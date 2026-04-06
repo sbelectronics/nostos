@@ -72,7 +72,7 @@ the NostOS kernel, assembled as a single 16KB image. It features the following c
 * HF / HEXDMP - Display file as hex dump
 * MT / MOUNT  - Mount filesystem device on block device
 * ST / STAT   - Display file status and block map
-* #  / REMARK - Remark (comment line, ignored)
+* (hash)  / REMARK - Remark (comment line, ignored)
 * SM / SUM    - SYSV checksum
 * FR / FREE   - Display free block count
 * PL / PLAY   - Execute commands from a script file
