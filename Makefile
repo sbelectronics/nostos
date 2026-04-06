@@ -135,7 +135,7 @@ endef
 # Targets
 # ============================================================
 
-.PHONY: all build-roms build-512k build-prod \
+.PHONY: all build-roms build-512k build-prod release \
         run-testing run-native run-native-throttled run-3rdparty run-extensions \
         run-fables run-fdc \
         run-production run-production-sio run-production-sio-sb run-production-z180 run-production-scc run-production-scc-bub-32k run-production-acia-32k run-production-fdc \
@@ -144,6 +144,16 @@ endef
 		test-exec-standalone
 
 all: build-roms build-512k build-prod
+
+# ============================================================
+# Release: copy all build/rom/*.rom files into release/<VERSION>/
+# ============================================================
+release: all
+	@VER=$$(cat VERSION | tr -d '[:space:]'); \
+	 DEST=release/$$VER; \
+	 mkdir -p $$DEST; \
+	 cp $(ROM_DIR)/*.rom $$DEST/; \
+	 echo "Released $$(ls $$DEST | wc -l) ROM image(s) to $$DEST/"
 
 build-roms: $(ALL_ROMS)
 build-512k: $(ALL_512K)

@@ -118,24 +118,7 @@ The build produces several ROM images, each tailored to a specific UART, block
 device, and memory configuration. The 16KB raw kernel images live in `build/`,
 and the final flashable ROM images live in `build/rom/`.
 
-### Raw 16KB kernel images (`build/`)
-
-Each of these is the bare 16KB NostOS kernel+executive assembled for a particular
-hardware variant. They are not directly flashable; they are combined with a disk
-image by the 32K and 512K targets below.
-
-| File | Memory | Serial | Block device |
-|------|--------|--------|--------------|
-| `nostos-acia.bin` | 512K banked | 6850 ACIA | CompactFlash |
-| `nostos-sio.bin` | 512K banked | Z80 SIO/2 | CompactFlash |
-| `nostos-sio-sb.bin` | 512K banked | Z80 SIO/2 (SmallComputerCentral) | CompactFlash |
-| `nostos-z180.bin` | 512K banked | Z180 ASCI | CompactFlash |
-| `nostos-scc.bin` | 512K banked | Z85C30 SCC | CompactFlash |
-| `nostos-acia-fdc.bin` | 512K banked | 6850 ACIA | WD37C65 floppy |
-| `nostos-acia-32k.bin` | 32K RAM + 32K ROM | 6850 ACIA | Bubble memory |
-| `nostos-scc-bub-32k.bin` | 32K RAM + 32K ROM | Z85C30 SCC | Bubble memory |
-
-### Flashable ROM images (`build/rom/`)
+### Flashable ROM images (`release/<versio>/`)
 
 These are the final images you would burn to an EPROM (or load into the emulator).
 Each combines a kernel image with a starter disk.
