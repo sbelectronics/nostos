@@ -1,0 +1,75 @@
+C:
+# ============================================================
+# CWD + drive-prefix path resolution tests
+# Verifies that "C:name" respects CUR_DIR when C is current device,
+# across all commands that open/create/remove files.
+# ============================================================
+MD TESTDIR
+CF SCOTT.TXT TESTDIR/TESTFILE.TXT
+CD TESTDIR
+# ---- Single-arg commands with same-device prefix ----
+# LF (TYPE) with C:filename — should find file in CWD
+LF C:TESTFILE.TXT
+# SUM with C:filename — should find file in CWD
+SUM C:TESTFILE.TXT
+# ---- CF source with same-device prefix ----
+# CF src=C:name — should read from CWD
+CF C:TESTFILE.TXT /COPY1.TXT
+LF /COPY1.TXT
+# ---- CF dest with same-device prefix ----
+# CF dest=C:name — should create in CWD
+CF /SCOTT.TXT C:COPY2.TXT
+LD
+# ---- CF dest=bare drive letter (same device) ----
+# CF dest=C: — should create in CWD using src basename
+CF /SCOTT.TXT C:
+LD
+# ---- NF (rename) with same-device prefix ----
+NF C:COPY2.TXT RENAMED.TXT
+LD
+# ---- RF (delete) with same-device prefix ----
+RF C:RENAMED.TXT
+RF C:SCOTT.TXT
+RF C:TESTFILE.TXT
+LD
+# ---- MD/RD with same-device prefix ----
+MD C:SUBDIR
+LD
+RD C:SUBDIR
+LD
+# ---- Different device: A:name should resolve from root of A ----
+# A: has FORMAT.APP in root — verify LF A:FORMAT.APP works from any CWD
+# (CWD is still C:/TESTDIR, which doesn't exist on A:)
+SUM A:FORMAT.APP
+# ---- CF source from different device ----
+CF A:FORMAT.APP C:
+LD
+RF FORMAT.APP
+# ---- Cross-device creates (B: = ramdisk, CWD = C:/TESTDIR) ----
+# These must land in B:/ root, NOT in B:/TESTDIR (which doesn't exist)
+A:FORMAT RAMD: 64
+MOUNT RAMD B
+# MD B:XDIR — should create /XDIR on B, not /TESTDIR/XDIR
+MD B:XDIR
+LD B:
+# CF dest=B:name — should create in B:/ root
+CF /SCOTT.TXT B:XFILE.TXT
+LD B:
+# CF dest=B: (bare) — should create in B:/ root using src basename
+CF /SCOTT.TXT B:
+LD B:
+# NF B:name — rename on different device from CWD
+NF B:XFILE.TXT RENAMED.TXT
+LD B:
+# RF B:name — delete on different device from CWD
+RF B:RENAMED.TXT
+RF B:SCOTT.TXT
+RD B:XDIR
+LD B:
+# ---- Absolute paths with drive prefix still work ----
+LF C:/SCOTT.TXT
+# ---- Clean up ----
+CD /
+RF COPY1.TXT
+RD TESTDIR
+HALT

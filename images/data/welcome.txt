@@ -1,0 +1,2 @@
+Welcome to NostOS: The Nostalgia operation system!
+You may use "HELP" to get a list of available executive commands.

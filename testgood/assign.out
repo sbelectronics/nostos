@@ -1,0 +1,52 @@
+A:/> C:
+C:/> 
+C:/> LL
+128 NUL: -> 1 NUL:
+129 CONI: -> 2 ACIA:
+130 CONO: -> 2 ACIA:
+131 SERI: -> 255 UN:
+132 SERO: -> 255 UN:
+133 PRN: -> 255 UN:
+C:/> 
+C:/> AS SERI: ACIA:
+Assigned.
+C:/> 
+C:/> LL
+128 NUL: -> 1 NUL:
+129 CONI: -> 2 ACIA:
+130 CONO: -> 2 ACIA:
+131 SERI: -> 2 ACIA:
+132 SERO: -> 255 UN:
+133 PRN: -> 255 UN:
+C:/> 
+C:/> AS SERI: UN:
+Assigned.
+C:/> 
+C:/> LL
+128 NUL: -> 1 NUL:
+129 CONI: -> 2 ACIA:
+130 CONO: -> 2 ACIA:
+131 SERI: -> 255 UN:
+132 SERO: -> 255 UN:
+133 PRN: -> 255 UN:
+C:/> 
+C:/> AS CONO: NOSUCH:
+Unknown physical device.
+C:/> 
+C:/> AS
+Usage: AS <logdev> <physdev>
+C:/> 
+C:/> AS MYDEV: NUL:
+Assigned.
+C:/> 
+C:/> LL
+128 NUL: -> 1 NUL:
+129 CONI: -> 2 ACIA:
+130 CONO: -> 2 ACIA:
+131 SERI: -> 255 UN:
+132 SERO: -> 255 UN:
+133 PRN: -> 255 UN:
+134 MYDE: -> 1 NUL:
+C:/> 
+C:/> HALT
+CPU halted

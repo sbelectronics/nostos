@@ -1,0 +1,7 @@
+C:
+free
+copy scott.txt scott2.txt
+free
+delete scott2.txt
+free
+halt

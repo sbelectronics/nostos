@@ -1,0 +1,81 @@
+C:
+# ============================================================
+# EOF Handling Test
+# Verifies that DEV_BREAD returns ERR_EOF correctly at file
+# boundaries, exercised through CF (copy file) which loops
+# on DEV_BREAD until ERR_EOF.
+#
+# Exercises:
+#   - Empty file (0 bytes): EOF on first read
+#   - 1-byte file: EOF after first block
+#   - 511-byte file: EOF after first block (just under boundary)
+#   - 512-byte file: EOF at exact block boundary
+#   - 513-byte file: EOF just past block boundary
+#   - 1024-byte file: EOF at exact 2-block boundary
+#   - TYPE of empty file (should print nothing)
+#   - TYPE of 1-byte file
+# ============================================================
+# Step 1: Create test files at boundary sizes
+RANDDATA ZERO.DAT 0 11111
+RANDDATA ONE.DAT 1 22222
+RANDDATA B511.DAT 511 33333
+RANDDATA B512.DAT 512 44444
+RANDDATA B513.DAT 513 55555
+RANDDATA B1024.DAT 1024 66666
+# Step 2: Verify originals with SUM
+SUM ZERO.DAT
+SUM ONE.DAT
+SUM B511.DAT
+SUM B512.DAT
+SUM B513.DAT
+SUM B1024.DAT
+# Step 3: Copy each file (CF uses DEV_BREAD loop until ERR_EOF)
+CF ZERO.DAT CZERO.DAT
+CF ONE.DAT CONE.DAT
+CF B511.DAT CB511.DAT
+CF B512.DAT CB512.DAT
+CF B513.DAT CB513.DAT
+CF B1024.DAT CB1024.DAT
+# Step 4: Verify copies match originals
+SUM CZERO.DAT
+SUM CONE.DAT
+SUM CB511.DAT
+SUM CB512.DAT
+SUM CB513.DAT
+SUM CB1024.DAT
+# Step 5: TYPE empty file (should print nothing)
+TYPE ZERO.DAT
+# Step 6: Copy into subdirectory (tests EOF with path resolution)
+MD SUBDIR
+CF ZERO.DAT SUBDIR/EMPTY.DAT
+CF B512.DAT SUBDIR/BLOCK.DAT
+CF B513.DAT SUBDIR/OVER.DAT
+SUM SUBDIR/EMPTY.DAT
+SUM SUBDIR/BLOCK.DAT
+SUM SUBDIR/OVER.DAT
+# Step 7: Copy from subdirectory back to root
+CF SUBDIR/BLOCK.DAT BACK.DAT
+SUM BACK.DAT
+# Step 8: DIR to verify sizes
+LD
+# Step 9: Clean up
+RF ZERO.DAT
+RF ONE.DAT
+RF B511.DAT
+RF B512.DAT
+RF B513.DAT
+RF B1024.DAT
+RF CZERO.DAT
+RF CONE.DAT
+RF CB511.DAT
+RF CB512.DAT
+RF CB513.DAT
+RF CB1024.DAT
+RF BACK.DAT
+RF SUBDIR/EMPTY.DAT
+RF SUBDIR/BLOCK.DAT
+RF SUBDIR/OVER.DAT
+RD SUBDIR
+DIR
+FREE
+HALT

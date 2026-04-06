@@ -1,0 +1,28 @@
+A:/> C:
+C:/> 
+C:/> HELP
+NostOS commands:
+HP / HELP   - Display help text
+IN / INFO   - Display system information
+HT / HALT   - Execute HALT instruction
+LL / LISTL  - List logical devices
+LP / LISTP  - List physical devices
+AS / ASSIGN - Assign logical device to physical device
+CD / CHDIR  - Change directory
+LD / DIR    - List directory
+MD / MKDIR  - Make directory
+RD / RMDIR  - Remove directory
+CF / COPY   - Copy file
+RF / DELETE - Delete file
+NF / RENAME - Rename file
+LF / TYPE   - Display file contents
+HF / HEXDMP - Display file as hex dump
+MT / MOUNT  - Mount filesystem device on block device
+ST / STAT   - Display file status and block map
+#  / REMARK - Remark (comment line, ignored)
+SM / SUM    - SYSV checksum
+FR / FREE   - Display free block count
+PL / PLAY   - Execute commands from a script file
+C:/> 
+C:/> HALT
+CPU halted

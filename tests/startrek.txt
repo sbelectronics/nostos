@@ -1,0 +1,8 @@
+C:
+STARTREK
+S
+L
+D
+?
+Q
+HALT

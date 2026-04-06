@@ -1,0 +1,28 @@
+C:
+# Create test files for multifile tests
+# 4 files of 512 bytes each (1 block) with different seeds
+RANDDATA FILE1.TMP 512 1
+RANDDATA FILE2.TMP 512 2
+RANDDATA FILE3.TMP 512 3
+RANDDATA FILE4.TMP 512 4
+# 2 files of 1024 bytes each (2 blocks) for interleaved test
+RANDDATA FILEA.TMP 1024 100
+RANDDATA FILEB.TMP 1024 200
+#
+# Test 1: Open 4 files simultaneously, read each, print checksums
+multifile.app 1
+#
+# Test 2: Interleaved reads vs sequential reads
+multifile.app 2
+#
+# Test 3: Handle exhaustion and recovery
+multifile.app 3
+#
+# Cleanup
+RF FILE1.TMP
+RF FILE2.TMP
+RF FILE3.TMP
+RF FILE4.TMP
+RF FILEA.TMP
+RF FILEB.TMP
+HALT

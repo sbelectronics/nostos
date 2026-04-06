@@ -1,0 +1,6 @@
+C:
+# Test zealasm assembler
+# Assemble sample.asm into sample.app, then run it
+ZEALASM.APP SAMPLE.ASM SAMPLE.APP
+SAMPLE.APP
+HALT

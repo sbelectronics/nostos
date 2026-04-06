@@ -1,0 +1,16 @@
+C:
+basic.app
+10 PRINT "HELLO"
+20 PRINT "WORLD"
+SAVE "TEST.BAS"
+SYSTEM
+basic.app
+LOAD "TEST.BAS"
+LIST
+
+
+RUN
+
+
+SYSTEM
+HALT

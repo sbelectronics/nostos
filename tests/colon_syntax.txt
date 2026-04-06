@@ -1,0 +1,11 @@
+C:
+# Test colon syntax on FORMAT, MT, and ASSIGN commands
+A:FORMAT RAMD: 744
+MT RAMD: B:
+LP
+DIR B:
+# Assign with colons
+ASSIGN X: B:
+X:
+DIR
+HALT

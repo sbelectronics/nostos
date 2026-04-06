@@ -1,0 +1,4 @@
+A:/> C:
+C:/> more.app XTEST.TXT
+test
+C:/> HALTCPU halted

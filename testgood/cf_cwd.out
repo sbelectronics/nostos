@@ -1,0 +1,188 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # CWD + drive-prefix path resolution tests
+C:/> 
+C:/> # Verifies that "C:name" respects CUR_DIR when C is current device,
+C:/> 
+C:/> # across all commands that open/create/remove files.
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> MD TESTDIR
+C:/> 
+C:/> CF SCOTT.TXT TESTDIR/TESTFILE.TXT
+C:/> 
+C:/> CD TESTDIR
+C:/TESTDIR> 
+C:/TESTDIR> # ---- Single-arg commands with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> # LF (TYPE) with C:filename — should find file in CWD
+C:/TESTDIR> 
+C:/TESTDIR> LF C:TESTFILE.TXT
+scott was here
+C:/TESTDIR> 
+C:/TESTDIR> # SUM with C:filename — should find file in CWD
+C:/TESTDIR> 
+C:/TESTDIR> SUM C:TESTFILE.TXT
+1382 1
+C:/TESTDIR> 
+C:/TESTDIR> # ---- CF source with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> # CF src=C:name — should read from CWD
+C:/TESTDIR> 
+C:/TESTDIR> CF C:TESTFILE.TXT /COPY1.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LF /COPY1.TXT
+scott was here
+C:/TESTDIR> 
+C:/TESTDIR> # ---- CF dest with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> # CF dest=C:name — should create in CWD
+C:/TESTDIR> 
+C:/TESTDIR> CF /SCOTT.TXT C:COPY2.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+    15 TESTFILE.TXT
+    15 COPY2.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # ---- CF dest=bare drive letter (same device) ----
+C:/TESTDIR> 
+C:/TESTDIR> # CF dest=C: — should create in CWD using src basename
+C:/TESTDIR> 
+C:/TESTDIR> CF /SCOTT.TXT C:
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+    15 TESTFILE.TXT
+    15 COPY2.TXT
+    15 SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # ---- NF (rename) with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> NF C:COPY2.TXT RENAMED.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+    15 TESTFILE.TXT
+    15 RENAMED.TXT
+    15 SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # ---- RF (delete) with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> RF C:RENAMED.TXT
+C:/TESTDIR> 
+C:/TESTDIR> RF C:SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> RF C:TESTFILE.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+C:/TESTDIR> 
+C:/TESTDIR> # ---- MD/RD with same-device prefix ----
+C:/TESTDIR> 
+C:/TESTDIR> MD C:SUBDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+ <DIR> SUBDIR
+C:/TESTDIR> 
+C:/TESTDIR> RD C:SUBDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+C:/TESTDIR> 
+C:/TESTDIR> # ---- Different device: A:name should resolve from root of A ----
+C:/TESTDIR> 
+C:/TESTDIR> # A: has FORMAT.APP in root — verify LF A:FORMAT.APP works from any CWD
+C:/TESTDIR> 
+C:/TESTDIR> # (CWD is still C:/TESTDIR, which doesn't exist on A:)
+C:/TESTDIR> 
+C:/TESTDIR> SUM A:FORMAT.APP
+2521 2
+C:/TESTDIR> 
+C:/TESTDIR> # ---- CF source from different device ----
+C:/TESTDIR> 
+C:/TESTDIR> CF A:FORMAT.APP C:
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+   849 FORMAT.APP
+C:/TESTDIR> 
+C:/TESTDIR> RF FORMAT.APP
+C:/TESTDIR> 
+C:/TESTDIR> # ---- Cross-device creates (B: = ramdisk, CWD = C:/TESTDIR) ----
+C:/TESTDIR> 
+C:/TESTDIR> # These must land in B:/ root, NOT in B:/TESTDIR (which doesn't exist)
+C:/TESTDIR> 
+C:/TESTDIR> A:FORMAT RAMD: 64
+Formatted 64-block filesystem.
+C:/TESTDIR> 
+C:/TESTDIR> MOUNT RAMD B
+Mounted.
+C:/TESTDIR> 
+C:/TESTDIR> # MD B:XDIR — should create /XDIR on B, not /TESTDIR/XDIR
+C:/TESTDIR> 
+C:/TESTDIR> MD B:XDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD B:
+Directory Listing:
+ <DIR> XDIR
+C:/TESTDIR> 
+C:/TESTDIR> # CF dest=B:name — should create in B:/ root
+C:/TESTDIR> 
+C:/TESTDIR> CF /SCOTT.TXT B:XFILE.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LD B:
+Directory Listing:
+ <DIR> XDIR
+    15 XFILE.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # CF dest=B: (bare) — should create in B:/ root using src basename
+C:/TESTDIR> 
+C:/TESTDIR> CF /SCOTT.TXT B:
+C:/TESTDIR> 
+C:/TESTDIR> LD B:
+Directory Listing:
+ <DIR> XDIR
+    15 XFILE.TXT
+    15 SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # NF B:name — rename on different device from CWD
+C:/TESTDIR> 
+C:/TESTDIR> NF B:XFILE.TXT RENAMED.TXT
+C:/TESTDIR> 
+C:/TESTDIR> LD B:
+Directory Listing:
+ <DIR> XDIR
+    15 RENAMED.TXT
+    15 SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> # RF B:name — delete on different device from CWD
+C:/TESTDIR> 
+C:/TESTDIR> RF B:RENAMED.TXT
+C:/TESTDIR> 
+C:/TESTDIR> RF B:SCOTT.TXT
+C:/TESTDIR> 
+C:/TESTDIR> RD B:XDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD B:
+Directory Listing:
+C:/TESTDIR> 
+C:/TESTDIR> # ---- Absolute paths with drive prefix still work ----
+C:/TESTDIR> 
+C:/TESTDIR> LF C:/SCOTT.TXT
+scott was here
+C:/TESTDIR> 
+C:/TESTDIR> # ---- Clean up ----
+C:/TESTDIR> 
+C:/TESTDIR> CD /
+C:/> 
+C:/> RF COPY1.TXT
+C:/> 
+C:/> RD TESTDIR
+C:/> 
+C:/> HALT
+CPU halted

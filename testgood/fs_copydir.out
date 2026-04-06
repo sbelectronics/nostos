@@ -1,0 +1,196 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Copy-Between-Directories Torture Test
+C:/> 
+C:/> # Tests copying files between subdirectories using paths,
+C:/> 
+C:/> # including cross-directory copies, copies into CWD, and
+C:/> 
+C:/> # verifying content integrity via SUM checksums.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - CF with source and dest in different subdirectories
+C:/> 
+C:/> #   - CF from root into subdirectory (and vice versa)
+C:/> 
+C:/> #   - CF using trailing-slash dest (auto basename)
+C:/> 
+C:/> #   - SUM of files via path from a different CWD
+C:/> 
+C:/> #   - Content integrity across all copies
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Set up directories and seed files
+C:/> 
+C:/> MD ALPHA
+C:/> 
+C:/> MD BRAVO
+C:/> 
+C:/> # Create test files with known checksums in root
+C:/> 
+C:/> RANDDATA ROOT1.DAT 2048 11111
+95 4
+C:/> 
+C:/> RANDDATA ROOT2.DAT 1500 22222
+62165 3
+C:/> 
+C:/> # Step 2: Copy from root into subdirectory using explicit path
+C:/> 
+C:/> CF ROOT1.DAT ALPHA/FILE1.DAT
+C:/> 
+C:/> CF ROOT2.DAT ALPHA/FILE2.DAT
+C:/> 
+C:/> # Verify copies in ALPHA match originals
+C:/> 
+C:/> SUM ROOT1.DAT
+95 4
+C:/> 
+C:/> SUM ALPHA/FILE1.DAT
+95 4
+C:/> 
+C:/> SUM ROOT2.DAT
+62165 3
+C:/> 
+C:/> SUM ALPHA/FILE2.DAT
+62165 3
+C:/> 
+C:/> # Step 3: Copy from one subdirectory to another
+C:/> 
+C:/> CF ALPHA/FILE1.DAT BRAVO/COPY1.DAT
+C:/> 
+C:/> CF ALPHA/FILE2.DAT BRAVO/COPY2.DAT
+C:/> 
+C:/> # Verify copies in BRAVO
+C:/> 
+C:/> SUM BRAVO/COPY1.DAT
+95 4
+C:/> 
+C:/> SUM BRAVO/COPY2.DAT
+62165 3
+C:/> 
+C:/> # Step 4: Copy using trailing-slash dest (auto basename)
+C:/> 
+C:/> CF ROOT1.DAT BRAVO/
+C:/> 
+C:/> SUM BRAVO/ROOT1.DAT
+95 4
+C:/> 
+C:/> # Step 5: CD into BRAVO and copy from ALPHA via absolute path
+C:/> 
+C:/> CD BRAVO
+C:/BRAVO> 
+C:/BRAVO> LD
+Directory Listing:
+  2048 COPY1.DAT
+  1500 COPY2.DAT
+  2048 ROOT1.DAT
+C:/BRAVO> 
+C:/BRAVO> CF /ALPHA/FILE1.DAT LOCAL.DAT
+C:/BRAVO> 
+C:/BRAVO> SUM LOCAL.DAT
+95 4
+C:/BRAVO> 
+C:/BRAVO> # Step 6: Copy from CWD (BRAVO) back to ALPHA
+C:/BRAVO> 
+C:/BRAVO> CF COPY1.DAT /ALPHA/FROM_B.DAT
+C:/BRAVO> 
+C:/BRAVO> CD /
+C:/> 
+C:/> SUM ALPHA/FROM_B.DAT
+95 4
+C:/> 
+C:/> SUM ALPHA/FILE1.DAT
+95 4
+C:/> 
+C:/> # Step 7: List both directories to verify contents
+C:/> 
+C:/> CD ALPHA
+C:/ALPHA> 
+C:/ALPHA> LD
+Directory Listing:
+  2048 FILE1.DAT
+  1500 FILE2.DAT
+  2048 FROM_B.DAT
+C:/ALPHA> 
+C:/ALPHA> CD /BRAVO
+C:/BRAVO> 
+C:/BRAVO> LD
+Directory Listing:
+  2048 COPY1.DAT
+  1500 COPY2.DAT
+  2048 ROOT1.DAT
+  2048 LOCAL.DAT
+C:/BRAVO> 
+C:/BRAVO> # Step 8: Copy between subdirs while CWD is root
+C:/BRAVO> 
+C:/BRAVO> CD /
+C:/> 
+C:/> CF ALPHA/FILE2.DAT BRAVO/FILE2.DAT
+C:/> 
+C:/> SUM BRAVO/FILE2.DAT
+62165 3
+C:/> 
+C:/> SUM ALPHA/FILE2.DAT
+62165 3
+C:/> 
+C:/> # Step 9: Clean up
+C:/> 
+C:/> RF ALPHA/FILE1.DAT
+C:/> 
+C:/> RF ALPHA/FILE2.DAT
+C:/> 
+C:/> RF ALPHA/FROM_B.DAT
+C:/> 
+C:/> RD ALPHA
+C:/> 
+C:/> RF BRAVO/COPY1.DAT
+C:/> 
+C:/> RF BRAVO/COPY2.DAT
+C:/> 
+C:/> RF BRAVO/ROOT1.DAT
+C:/> 
+C:/> RF BRAVO/LOCAL.DAT
+C:/> 
+C:/> RF BRAVO/FILE2.DAT
+C:/> 
+C:/> RD BRAVO
+C:/> 
+C:/> RF ROOT1.DAT
+C:/> 
+C:/> RF ROOT2.DAT
+C:/> 
+C:/> # Verify filesystem is clean
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

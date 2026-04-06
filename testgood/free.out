@@ -1,0 +1,13 @@
+A:/> C:
+C:/> free
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> copy scott.txt scott2.txt
+C:/> free
+Free Blocks:  947712 bytes (1851 blocks)
+Free Memory:  47087 bytes
+C:/> delete scott2.txt
+C:/> free
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> haltCPU halted

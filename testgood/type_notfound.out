@@ -1,0 +1,10 @@
+A:/> C:
+C:/> # MT CF A
+C:/> 
+C:/> # C:
+C:/> 
+C:/> LF NONEXISTENT
+Error: Not found.
+C:/> 
+C:/> HALT
+CPU halted

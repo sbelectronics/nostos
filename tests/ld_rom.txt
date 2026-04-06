@@ -1,0 +1,7 @@
+C:
+a:
+dir
+ld /aesop
+ld /jataka1
+ld /jataka2
+halt

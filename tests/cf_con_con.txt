@@ -1,0 +1,5 @@
+C:
+# MOUNT CF A
+CF CONI: CONO:
+Hello World
+HALT

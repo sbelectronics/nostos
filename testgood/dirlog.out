@@ -1,0 +1,35 @@
+A:/> C:
+C:/> # MOUNT CF A
+C:/> ASSIGN X A
+Assigned.
+C:/> LL
+128 NUL: -> 1 NUL:
+129 CONI: -> 2 ACIA:
+130 CONO: -> 2 ACIA:
+131 SERI: -> 255 UN:
+132 SERO: -> 255 UN:
+133 PRN: -> 255 UN:
+134 X: -> 16 A:
+C:/> LP
+17 C: on CF:
+16 A: on ROMD:
+6 RAMD:
+5 ROMD:
+255 UN:
+14 RND:
+1 NUL:
+2 ACIA:
+3 CF:
+C:/> X:
+X:/> DIR
+Directory Listing:
+ <DIR> AESOP
+ <DIR> JATAKA1
+ <DIR> JATAKA2
+   849 FORMAT.APP
+  1957 FDINIT.APP
+  4588 ED.APP
+  1318 APPEND.APP
+  2567 XRECV.APP
+  2625 XSEND.APP
+X:/> HALTCPU halted

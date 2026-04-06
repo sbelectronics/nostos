@@ -1,0 +1,13 @@
+A:/> C:
+C:/> # MT CF A
+C:/> 
+C:/> # C:
+C:/> 
+C:/> SUM SCOTT.TXT
+1382 1
+C:/> 
+C:/> SUM ODYSSEY.TXT
+26703 42
+C:/> 
+C:/> HALT
+CPU halted

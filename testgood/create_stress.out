@@ -1,0 +1,480 @@
+A:/> C:
+C:/> 
+C:/> # Creation stress test: 32 directories + 32 files
+C:/> 
+C:/> # Verifies no PDT handle leaks in MD or CF commands.
+C:/> 
+C:/> # DIR must work after every batch of creations.
+C:/> 
+C:/> MD DIR01
+C:/> 
+C:/> MD DIR02
+C:/> 
+C:/> MD DIR03
+C:/> 
+C:/> MD DIR04
+C:/> 
+C:/> MD DIR05
+C:/> 
+C:/> MD DIR06
+C:/> 
+C:/> MD DIR07
+C:/> 
+C:/> MD DIR08
+C:/> 
+C:/> MD DIR09
+C:/> 
+C:/> MD DIR10
+C:/> 
+C:/> MD DIR11
+C:/> 
+C:/> MD DIR12
+C:/> 
+C:/> MD DIR13
+C:/> 
+C:/> MD DIR14
+C:/> 
+C:/> MD DIR15
+C:/> 
+C:/> MD DIR16
+C:/> 
+C:/> # Verify dir works after 16 mkdirs
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> DIR01
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+ <DIR> DIR02
+ <DIR> DIR03
+ <DIR> DIR04
+     7 TWELVE.TXT
+ <DIR> DIR05
+ <DIR> DIR06
+ <DIR> DIR07
+ <DIR> DIR08
+ <DIR> DIR09
+ <DIR> DIR10
+ <DIR> DIR11
+ <DIR> DIR12
+ <DIR> DIR13
+ <DIR> DIR14
+ <DIR> DIR15
+ <DIR> DIR16
+C:/> 
+C:/> MD DIR17
+C:/> 
+C:/> MD DIR18
+C:/> 
+C:/> MD DIR19
+C:/> 
+C:/> MD DIR20
+C:/> 
+C:/> MD DIR21
+C:/> 
+C:/> MD DIR22
+C:/> 
+C:/> MD DIR23
+C:/> 
+C:/> MD DIR24
+C:/> 
+C:/> MD DIR25
+C:/> 
+C:/> MD DIR26
+C:/> 
+C:/> MD DIR27
+C:/> 
+C:/> MD DIR28
+C:/> 
+C:/> MD DIR29
+C:/> 
+C:/> MD DIR30
+C:/> 
+C:/> MD DIR31
+C:/> 
+C:/> MD DIR32
+C:/> 
+C:/> # Verify dir works after 32 mkdirs
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> DIR01
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+ <DIR> DIR02
+ <DIR> DIR03
+ <DIR> DIR04
+     7 TWELVE.TXT
+ <DIR> DIR05
+ <DIR> DIR06
+ <DIR> DIR07
+ <DIR> DIR08
+ <DIR> DIR09
+ <DIR> DIR10
+ <DIR> DIR11
+ <DIR> DIR12
+ <DIR> DIR13
+ <DIR> DIR14
+ <DIR> DIR15
+ <DIR> DIR16
+ <DIR> DIR17
+ <DIR> DIR18
+ <DIR> DIR19
+ <DIR> DIR20
+ <DIR> DIR21
+ <DIR> DIR22
+ <DIR> DIR23
+ <DIR> DIR24
+ <DIR> DIR25
+ <DIR> DIR26
+ <DIR> DIR27
+ <DIR> DIR28
+ <DIR> DIR29
+ <DIR> DIR30
+ <DIR> DIR31
+ <DIR> DIR32
+C:/> 
+C:/> # Now create 32 files
+C:/> 
+C:/> CF SCOTT.TXT F001.TXT
+C:/> 
+C:/> CF SCOTT.TXT F002.TXT
+C:/> 
+C:/> CF SCOTT.TXT F003.TXT
+C:/> 
+C:/> CF SCOTT.TXT F004.TXT
+C:/> 
+C:/> CF SCOTT.TXT F005.TXT
+C:/> 
+C:/> CF SCOTT.TXT F006.TXT
+C:/> 
+C:/> CF SCOTT.TXT F007.TXT
+C:/> 
+C:/> CF SCOTT.TXT F008.TXT
+C:/> 
+C:/> CF SCOTT.TXT F009.TXT
+C:/> 
+C:/> CF SCOTT.TXT F010.TXT
+C:/> 
+C:/> CF SCOTT.TXT F011.TXT
+C:/> 
+C:/> CF SCOTT.TXT F012.TXT
+C:/> 
+C:/> CF SCOTT.TXT F013.TXT
+C:/> 
+C:/> CF SCOTT.TXT F014.TXT
+C:/> 
+C:/> CF SCOTT.TXT F015.TXT
+C:/> 
+C:/> CF SCOTT.TXT F016.TXT
+C:/> 
+C:/> CF SCOTT.TXT F017.TXT
+C:/> 
+C:/> CF SCOTT.TXT F018.TXT
+C:/> 
+C:/> CF SCOTT.TXT F019.TXT
+C:/> 
+C:/> CF SCOTT.TXT F020.TXT
+C:/> 
+C:/> CF SCOTT.TXT F021.TXT
+C:/> 
+C:/> CF SCOTT.TXT F022.TXT
+C:/> 
+C:/> CF SCOTT.TXT F023.TXT
+C:/> 
+C:/> CF SCOTT.TXT F024.TXT
+C:/> 
+C:/> CF SCOTT.TXT F025.TXT
+C:/> 
+C:/> CF SCOTT.TXT F026.TXT
+C:/> 
+C:/> CF SCOTT.TXT F027.TXT
+C:/> 
+C:/> CF SCOTT.TXT F028.TXT
+C:/> 
+C:/> CF SCOTT.TXT F029.TXT
+C:/> 
+C:/> CF SCOTT.TXT F030.TXT
+C:/> 
+C:/> CF SCOTT.TXT F031.TXT
+C:/> 
+C:/> CF SCOTT.TXT F032.TXT
+C:/> 
+C:/> # Verify dir works after 32 mkdirs + 32 file creates
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> DIR01
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+ <DIR> DIR02
+ <DIR> DIR03
+ <DIR> DIR04
+     7 TWELVE.TXT
+ <DIR> DIR05
+ <DIR> DIR06
+ <DIR> DIR07
+ <DIR> DIR08
+ <DIR> DIR09
+ <DIR> DIR10
+ <DIR> DIR11
+ <DIR> DIR12
+ <DIR> DIR13
+ <DIR> DIR14
+ <DIR> DIR15
+ <DIR> DIR16
+ <DIR> DIR17
+ <DIR> DIR18
+ <DIR> DIR19
+ <DIR> DIR20
+ <DIR> DIR21
+ <DIR> DIR22
+ <DIR> DIR23
+ <DIR> DIR24
+ <DIR> DIR25
+ <DIR> DIR26
+ <DIR> DIR27
+ <DIR> DIR28
+ <DIR> DIR29
+ <DIR> DIR30
+ <DIR> DIR31
+ <DIR> DIR32
+    15 F001.TXT
+    15 F002.TXT
+    15 F003.TXT
+    15 F004.TXT
+    15 F005.TXT
+    15 F006.TXT
+    15 F007.TXT
+    15 F008.TXT
+    15 F009.TXT
+    15 F010.TXT
+    15 F011.TXT
+    15 F012.TXT
+    15 F013.TXT
+    15 F014.TXT
+    15 F015.TXT
+    15 F016.TXT
+    15 F017.TXT
+    15 F018.TXT
+    15 F019.TXT
+    15 F020.TXT
+    15 F021.TXT
+    15 F022.TXT
+    15 F023.TXT
+    15 F024.TXT
+    15 F025.TXT
+    15 F026.TXT
+    15 F027.TXT
+    15 F028.TXT
+    15 F029.TXT
+    15 F030.TXT
+    15 F031.TXT
+    15 F032.TXT
+C:/> 
+C:/> # Cleanup files
+C:/> 
+C:/> RF F001.TXT
+C:/> 
+C:/> RF F002.TXT
+C:/> 
+C:/> RF F003.TXT
+C:/> 
+C:/> RF F004.TXT
+C:/> 
+C:/> RF F005.TXT
+C:/> 
+C:/> RF F006.TXT
+C:/> 
+C:/> RF F007.TXT
+C:/> 
+C:/> RF F008.TXT
+C:/> 
+C:/> RF F009.TXT
+C:/> 
+C:/> RF F010.TXT
+C:/> 
+C:/> RF F011.TXT
+C:/> 
+C:/> RF F012.TXT
+C:/> 
+C:/> RF F013.TXT
+C:/> 
+C:/> RF F014.TXT
+C:/> 
+C:/> RF F015.TXT
+C:/> 
+C:/> RF F016.TXT
+C:/> 
+C:/> RF F017.TXT
+C:/> 
+C:/> RF F018.TXT
+C:/> 
+C:/> RF F019.TXT
+C:/> 
+C:/> RF F020.TXT
+C:/> 
+C:/> RF F021.TXT
+C:/> 
+C:/> RF F022.TXT
+C:/> 
+C:/> RF F023.TXT
+C:/> 
+C:/> RF F024.TXT
+C:/> 
+C:/> RF F025.TXT
+C:/> 
+C:/> RF F026.TXT
+C:/> 
+C:/> RF F027.TXT
+C:/> 
+C:/> RF F028.TXT
+C:/> 
+C:/> RF F029.TXT
+C:/> 
+C:/> RF F030.TXT
+C:/> 
+C:/> RF F031.TXT
+C:/> 
+C:/> RF F032.TXT
+C:/> 
+C:/> # Cleanup directories
+C:/> 
+C:/> RD DIR01
+C:/> 
+C:/> RD DIR02
+C:/> 
+C:/> RD DIR03
+C:/> 
+C:/> RD DIR04
+C:/> 
+C:/> RD DIR05
+C:/> 
+C:/> RD DIR06
+C:/> 
+C:/> RD DIR07
+C:/> 
+C:/> RD DIR08
+C:/> 
+C:/> RD DIR09
+C:/> 
+C:/> RD DIR10
+C:/> 
+C:/> RD DIR11
+C:/> 
+C:/> RD DIR12
+C:/> 
+C:/> RD DIR13
+C:/> 
+C:/> RD DIR14
+C:/> 
+C:/> RD DIR15
+C:/> 
+C:/> RD DIR16
+C:/> 
+C:/> RD DIR17
+C:/> 
+C:/> RD DIR18
+C:/> 
+C:/> RD DIR19
+C:/> 
+C:/> RD DIR20
+C:/> 
+C:/> RD DIR21
+C:/> 
+C:/> RD DIR22
+C:/> 
+C:/> RD DIR23
+C:/> 
+C:/> RD DIR24
+C:/> 
+C:/> RD DIR25
+C:/> 
+C:/> RD DIR26
+C:/> 
+C:/> RD DIR27
+C:/> 
+C:/> RD DIR28
+C:/> 
+C:/> RD DIR29
+C:/> 
+C:/> RD DIR30
+C:/> 
+C:/> RD DIR31
+C:/> 
+C:/> RD DIR32
+C:/> 
+C:/> # Final dir should show original contents
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> HALT
+CPU halted

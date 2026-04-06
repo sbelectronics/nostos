@@ -1,0 +1,61 @@
+A:/> C:
+C:/> STARTREK
+
+*** SUPER STAR TREK ***
+
+Your mission: destroy 19 Klingons in 45 stardates.
+There are 1 starbases.
+
+Entering Regulus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . . . . . . 
+Stardate: 2016  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 3000  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . . . . . . 
+Stardate: 2016  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 3000  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? D
+Damage Report:
+  Warp Engines:   0
+  S.R. Sensors:   0
+  L.R. Sensors:   0
+  Phaser Control: 0
+  Torpedo Tubes:  0
+  Damage Control: 0
+  Shield Control: 0
+  Library Comp:   0
+Command? ?
+Commands:
+  N - Navigate    S - Short scan
+  L - Long scan   P - Phasers
+  T - Torpedoes   H - Shields
+  D - Damage      C - Computer
+  Q - Quit        ? - Help
+Command? Q
+Resigned.
+C:/> HALTCPU halted

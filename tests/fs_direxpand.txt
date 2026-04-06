@@ -1,0 +1,89 @@
+C:
+# ============================================================
+# Directory Expansion Torture Test
+# Tests that directories can grow beyond their initial 16-entry
+# block by allocating new blocks and extending the directory
+# inode's spans. Also tests non-contiguous directory spans by
+# pre-fragmenting the disk.
+#
+# Strategy:
+#   1. Create subdirectory BIGDIR
+#   2. Fill its first block (16 files = 16 entries)
+#   3. Fragment the disk to force non-contiguous allocation
+#   4. Create more files in BIGDIR (forces directory expansion)
+#   5. List and verify all entries are accessible
+#   6. Read back files from both the original and expanded blocks
+#   7. Clean up
+# ============================================================
+# Step 1: Create the test subdirectory
+MD BIGDIR
+# Step 2: Fill the first directory block (16 entries)
+CF SCOTT.TXT BIGDIR/D01.TXT
+CF SCOTT.TXT BIGDIR/D02.TXT
+CF SCOTT.TXT BIGDIR/D03.TXT
+CF SCOTT.TXT BIGDIR/D04.TXT
+CF SCOTT.TXT BIGDIR/D05.TXT
+CF SCOTT.TXT BIGDIR/D06.TXT
+CF SCOTT.TXT BIGDIR/D07.TXT
+CF SCOTT.TXT BIGDIR/D08.TXT
+CF SCOTT.TXT BIGDIR/D09.TXT
+CF SCOTT.TXT BIGDIR/D10.TXT
+CF SCOTT.TXT BIGDIR/D11.TXT
+CF SCOTT.TXT BIGDIR/D12.TXT
+CF SCOTT.TXT BIGDIR/D13.TXT
+CF SCOTT.TXT BIGDIR/D14.TXT
+CF SCOTT.TXT BIGDIR/D15.TXT
+CF SCOTT.TXT BIGDIR/D16.TXT
+# Step 3: Fragment the disk so the next directory block
+# won't be contiguous with the first one.
+CF SCOTT.TXT GAP01.TXT
+CF SCOTT.TXT GAP02.TXT
+CF SCOTT.TXT GAP03.TXT
+CF SCOTT.TXT GAP04.TXT
+CF SCOTT.TXT GAP05.TXT
+RF GAP01.TXT
+RF GAP03.TXT
+RF GAP05.TXT
+# Step 4: Create more files to force directory expansion
+# Entry 17+ must go into a new directory block
+CF SCOTT.TXT BIGDIR/D17.TXT
+CF SCOTT.TXT BIGDIR/D18.TXT
+CF SCOTT.TXT BIGDIR/D19.TXT
+CF SCOTT.TXT BIGDIR/D20.TXT
+# Step 5: Verify all entries are visible via LD
+CD BIGDIR
+LD
+# Step 6: Read back files from both blocks to verify accessibility
+# D01 is in the original block; D20 is in the expanded block
+LF D01.TXT
+LF D20.TXT
+# Step 7: Go back to root and clean up
+CD /
+# Remove files in BIGDIR
+RF BIGDIR/D01.TXT
+RF BIGDIR/D02.TXT
+RF BIGDIR/D03.TXT
+RF BIGDIR/D04.TXT
+RF BIGDIR/D05.TXT
+RF BIGDIR/D06.TXT
+RF BIGDIR/D07.TXT
+RF BIGDIR/D08.TXT
+RF BIGDIR/D09.TXT
+RF BIGDIR/D10.TXT
+RF BIGDIR/D11.TXT
+RF BIGDIR/D12.TXT
+RF BIGDIR/D13.TXT
+RF BIGDIR/D14.TXT
+RF BIGDIR/D15.TXT
+RF BIGDIR/D16.TXT
+RF BIGDIR/D17.TXT
+RF BIGDIR/D18.TXT
+RF BIGDIR/D19.TXT
+RF BIGDIR/D20.TXT
+RD BIGDIR
+RF GAP02.TXT
+RF GAP04.TXT
+# Verify filesystem is clean
+DIR
+FREE
+HALT

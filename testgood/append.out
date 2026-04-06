@@ -1,0 +1,36 @@
+A:/> C:
+C:/> 
+C:/> # Test APPEND command
+C:/> 
+C:/> # Create new file and append to it
+C:/> 
+C:/> A:APPEND TEST.TXT Hello World
+C:/> 
+C:/> TYPE TEST.TXT
+Hello World
+C:/> 
+C:/> # Append again to existing file
+C:/> 
+C:/> A:APPEND TEST.TXT Second Line
+C:/> 
+C:/> TYPE TEST.TXT
+Hello World
+Second Line
+C:/> 
+C:/> # Check file size
+C:/> 
+C:/> ST TEST.TXT
+Flags:      0x00
+Root Inode: 0x0093
+File Size:  0x0000001A
+Blk Pos:    0x0000
+Span First: 0x0000
+Span Last:  0x0000
+Span Off:   0xFFFF
+Blocks:
+  0094-0094
+C:/> 
+C:/> RF TEST.TXT
+C:/> 
+C:/> HALT
+CPU halted

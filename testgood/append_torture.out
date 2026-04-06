@@ -1,0 +1,95 @@
+A:/> C:
+C:/> 
+C:/> # Append torture test - build a file exceeding 2 blocks (1024 bytes)
+C:/> 
+C:/> # Each line includes text + CRLF (2 bytes)
+C:/> 
+C:/> A:APPEND BIG.TXT Line 01: The quick brown fox jumps over the lazy dog
+C:/> 
+C:/> A:APPEND BIG.TXT Line 02: Pack my box with five dozen liquor jugs
+C:/> 
+C:/> A:APPEND BIG.TXT Line 03: How vexingly quick daft zebras jump
+C:/> 
+C:/> A:APPEND BIG.TXT Line 04: The five boxing wizards jump quickly
+C:/> 
+C:/> A:APPEND BIG.TXT Line 05: Bright vixens jump dozy fowl quack
+C:/> 
+C:/> A:APPEND BIG.TXT Line 06: Jinxed wizards pluck ivy from the big quilt
+C:/> 
+C:/> A:APPEND BIG.TXT Line 07: Crazy Frederick bought many very exquisite opal jewels
+C:/> 
+C:/> A:APPEND BIG.TXT Line 08: We promptly judged antique ivory buckles for the next prize
+C:/> 
+C:/> A:APPEND BIG.TXT Line 09: A mad boxer shot a quick gloved jab to the jaw of his dizzy opponent
+C:/> 
+C:/> A:APPEND BIG.TXT Line 10: The job requires extra pluck and zeal from every young wage earner
+C:/> 
+C:/> A:APPEND BIG.TXT Line 11: Just keep examining every low bid quoted for zinc etchings
+C:/> 
+C:/> A:APPEND BIG.TXT Line 12: How razorback jumping frogs can level six piqued gymnasts
+C:/> 
+C:/> A:APPEND BIG.TXT Line 13: Grumpy wizards make toxic brew for the evil queen and jack
+C:/> 
+C:/> A:APPEND BIG.TXT Line 14: All questions asked by five watched experts amaze the judge
+C:/> 
+C:/> A:APPEND BIG.TXT Line 15: The lazy major was fixing Cupids broken quiver
+C:/> 
+C:/> A:APPEND BIG.TXT Line 16: A quick movement of the enemy will jeopardize six gunboats
+C:/> 
+C:/> A:APPEND BIG.TXT Line 17: Few quips galvanized the mock jury box
+C:/> 
+C:/> A:APPEND BIG.TXT Line 18: The quick brown fox jumps right over the lazy dog again
+C:/> 
+C:/> A:APPEND BIG.TXT Line 19: Jackdaws love my big sphinx of quartz
+C:/> 
+C:/> A:APPEND BIG.TXT Line 20: Pack my box with five dozen liquor jugs once more
+C:/> 
+C:/> A:APPEND BIG.TXT Line 21: Sixty zippers were quickly picked from the woven jute bag
+C:/> 
+C:/> A:APPEND BIG.TXT Line 22: Amazingly few discotheques provide jukeboxes
+C:/> 
+C:/> A:APPEND BIG.TXT Line 23: My girl wove six dozen plaid jackets before she quit
+C:/> 
+C:/> A:APPEND BIG.TXT Line 24: The explorer was frozen in his survey of big chunks of ice for the project
+C:/> 
+C:/> TYPE BIG.TXT
+Line 01: The quick brown fox jumps over the lazy dog
+Line 02: Pack my box with five dozen liquor jugs
+Line 03: How vexingly quick daft zebras jump
+Line 04: The five boxing wizards jump quickly
+Line 05: Bright vixens jump dozy fowl quack
+Line 06: Jinxed wizards pluck ivy from the big quilt
+Line 07: Crazy Frederick bought many very exquisite opal jewels
+Line 08: We promptly judged antique ivory buckles for the next prize
+Line 09: A mad boxer shot a quick gloved jab to the jaw of his dizzy opponent
+Line 10: The job requires extra pluck and zeal from every young wage earner
+Line 11: Just keep examining every low bid quoted for zinc etchings
+Line 12: How razorback jumping frogs can level six piqued gymnasts
+Line 13: Grumpy wizards make toxic brew for the evil queen and jack
+Line 14: All questions asked by five watched experts amaze the judge
+Line 15: The lazy major was fixing Cupids broken quiver
+Line 16: A quick movement of the enemy will jeopardize six gunboats
+Line 17: Few quips galvanized the mock jury box
+Line 18: The quick brown fox jumps right over the lazy dog again
+Line 19: Jackdaws love my big sphinx of quartz
+Line 20: Pack my box with five dozen liquor jugs once more
+Line 21: Sixty zippers were quickly picked from the woven jute bag
+Line 22: Amazingly few discotheques provide jukeboxes
+Line 23: My girl wove six dozen plaid jackets before she quit
+Line 24: The explorer was frozen in his survey of big chunks of ice for the project
+C:/> 
+C:/> ST BIG.TXT
+Flags:      0x00
+Root Inode: 0x0093
+File Size:  0x000005CB
+Blk Pos:    0x0000
+Span First: 0x0000
+Span Last:  0x0000
+Span Off:   0xFFFF
+Blocks:
+  0094-0096
+C:/> 
+C:/> RF BIG.TXT
+C:/> 
+C:/> HALT
+CPU halted

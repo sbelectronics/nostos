@@ -1,0 +1,222 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Directory Expansion Torture Test
+C:/> 
+C:/> # Tests that directories can grow beyond their initial 16-entry
+C:/> 
+C:/> # block by allocating new blocks and extending the directory
+C:/> 
+C:/> # inode's spans. Also tests non-contiguous directory spans by
+C:/> 
+C:/> # pre-fragmenting the disk.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Strategy:
+C:/> 
+C:/> #   1. Create subdirectory BIGDIR
+C:/> 
+C:/> #   2. Fill its first block (16 files = 16 entries)
+C:/> 
+C:/> #   3. Fragment the disk to force non-contiguous allocation
+C:/> 
+C:/> #   4. Create more files in BIGDIR (forces directory expansion)
+C:/> 
+C:/> #   5. List and verify all entries are accessible
+C:/> 
+C:/> #   6. Read back files from both the original and expanded blocks
+C:/> 
+C:/> #   7. Clean up
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Create the test subdirectory
+C:/> 
+C:/> MD BIGDIR
+C:/> 
+C:/> # Step 2: Fill the first directory block (16 entries)
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D01.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D02.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D03.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D04.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D05.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D06.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D07.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D08.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D09.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D10.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D11.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D12.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D13.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D14.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D15.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D16.TXT
+C:/> 
+C:/> # Step 3: Fragment the disk so the next directory block
+C:/> 
+C:/> # won't be contiguous with the first one.
+C:/> 
+C:/> CF SCOTT.TXT GAP01.TXT
+C:/> 
+C:/> CF SCOTT.TXT GAP02.TXT
+C:/> 
+C:/> CF SCOTT.TXT GAP03.TXT
+C:/> 
+C:/> CF SCOTT.TXT GAP04.TXT
+C:/> 
+C:/> CF SCOTT.TXT GAP05.TXT
+C:/> 
+C:/> RF GAP01.TXT
+C:/> 
+C:/> RF GAP03.TXT
+C:/> 
+C:/> RF GAP05.TXT
+C:/> 
+C:/> # Step 4: Create more files to force directory expansion
+C:/> 
+C:/> # Entry 17+ must go into a new directory block
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D17.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D18.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D19.TXT
+C:/> 
+C:/> CF SCOTT.TXT BIGDIR/D20.TXT
+C:/> 
+C:/> # Step 5: Verify all entries are visible via LD
+C:/> 
+C:/> CD BIGDIR
+C:/BIGDIR> 
+C:/BIGDIR> LD
+Directory Listing:
+    15 D01.TXT
+    15 D02.TXT
+    15 D03.TXT
+    15 D04.TXT
+    15 D05.TXT
+    15 D06.TXT
+    15 D07.TXT
+    15 D08.TXT
+    15 D09.TXT
+    15 D10.TXT
+    15 D11.TXT
+    15 D12.TXT
+    15 D13.TXT
+    15 D14.TXT
+    15 D15.TXT
+    15 D16.TXT
+    15 D17.TXT
+    15 D18.TXT
+    15 D19.TXT
+    15 D20.TXT
+C:/BIGDIR> 
+C:/BIGDIR> # Step 6: Read back files from both blocks to verify accessibility
+C:/BIGDIR> 
+C:/BIGDIR> # D01 is in the original block; D20 is in the expanded block
+C:/BIGDIR> 
+C:/BIGDIR> LF D01.TXT
+scott was here
+C:/BIGDIR> 
+C:/BIGDIR> LF D20.TXT
+scott was here
+C:/BIGDIR> 
+C:/BIGDIR> # Step 7: Go back to root and clean up
+C:/BIGDIR> 
+C:/BIGDIR> CD /
+C:/> 
+C:/> # Remove files in BIGDIR
+C:/> 
+C:/> RF BIGDIR/D01.TXT
+C:/> 
+C:/> RF BIGDIR/D02.TXT
+C:/> 
+C:/> RF BIGDIR/D03.TXT
+C:/> 
+C:/> RF BIGDIR/D04.TXT
+C:/> 
+C:/> RF BIGDIR/D05.TXT
+C:/> 
+C:/> RF BIGDIR/D06.TXT
+C:/> 
+C:/> RF BIGDIR/D07.TXT
+C:/> 
+C:/> RF BIGDIR/D08.TXT
+C:/> 
+C:/> RF BIGDIR/D09.TXT
+C:/> 
+C:/> RF BIGDIR/D10.TXT
+C:/> 
+C:/> RF BIGDIR/D11.TXT
+C:/> 
+C:/> RF BIGDIR/D12.TXT
+C:/> 
+C:/> RF BIGDIR/D13.TXT
+C:/> 
+C:/> RF BIGDIR/D14.TXT
+C:/> 
+C:/> RF BIGDIR/D15.TXT
+C:/> 
+C:/> RF BIGDIR/D16.TXT
+C:/> 
+C:/> RF BIGDIR/D17.TXT
+C:/> 
+C:/> RF BIGDIR/D18.TXT
+C:/> 
+C:/> RF BIGDIR/D19.TXT
+C:/> 
+C:/> RF BIGDIR/D20.TXT
+C:/> 
+C:/> RD BIGDIR
+C:/> 
+C:/> RF GAP02.TXT
+C:/> 
+C:/> RF GAP04.TXT
+C:/> 
+C:/> # Verify filesystem is clean
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,260 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Rename-After-Delete Torture Test
+C:/> 
+C:/> # Tests that rename operates correctly when the directory has
+C:/> 
+C:/> # holes (unused entries) from prior deletions, and that deleted
+C:/> 
+C:/> # filenames become available for reuse via rename.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - Rename with freed slots preceding the target entry
+C:/> 
+C:/> #   - Rename to the name of a previously deleted file
+C:/> 
+C:/> #   - New file creation reusing a freed slot, then rename
+C:/> 
+C:/> #   - Content integrity through multiple renames
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Create several files
+C:/> 
+C:/> CF SCOTT.TXT ALPHA.TXT
+C:/> 
+C:/> CF SCOTT.TXT BRAVO.TXT
+C:/> 
+C:/> CF SCOTT.TXT CHARLIE.TXT
+C:/> 
+C:/> CF SCOTT.TXT DELTA.TXT
+C:/> 
+C:/> CF SCOTT.TXT ECHO.TXT
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+    15 ALPHA.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 BRAVO.TXT
+    15 CHARLIE.TXT
+    15 DELTA.TXT
+     7 TWELVE.TXT
+    15 ECHO.TXT
+C:/> 
+C:/> # Step 2: Delete some files to create holes in the directory
+C:/> 
+C:/> RF BRAVO.TXT
+C:/> 
+C:/> RF DELTA.TXT
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+    15 ALPHA.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 CHARLIE.TXT
+     7 TWELVE.TXT
+    15 ECHO.TXT
+C:/> 
+C:/> # Step 3: Rename a file that comes after the holes
+C:/> 
+C:/> # CHARLIE.TXT's entry is between the two freed slots
+C:/> 
+C:/> NF CHARLIE.TXT CHARLIE2.TXT
+C:/> 
+C:/> # Verify rename worked and content is intact
+C:/> 
+C:/> LF CHARLIE2.TXT
+scott was here
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+    15 ALPHA.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 CHARLIE2.TXT
+     7 TWELVE.TXT
+    15 ECHO.TXT
+C:/> 
+C:/> # Step 4: Rename a file to the name of a deleted file
+C:/> 
+C:/> # BRAVO.TXT was deleted — that name should be reusable
+C:/> 
+C:/> NF ECHO.TXT BRAVO.TXT
+C:/> 
+C:/> LF BRAVO.TXT
+scott was here
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+    15 ALPHA.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 CHARLIE2.TXT
+     7 TWELVE.TXT
+    15 BRAVO.TXT
+C:/> 
+C:/> # Step 5: Create a new file that reuses a freed directory slot
+C:/> 
+C:/> # then rename it
+C:/> 
+C:/> CF SCOTT.TXT FOXTROT.TXT
+C:/> 
+C:/> NF FOXTROT.TXT GOLF.TXT
+C:/> 
+C:/> LF GOLF.TXT
+scott was here
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+    15 ALPHA.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 GOLF.TXT
+    15 CHARLIE2.TXT
+     7 TWELVE.TXT
+    15 BRAVO.TXT
+C:/> 
+C:/> # Step 6: Chain of renames — rename the same file multiple times
+C:/> 
+C:/> NF ALPHA.TXT HOTEL.TXT
+C:/> 
+C:/> NF HOTEL.TXT INDIA.TXT
+C:/> 
+C:/> NF INDIA.TXT JULIET.TXT
+C:/> 
+C:/> LF JULIET.TXT
+scott was here
+C:/> 
+C:/> # Step 7: Verify rename to existing name fails gracefully
+C:/> 
+C:/> # BRAVO.TXT exists; renaming CHARLIE2.TXT to BRAVO.TXT should fail
+C:/> 
+C:/> NF CHARLIE2.TXT BRAVO.TXT
+Error: Already exists.
+C:/> 
+C:/> # Step 8: Clean up
+C:/> 
+C:/> RF JULIET.TXT
+C:/> 
+C:/> RF BRAVO.TXT
+C:/> 
+C:/> RF CHARLIE2.TXT
+C:/> 
+C:/> RF GOLF.TXT
+C:/> 
+C:/> # Verify filesystem is clean
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

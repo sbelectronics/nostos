@@ -1,0 +1,249 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Filesystem Multi-Span Torture Test
+C:/> 
+C:/> # Tests that large files with many non-contiguous spans
+C:/> 
+C:/> # (inode span pairs) can be written and read back correctly.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Strategy:
+C:/> 
+C:/> #   1. Create 40 small 1-block files to fill contiguous space
+C:/> 
+C:/> #   2. Delete every other file to create 1-block gaps
+C:/> 
+C:/> #   3. Write a large file (RANDDATA) that must span many gaps
+C:/> 
+C:/> #   4. Verify checksum to prove all spans read back correctly
+C:/> 
+C:/> #   5. Clean up
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Create 40 small files to consume contiguous blocks
+C:/> 
+C:/> CF SCOTT.TXT S001.TXT
+C:/> 
+C:/> CF SCOTT.TXT S002.TXT
+C:/> 
+C:/> CF SCOTT.TXT S003.TXT
+C:/> 
+C:/> CF SCOTT.TXT S004.TXT
+C:/> 
+C:/> CF SCOTT.TXT S005.TXT
+C:/> 
+C:/> CF SCOTT.TXT S006.TXT
+C:/> 
+C:/> CF SCOTT.TXT S007.TXT
+C:/> 
+C:/> CF SCOTT.TXT S008.TXT
+C:/> 
+C:/> CF SCOTT.TXT S009.TXT
+C:/> 
+C:/> CF SCOTT.TXT S010.TXT
+C:/> 
+C:/> CF SCOTT.TXT S011.TXT
+C:/> 
+C:/> CF SCOTT.TXT S012.TXT
+C:/> 
+C:/> CF SCOTT.TXT S013.TXT
+C:/> 
+C:/> CF SCOTT.TXT S014.TXT
+C:/> 
+C:/> CF SCOTT.TXT S015.TXT
+C:/> 
+C:/> CF SCOTT.TXT S016.TXT
+C:/> 
+C:/> CF SCOTT.TXT S017.TXT
+C:/> 
+C:/> CF SCOTT.TXT S018.TXT
+C:/> 
+C:/> CF SCOTT.TXT S019.TXT
+C:/> 
+C:/> CF SCOTT.TXT S020.TXT
+C:/> 
+C:/> CF SCOTT.TXT S021.TXT
+C:/> 
+C:/> CF SCOTT.TXT S022.TXT
+C:/> 
+C:/> CF SCOTT.TXT S023.TXT
+C:/> 
+C:/> CF SCOTT.TXT S024.TXT
+C:/> 
+C:/> CF SCOTT.TXT S025.TXT
+C:/> 
+C:/> CF SCOTT.TXT S026.TXT
+C:/> 
+C:/> CF SCOTT.TXT S027.TXT
+C:/> 
+C:/> CF SCOTT.TXT S028.TXT
+C:/> 
+C:/> CF SCOTT.TXT S029.TXT
+C:/> 
+C:/> CF SCOTT.TXT S030.TXT
+C:/> 
+C:/> CF SCOTT.TXT S031.TXT
+C:/> 
+C:/> CF SCOTT.TXT S032.TXT
+C:/> 
+C:/> CF SCOTT.TXT S033.TXT
+C:/> 
+C:/> CF SCOTT.TXT S034.TXT
+C:/> 
+C:/> CF SCOTT.TXT S035.TXT
+C:/> 
+C:/> CF SCOTT.TXT S036.TXT
+C:/> 
+C:/> CF SCOTT.TXT S037.TXT
+C:/> 
+C:/> CF SCOTT.TXT S038.TXT
+C:/> 
+C:/> CF SCOTT.TXT S039.TXT
+C:/> 
+C:/> CF SCOTT.TXT S040.TXT
+C:/> 
+C:/> # Step 2: Delete every other file to create 1-block gaps
+C:/> 
+C:/> RF S001.TXT
+C:/> 
+C:/> RF S003.TXT
+C:/> 
+C:/> RF S005.TXT
+C:/> 
+C:/> RF S007.TXT
+C:/> 
+C:/> RF S009.TXT
+C:/> 
+C:/> RF S011.TXT
+C:/> 
+C:/> RF S013.TXT
+C:/> 
+C:/> RF S015.TXT
+C:/> 
+C:/> RF S017.TXT
+C:/> 
+C:/> RF S019.TXT
+C:/> 
+C:/> RF S021.TXT
+C:/> 
+C:/> RF S023.TXT
+C:/> 
+C:/> RF S025.TXT
+C:/> 
+C:/> RF S027.TXT
+C:/> 
+C:/> RF S029.TXT
+C:/> 
+C:/> RF S031.TXT
+C:/> 
+C:/> RF S033.TXT
+C:/> 
+C:/> RF S035.TXT
+C:/> 
+C:/> RF S037.TXT
+C:/> 
+C:/> RF S039.TXT
+C:/> 
+C:/> # Step 3: Write large files using RANDDATA into fragmented space
+C:/> 
+C:/> # 10240 bytes = 20 blocks, should create ~20 spans
+C:/> 
+C:/> RANDDATA MULTI1.DAT 10240 42000
+59480 20
+C:/> 
+C:/> # 5120 bytes = 10 blocks, another multi-span file
+C:/> 
+C:/> RANDDATA MULTI2.DAT 5120 99000
+58466 10
+C:/> 
+C:/> # Step 4: Verify checksums (proves multi-span read works)
+C:/> 
+C:/> # expect: checksum blocks (from RANDDATA output above, verified by SUM)
+C:/> 
+C:/> SUM MULTI1.DAT
+59480 20
+C:/> 
+C:/> SUM MULTI2.DAT
+58466 10
+C:/> 
+C:/> # Step 5: Clean up - remove the gap files
+C:/> 
+C:/> RF S002.TXT
+C:/> 
+C:/> RF S004.TXT
+C:/> 
+C:/> RF S006.TXT
+C:/> 
+C:/> RF S008.TXT
+C:/> 
+C:/> RF S010.TXT
+C:/> 
+C:/> RF S012.TXT
+C:/> 
+C:/> RF S014.TXT
+C:/> 
+C:/> RF S016.TXT
+C:/> 
+C:/> RF S018.TXT
+C:/> 
+C:/> RF S020.TXT
+C:/> 
+C:/> RF S022.TXT
+C:/> 
+C:/> RF S024.TXT
+C:/> 
+C:/> RF S026.TXT
+C:/> 
+C:/> RF S028.TXT
+C:/> 
+C:/> RF S030.TXT
+C:/> 
+C:/> RF S032.TXT
+C:/> 
+C:/> RF S034.TXT
+C:/> 
+C:/> RF S036.TXT
+C:/> 
+C:/> RF S038.TXT
+C:/> 
+C:/> RF S040.TXT
+C:/> 
+C:/> # Remove the test files
+C:/> 
+C:/> RF MULTI1.DAT
+C:/> 
+C:/> RF MULTI2.DAT
+C:/> 
+C:/> # Verify filesystem is clean
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  947712 bytes (1851 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,10 @@
+C:
+cf a:aesop/01_COCK.TXT /01_COCK.TXT
+cf a:aesop/02_LAMB.TXT /01_COCK.TXT
+mkdir aesop
+cf a:aesop/01_COCK.TXT /aesop/01_COCK.TXT
+cf a:aesop/02_LAMB.TXT /aesop/01_COCK.TXT
+dir
+cd /aesop
+dir
+halt

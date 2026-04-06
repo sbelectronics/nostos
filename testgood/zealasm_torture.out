@@ -1,0 +1,259 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Zealasm Torture Test
+C:/> 
+C:/> # Build an assembly source file using ED, assemble it with
+C:/> 
+C:/> # zealasm, then run the result. Each test section prints a
+C:/> 
+C:/> # letter A-H. Expected output: "ABCDEFGH OK"
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # --- Build TORTURE.ASM using ED ---
+C:/> 
+C:/> A:ED
+*
+*i
+
+    org 0
+
+    jp main
+
+cono equ 0x82
+
+cwrite equ 15
+
+cwstr equ 16
+
+sysexit equ 0
+
+kernel equ 0x0010
+
+; --- printchar: print A as character ---
+
+printchar:
+
+    push bc
+
+    push de
+
+    ld e, a
+
+    ld b, cono
+
+    ld c, cwrite
+
+    call kernel
+
+    pop de
+
+    pop bc
+
+    ret
+
+; --- fail: print ! and halt ---
+
+fail:
+
+    ld a, 0x21
+
+    call printchar
+
+    halt
+
+; ========== MAIN ==========
+
+main:
+
+; --- Test A: LD immediate, JP absolute ---
+
+    ld a, 0x41
+
+    ld b, a
+
+    ld a, b
+
+    cp 0x41
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test B: LD 16-bit, ADD HL ---
+
+    ld hl, 0x0020
+
+    ld de, 0x0022
+
+    add hl, de
+
+    ld a, l
+
+    cp 0x42
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test C: PUSH/POP, conditional JP ---
+
+    ld bc, 0x4300
+
+    push bc
+
+    ld bc, 0x0000
+
+    pop bc
+
+    ld a, b
+
+    cp 0x43
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test D: JR forward ---
+
+    ld a, 1
+
+    or a
+
+    jr nz, test_d_ok
+
+    jp fail
+
+test_d_ok:
+
+    ld a, 0x44
+
+    call printchar
+
+; --- Test E: JR backward (loop) ---
+
+    ld b, 3
+
+    ld c, 0
+
+test_e_loop:
+
+    inc c
+
+    dec b
+
+    jr nz, test_e_loop
+
+    ld a, c
+
+    cp 3
+
+    jp nz, fail
+
+    ld a, 0x45
+
+    call printchar
+
+; --- Test F: DJNZ ---
+
+    ld b, 5
+
+    ld c, 0
+
+test_f_loop:
+
+    inc c
+
+    djnz test_f_loop
+
+    ld a, c
+
+    cp 5
+
+    jp nz, fail
+
+    ld a, 0x46
+
+    call printchar
+
+; --- Test G: CALL/RET, arithmetic ---
+
+    ld a, 0x40
+
+    call add_seven
+
+    cp 0x47
+
+    jp nz, fail
+
+    call printchar
+
+    jp test_h
+
+add_seven:
+
+    add a, 7
+
+    ret
+
+; --- Test H: AND/OR/XOR, CP ---
+
+test_h:
+
+    ld a, 0xFF
+
+    and 0x4F
+
+    xor 0x07
+
+    cp 0x48
+
+    jp nz, fail
+
+    call printchar
+
+; --- Print " OK" and exit ---
+
+    ld de, msg_ok
+
+    ld b, cono
+
+    ld c, cwstr
+
+    call kernel
+
+    ld c, sysexit
+
+    call kernel
+
+msg_ok:
+
+    defm " OK"
+
+    defb 0x0D
+
+    defb 0x0A
+
+    defb 0
+
+.
+*
+*w TORTURE.ASM
+1891
+*
+*Q
+C:/> 
+C:/> # --- Assemble and run ---
+C:/> 
+C:/> ZEALASM.APP TORTURE.ASM TORTURE.APP
+Zealasm v0.2
+Assembling TORTURE.ASM
+Code: 171 bytes, Relocs: 21
+C:/> 
+C:/> TORTURE.APP
+ABCDEFGH OK
+C:/> 
+C:/> HALT
+CPU halted

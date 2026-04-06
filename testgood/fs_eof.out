@@ -1,0 +1,239 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # EOF Handling Test
+C:/> 
+C:/> # Verifies that DEV_BREAD returns ERR_EOF correctly at file
+C:/> 
+C:/> # boundaries, exercised through CF (copy file) which loops
+C:/> 
+C:/> # on DEV_BREAD until ERR_EOF.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - Empty file (0 bytes): EOF on first read
+C:/> 
+C:/> #   - 1-byte file: EOF after first block
+C:/> 
+C:/> #   - 511-byte file: EOF after first block (just under boundary)
+C:/> 
+C:/> #   - 512-byte file: EOF at exact block boundary
+C:/> 
+C:/> #   - 513-byte file: EOF just past block boundary
+C:/> 
+C:/> #   - 1024-byte file: EOF at exact 2-block boundary
+C:/> 
+C:/> #   - TYPE of empty file (should print nothing)
+C:/> 
+C:/> #   - TYPE of 1-byte file
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Create test files at boundary sizes
+C:/> 
+C:/> RANDDATA ZERO.DAT 0 11111
+0 0
+C:/> 
+C:/> RANDDATA ONE.DAT 1 22222
+103 1
+C:/> 
+C:/> RANDDATA B511.DAT 511 33333
+64972 1
+C:/> 
+C:/> RANDDATA B512.DAT 512 44444
+64952 1
+C:/> 
+C:/> RANDDATA B513.DAT 513 55555
+60436 2
+C:/> 
+C:/> RANDDATA B1024.DAT 1024 66666
+8277 2
+C:/> 
+C:/> # Step 2: Verify originals with SUM
+C:/> 
+C:/> SUM ZERO.DAT
+0 0
+C:/> 
+C:/> SUM ONE.DAT
+103 1
+C:/> 
+C:/> SUM B511.DAT
+64972 1
+C:/> 
+C:/> SUM B512.DAT
+64952 1
+C:/> 
+C:/> SUM B513.DAT
+60436 2
+C:/> 
+C:/> SUM B1024.DAT
+8277 2
+C:/> 
+C:/> # Step 3: Copy each file (CF uses DEV_BREAD loop until ERR_EOF)
+C:/> 
+C:/> CF ZERO.DAT CZERO.DAT
+C:/> 
+C:/> CF ONE.DAT CONE.DAT
+C:/> 
+C:/> CF B511.DAT CB511.DAT
+C:/> 
+C:/> CF B512.DAT CB512.DAT
+C:/> 
+C:/> CF B513.DAT CB513.DAT
+C:/> 
+C:/> CF B1024.DAT CB1024.DAT
+C:/> 
+C:/> # Step 4: Verify copies match originals
+C:/> 
+C:/> SUM CZERO.DAT
+0 0
+C:/> 
+C:/> SUM CONE.DAT
+103 1
+C:/> 
+C:/> SUM CB511.DAT
+64972 1
+C:/> 
+C:/> SUM CB512.DAT
+64952 1
+C:/> 
+C:/> SUM CB513.DAT
+60436 2
+C:/> 
+C:/> SUM CB1024.DAT
+8277 2
+C:/> 
+C:/> # Step 5: TYPE empty file (should print nothing)
+C:/> 
+C:/> TYPE ZERO.DAT
+C:/> 
+C:/> # Step 6: Copy into subdirectory (tests EOF with path resolution)
+C:/> 
+C:/> MD SUBDIR
+C:/> 
+C:/> CF ZERO.DAT SUBDIR/EMPTY.DAT
+C:/> 
+C:/> CF B512.DAT SUBDIR/BLOCK.DAT
+C:/> 
+C:/> CF B513.DAT SUBDIR/OVER.DAT
+C:/> 
+C:/> SUM SUBDIR/EMPTY.DAT
+0 0
+C:/> 
+C:/> SUM SUBDIR/BLOCK.DAT
+64952 1
+C:/> 
+C:/> SUM SUBDIR/OVER.DAT
+60436 2
+C:/> 
+C:/> # Step 7: Copy from subdirectory back to root
+C:/> 
+C:/> CF SUBDIR/BLOCK.DAT BACK.DAT
+C:/> 
+C:/> SUM BACK.DAT
+64952 1
+C:/> 
+C:/> # Step 8: DIR to verify sizes
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     0 ZERO.DAT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     1 ONE.DAT
+   511 B511.DAT
+   512 B512.DAT
+     7 TWELVE.TXT
+   513 B513.DAT
+  1024 B1024.DAT
+     0 CZERO.DAT
+     1 CONE.DAT
+   511 CB511.DAT
+   512 CB512.DAT
+   513 CB513.DAT
+  1024 CB1024.DAT
+ <DIR> SUBDIR
+   512 BACK.DAT
+C:/> 
+C:/> # Step 9: Clean up
+C:/> 
+C:/> RF ZERO.DAT
+C:/> 
+C:/> RF ONE.DAT
+C:/> 
+C:/> RF B511.DAT
+C:/> 
+C:/> RF B512.DAT
+C:/> 
+C:/> RF B513.DAT
+C:/> 
+C:/> RF B1024.DAT
+C:/> 
+C:/> RF CZERO.DAT
+C:/> 
+C:/> RF CONE.DAT
+C:/> 
+C:/> RF CB511.DAT
+C:/> 
+C:/> RF CB512.DAT
+C:/> 
+C:/> RF CB513.DAT
+C:/> 
+C:/> RF CB1024.DAT
+C:/> 
+C:/> RF BACK.DAT
+C:/> 
+C:/> RF SUBDIR/EMPTY.DAT
+C:/> 
+C:/> RF SUBDIR/BLOCK.DAT
+C:/> 
+C:/> RF SUBDIR/OVER.DAT
+C:/> 
+C:/> RD SUBDIR
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948224 bytes (1852 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

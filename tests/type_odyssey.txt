@@ -1,0 +1,6 @@
+C:
+# MT CF A
+# C:
+DIR
+LF odyssey.txt
+HALT

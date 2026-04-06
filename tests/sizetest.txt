@@ -1,0 +1,22 @@
+C:
+# BGETSIZE / BSETSIZE syscall tests
+# Create test files with known sizes
+RANDDATA SIZE1.TMP 512 1
+RANDDATA SIZE2.TMP 1500 2
+#
+# Test 1: BGETSIZE on known files
+sizetest.app 1
+#
+# Test 2: BSETSIZE then BGETSIZE round-trip
+sizetest.app 2
+#
+# Test 3: BSETSIZE to 0 and to 60000
+sizetest.app 3
+#
+# Test 4: BSETSIZE persists across close/reopen
+sizetest.app 4
+#
+# Cleanup
+RF SIZE1.TMP
+RF SIZE2.TMP
+HALT

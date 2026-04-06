@@ -1,0 +1,189 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Filesystem Error Handling Test
+C:/> 
+C:/> # Tests that the filesystem reports errors correctly and
+C:/> 
+C:/> # remains in a consistent state after each error.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - RF on non-existent file
+C:/> 
+C:/> #   - RD on non-empty directory
+C:/> 
+C:/> #   - CD to non-existent directory
+C:/> 
+C:/> #   - Create duplicate file (CF to existing name)
+C:/> 
+C:/> #   - NF (rename) to existing name
+C:/> 
+C:/> #   - CF to non-existent subdirectory path
+C:/> 
+C:/> #   - MD duplicate directory
+C:/> 
+C:/> #   - SUM of non-existent file
+C:/> 
+C:/> #   - RF on a directory (should fail)
+C:/> 
+C:/> #   - RD on a file (should fail)
+C:/> 
+C:/> #   - Filesystem remains consistent after all errors
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Remove non-existent file
+C:/> 
+C:/> RF NOSUCHFILE.TXT
+Error: Not found.
+C:/> 
+C:/> # Step 2: CD to non-existent directory
+C:/> 
+C:/> CD NOSUCHDIR
+Error: Not found.
+C:/> 
+C:/> # Step 3: Create a test directory with a file for further tests
+C:/> 
+C:/> MD TESTDIR
+C:/> 
+C:/> CF SCOTT.TXT TESTDIR/FILE.TXT
+C:/> 
+C:/> # Step 4: RD on non-empty directory
+C:/> 
+C:/> RD TESTDIR
+Error: Directory not empty.
+C:/> 
+C:/> # Step 5: Create duplicate file (CF where dest already exists)
+C:/> 
+C:/> # This should succeed (CF overwrites by design)
+C:/> 
+C:/> CF SCOTT.TXT DUPE.TXT
+C:/> 
+C:/> CF SCOTT.TXT DUPE.TXT
+C:/> 
+C:/> SUM DUPE.TXT
+1382 1
+C:/> 
+C:/> # Step 6: NF (rename) to existing name
+C:/> 
+C:/> NF DUPE.TXT SCOTT.TXT
+Error: Already exists.
+C:/> 
+C:/> # Step 7: CF to path with non-existent intermediate directory
+C:/> 
+C:/> CF SCOTT.TXT FAKEDIR/FILE.TXT
+Error: Not found.
+C:/> 
+C:/> # Step 8: MD duplicate directory
+C:/> 
+C:/> MD TESTDIR
+Error: Already exists.
+C:/> 
+C:/> # Step 9: SUM of non-existent file
+C:/> 
+C:/> SUM GHOST.TXT
+Error: Not found.
+C:/> 
+C:/> # Step 10: RF on a directory (not a file)
+C:/> 
+C:/> RF TESTDIR
+Error: Not a file.
+C:/> 
+C:/> # Step 11: RD on a file (not a directory)
+C:/> 
+C:/> RD DUPE.TXT
+Error: Not a directory.
+C:/> 
+C:/> # Step 12: LF non-existent file
+C:/> 
+C:/> LF MISSING.TXT
+Error: Not found.
+C:/> 
+C:/> # Step 13: CD to a file (not a directory)
+C:/> 
+C:/> CD DUPE.TXT
+Error: Invalid parameter.
+C:/> 
+C:/> # Step 14: NF (rename) non-existent source
+C:/> 
+C:/> NF PHANTOM.TXT NEWNAME.TXT
+Error: Not found.
+C:/> 
+C:/> # Step 15: MD in non-existent parent
+C:/> 
+C:/> MD FAKEDIR/SUBDIR
+Error: Not found.
+C:/> 
+C:/> # Step 16: Verify filesystem is still consistent
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> TESTDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+    15 DUPE.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> # Step 17: Verify files are still accessible after all the errors
+C:/> 
+C:/> SUM DUPE.TXT
+1382 1
+C:/> 
+C:/> SUM TESTDIR/FILE.TXT
+1382 1
+C:/> 
+C:/> # Step 18: Clean up
+C:/> 
+C:/> RF DUPE.TXT
+C:/> 
+C:/> RF TESTDIR/FILE.TXT
+C:/> 
+C:/> RD TESTDIR
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

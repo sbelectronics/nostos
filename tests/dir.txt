@@ -1,0 +1,7 @@
+C:
+# MOUNT CF A
+LL
+LP
+# C:
+DIR
+HALT

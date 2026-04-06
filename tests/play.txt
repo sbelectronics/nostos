@@ -1,0 +1,9 @@
+C:
+# PLAY command test - create script on the fly
+A:APPEND SCRIPT.PLY # This is a test script
+A:APPEND SCRIPT.PLY DIR
+A:APPEND SCRIPT.PLY TYPE SCOTT.TXT
+PLAY SCRIPT.PLY
+# Back in interactive mode
+RF SCRIPT.PLY
+HALT

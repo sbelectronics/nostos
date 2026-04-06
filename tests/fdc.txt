@@ -1,0 +1,101 @@
+fdinit fd:
+y
+format fd: 1000
+mount fd: c:
+copy aesop/01_cock.txt c:
+copy aesop/02_lamb.txt c:
+copy aesop/03_shadow.txt c:
+copy aesop/04_share.txt c:
+copy aesop/05_crane.txt c:
+copy aesop/06_serpent.txt c:
+copy aesop/07_town_mse.txt c:
+copy aesop/08_crow.txt c:
+copy aesop/09_sick.txt c:
+copy aesop/10_lapdog.txt c:
+copy aesop/11_lion_mse.txt c:
+copy aesop/12_swallow.txt c:
+copy aesop/13_frogs.txt c:
+copy aesop/14_mountain.txt c:
+copy aesop/15_hares.txt c:
+copy aesop/16_wolf_kid.txt c:
+copy aesop/17_woodman.txt c:
+copy aesop/18_bald_man.txt c:
+copy aesop/19_stork.txt c:
+copy aesop/20_mask.txt c:
+copy aesop/21_jay.txt c:
+copy aesop/22_frog_ox.txt c:
+copy aesop/23_androcles.txt c:
+copy aesop/24_bat.txt c:
+copy aesop/25_hunter.txt c:
+copy aesop/26_ser_file.txt c:
+copy aesop/27_wood.txt c:
+copy aesop/28_dog_wolf.txt c:
+copy aesop/29_belly.txt c:
+copy aesop/30_hart.txt c:
+copy aesop/31_grapes.txt c:
+c:
+dir
+sum 01_cock.txt
+sum 02_lamb.txt
+sum 03_shadow.txt
+sum 04_share.txt
+sum 05_crane.txt
+sum 06_serpent.txt
+sum 07_town_mse.txt
+sum 08_crow.txt
+sum 09_sick.txt
+sum 10_lapdog.txt
+sum 11_lion_mse.txt
+sum 12_swallow.txt
+sum 13_frogs.txt
+sum 14_mountain.txt
+sum 15_hares.txt
+sum 16_wolf_kid.txt
+sum 17_woodman.txt
+sum 18_bald_man.txt
+sum 19_stork.txt
+sum 20_mask.txt
+sum 21_jay.txt
+sum 22_frog_ox.txt
+sum 23_androcles.txt
+sum 24_bat.txt
+sum 25_hunter.txt
+sum 26_ser_file.txt
+sum 27_wood.txt
+sum 28_dog_wolf.txt
+sum 29_belly.txt
+sum 30_hart.txt
+sum 31_grapes.txt
+a:
+sum aesop/01_cock.txt
+sum aesop/02_lamb.txt
+sum aesop/03_shadow.txt
+sum aesop/04_share.txt
+sum aesop/05_crane.txt
+sum aesop/06_serpent.txt
+sum aesop/07_town_mse.txt
+sum aesop/08_crow.txt
+sum aesop/09_sick.txt
+sum aesop/10_lapdog.txt
+sum aesop/11_lion_mse.txt
+sum aesop/12_swallow.txt
+sum aesop/13_frogs.txt
+sum aesop/14_mountain.txt
+sum aesop/15_hares.txt
+sum aesop/16_wolf_kid.txt
+sum aesop/17_woodman.txt
+sum aesop/18_bald_man.txt
+sum aesop/19_stork.txt
+sum aesop/20_mask.txt
+sum aesop/21_jay.txt
+sum aesop/22_frog_ox.txt
+sum aesop/23_androcles.txt
+sum aesop/24_bat.txt
+sum aesop/25_hunter.txt
+sum aesop/26_ser_file.txt
+sum aesop/27_wood.txt
+sum aesop/28_dog_wolf.txt
+sum aesop/29_belly.txt
+sum aesop/30_hart.txt
+sum aesop/31_grapes.txt
+HALT

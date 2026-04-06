@@ -1,0 +1,42 @@
+A:/> C:
+C:/> TAIL.APP SCOTT.TXT
+scott was here
+C:/> TAIL.APP ONE.TXT
+one
+C:/> TAIL.APP -5 ODYSSEY.TXT
+shirt he gave it to the good old woman, who folded it tidily up, and hung it
+for him over a peg by his bed side, after which she went out, pulled the door
+to by a silver catch, and drew the bolt home by means of the strap. But
+Telemachus as he lay covered with a woollen fleece kept thinking all night
+through of his intended voyage of the counsel that Minerva had given him.
+C:/> TAIL.APP -1 ODYSSEY.TXT
+through of his intended voyage of the counsel that Minerva had given him.
+C:/> TAIL.APP ODYSSEY.TXT
+respect to her in his household as he did to his own wedded wife, but he did
+not take her to his bed for he feared his wife's resentment. She it was who
+now lighted Telemachus to his room, and she loved him better than any of the
+other women in the house did, for she had nursed him when he was a baby. He
+opened the door of his bed room and sat down upon the bed; as he took off his
+shirt he gave it to the good old woman, who folded it tidily up, and hung it
+for him over a peg by his bed side, after which she went out, pulled the door
+to by a silver catch, and drew the bolt home by means of the strap. But
+Telemachus as he lay covered with a woollen fleece kept thinking all night
+through of his intended voyage of the counsel that Minerva had given him.
+C:/> TAIL.APP ODYSSEYF.TXT
+respect to her in his household as he did to his own wedded wife, but he did
+not take her to his bed for he feared his wife's resentment. She it was who
+now lighted Telemachus to his room, and she loved him better than any of the
+other women in the house did, for she had nursed him when he was a baby. He
+opened the door of his bed room and sat down upon the bed; as he took off his
+shirt he gave it to the good old woman, who folded it tidily up, and hung it
+for him over a peg by his bed side, after which she went out, pulled the door
+to by a silver catch, and drew the bolt home by means of the strap. But
+Telemachus as he lay covered with a woollen fleece kept thinking all night
+through of his intended voyage of the counsel that Minerva had given him.
+C:/> TAIL.APP -3 MYDIR/MYFILE.TXT
+this is a test
+C:/> TAIL.APP
+Usage: TAIL [-N] <filename>
+C:/> TAIL.APP NONEXISTENT.TXT
+Error: cannot open file
+C:/> HALTCPU halted

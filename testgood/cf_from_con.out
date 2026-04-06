@@ -1,0 +1,11 @@
+A:/> C:
+C:/> # MOUNT CF A
+C:/> 
+C:/> CF CONI: NEWFILE.TXT
+C:/> 
+C:/> 
+C:/> LF NEWFILE.TXT
+
+Hello WorldC:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,9 @@
+C:
+FORTH.APP
+2 3 + .
+: HELLO ." Hello from FORTH!" CR ;
+HELLO
+: COUNT10 10 0 DO I . LOOP ;
+COUNT10
+BYE
+HALT

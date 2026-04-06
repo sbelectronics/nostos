@@ -1,0 +1,9 @@
+# Verify autoplay ran: B: should be formatted and mounted
+DIR B:
+# Copy a file to B: to prove it's writable
+COPY A:FORMAT.APP B:
+DIR B:
+# Verify interactive mode works
+C:
+TYPE SCOTT.TXT
+HALT

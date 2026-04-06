@@ -1,0 +1,133 @@
+C:
+# Nested subdirectory stress test
+# Creates multiple levels of nesting, with files at each level,
+# verifies directory listings, then cleans up everything.
+# Uses short names for deep nesting (CUR_DIR is capped at 31 chars).
+
+# --- Build 8-level deep tree using CD ---
+# /A/B/C/D/E/F/G/H = 16 chars in CUR_DIR, well within limit
+MD A
+CD A
+CF /SCOTT.TXT L1.TXT
+MD B
+CD B
+CF /SCOTT.TXT L2.TXT
+MD C
+CD C
+CF /SCOTT.TXT L3.TXT
+MD D
+CD D
+CF /SCOTT.TXT L4.TXT
+MD E
+CD E
+CF /SCOTT.TXT L5.TXT
+MD F
+CD F
+CF /SCOTT.TXT L6.TXT
+MD G
+CD G
+CF /SCOTT.TXT L7.TXT
+MD H
+CD H
+CF /SCOTT.TXT L8.TXT
+LD
+
+# --- Navigate back and verify via full paths ---
+CD /
+LF A/L1.TXT
+LF A/B/L2.TXT
+LF A/B/C/L3.TXT
+LF A/B/C/D/L4.TXT
+LF A/B/C/D/E/L5.TXT
+LF A/B/C/D/E/F/L6.TXT
+LF A/B/C/D/E/F/G/L7.TXT
+LF A/B/C/D/E/F/G/H/L8.TXT
+
+# --- Create siblings at intermediate levels ---
+MD A/B/C/SIB1
+MD A/B/C/SIB2
+CF /SCOTT.TXT A/B/C/SIB1/S1.TXT
+CF /SCOTT.TXT A/B/C/SIB2/S2.TXT
+CD A/B/C
+LD
+CD SIB1
+LD
+CD /
+
+# --- Build a second deep tree with longer names ---
+# /ALPHA/BRAVO/GAMMA/DELTA = 24 chars, within 31-char limit
+MD ALPHA
+CD ALPHA
+MD BRAVO
+CD BRAVO
+MD GAMMA
+CD GAMMA
+MD DELTA
+CD DELTA
+CF /SCOTT.TXT DEEP.TXT
+LD
+CD /
+
+# Verify via full path
+LF ALPHA/BRAVO/GAMMA/DELTA/DEEP.TXT
+
+# --- Create multiple branches at one level ---
+CD A/B
+MD X1
+MD X2
+MD X3
+MD X4
+CF /SCOTT.TXT X1/F1.TXT
+CF /SCOTT.TXT X2/F2.TXT
+CF /SCOTT.TXT X3/F3.TXT
+CF /SCOTT.TXT X4/F4.TXT
+LD
+CD /
+
+# --- Verify root dir still works ---
+LD
+
+# --- Cleanup branches at A/B ---
+RF A/B/X1/F1.TXT
+RF A/B/X2/F2.TXT
+RF A/B/X3/F3.TXT
+RF A/B/X4/F4.TXT
+RD A/B/X1
+RD A/B/X2
+RD A/B/X3
+RD A/B/X4
+
+# --- Cleanup second tree ---
+RF ALPHA/BRAVO/GAMMA/DELTA/DEEP.TXT
+RD ALPHA/BRAVO/GAMMA/DELTA
+RD ALPHA/BRAVO/GAMMA
+RD ALPHA/BRAVO
+RD ALPHA
+
+# --- Cleanup siblings ---
+RF A/B/C/SIB1/S1.TXT
+RF A/B/C/SIB2/S2.TXT
+RD A/B/C/SIB1
+RD A/B/C/SIB2
+
+# --- Cleanup deep tree (bottom up) ---
+RF A/B/C/D/E/F/G/H/L8.TXT
+RD A/B/C/D/E/F/G/H
+RF A/B/C/D/E/F/G/L7.TXT
+RD A/B/C/D/E/F/G
+RF A/B/C/D/E/F/L6.TXT
+RD A/B/C/D/E/F
+RF A/B/C/D/E/L5.TXT
+RD A/B/C/D/E
+RF A/B/C/D/L4.TXT
+RD A/B/C/D
+RF A/B/C/L3.TXT
+RD A/B/C
+RF A/B/L2.TXT
+RD A/B
+RF A/L1.TXT
+RD A
+
+# --- Final dir should show original contents ---
+LD
+HALT

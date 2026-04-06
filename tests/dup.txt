@@ -1,0 +1,27 @@
+C:
+# DUP extension test — negative cases and basic positive case
+
+# --- Negative: no arguments ---
+DUP.EXT
+
+# --- Negative: only device name, missing targets ---
+DUP.EXT BOTH
+
+# --- Negative: missing second target ---
+DUP.EXT BOTH ACIA
+
+# --- Negative: first target device not found ---
+DUP.EXT BOTH FAKE1 ACIA
+
+# --- Negative: second target device not found ---
+DUP.EXT BOTH ACIA FAKE2
+
+# --- Negative: first target not char output (CF is block device) ---
+DUP.EXT BOTH CF ACIA
+
+# --- Positive: duplicate ACIA output (chars printed twice) ---
+DUP.EXT BOTH ACIA ACIA
+AS CONO BOTH
+HELLO
+AS CONO ACIA
+HALT

@@ -1,0 +1,56 @@
+A:/> C:
+C:/> CF a:aesop/01_COCK.TXT c:
+C:/> cf a:aesop/02_LAMB.TXT c:/
+C:/> cf a:/aesop/03_SHADOW.TXT c:
+C:/> cf a:/aesop/04_SHARE.TXT c:/
+C:/> a:
+A:/> cd /aesop
+A:/aesop> cf 05_CRANE.TXT c:
+A:/aesop> cf 06_SERPENT.TXT c:/
+A:/aesop> c:
+C:/aesop> cd /
+C:/> mkdir aesop
+C:/> cf a:aesop/07_TOWN_MSE.TXT aesop/
+C:/> cf a:aesop/08_CROW.TXT /aesop/
+C:/> cf a:aesop/09_SICK.TXT c:aesop/
+C:/> cf a:aesop/10_LAPDOG.TXT c:/aesop/
+C:/> cd /aesop
+C:/aesop> cf a:aesop/11_LION_MSE.TXT 11_LION_MSE.TXT
+C:/aesop> cd /
+C:/> dir
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+   559 01_COCK.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+   950 02_LAMB.TXT
+   618 03_SHADOW.TXT
+   896 04_SHARE.TXT
+     7 TWELVE.TXT
+   975 05_CRANE.TXT
+   878 06_SERPENT.TXT
+ <DIR> AESOP
+C:/> cd /aesop
+C:/aesop> dir
+Directory Listing:
+  1636 07_TOWN_MSE.TXT
+   937 08_CROW.TXT
+   682 09_SICK.TXT
+   922 10_LAPDOG.TXT
+   958 11_LION_MSE.TXT
+C:/aesop> haltCPU halted

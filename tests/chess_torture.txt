@@ -1,0 +1,10 @@
+C:
+chess.app
+H
+E2E4
+D2D4
+F1B5
+B5A6
+B
+Q
+HALT

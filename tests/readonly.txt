@@ -1,0 +1,14 @@
+C:
+# ============================================================
+# Read-Only Device Test
+# Tests that write operations on the romdisk (A:) are rejected
+# with "Read only" errors.
+# ============================================================
+# Step 1: Try to copy a file to A: (CF uses path_parse)
+CF SCOTT.TXT A:SCOTT2.TXT
+# Step 2: Try to copy a file to A: with overwrite
+CF SCOTT.TXT A:FORMAT.APP
+# Step 3: Verify A: is unchanged and still readable
+DIR A:
+TYPE A:AESOP/01_COCK.TXT
+HALT

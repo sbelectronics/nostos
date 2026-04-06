@@ -1,0 +1,4 @@
+C:
+life.app 12345
+Q
+HALT

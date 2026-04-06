@@ -1,0 +1,82 @@
+C:
+# ============================================================
+# Fill Disk Torture Test
+# Tests that the filesystem handles disk-full conditions
+# correctly: proper error reporting, existing files remain
+# accessible, and space is recoverable after deletion.
+#
+# Strategy:
+#   1. Check initial free space
+#   2. Create large files to consume nearly all blocks
+#   3. Attempt to create a file on a full disk (expect error)
+#   4. Verify existing files are still readable
+#   5. Delete files and verify space is recovered
+#   6. Create a file in recovered space to prove reuse works
+#   7. Clean up
+# ============================================================
+# Step 1: Record initial free space
+FREE
+# Step 2: Fill the disk with large files
+# Each 60000-byte file uses 118 data blocks + 1 inode = 119 blocks
+# 15 files = 1785 blocks, leaving ~90 free
+RANDDATA FILL01.DAT 60000 1001
+RANDDATA FILL02.DAT 60000 2002
+RANDDATA FILL03.DAT 60000 3003
+RANDDATA FILL04.DAT 60000 4004
+RANDDATA FILL05.DAT 60000 5005
+RANDDATA FILL06.DAT 60000 6006
+RANDDATA FILL07.DAT 60000 7007
+RANDDATA FILL08.DAT 60000 8008
+RANDDATA FILL09.DAT 60000 9009
+RANDDATA FILL10.DAT 60000 10010
+RANDDATA FILL11.DAT 60000 11011
+RANDDATA FILL12.DAT 60000 12012
+RANDDATA FILL13.DAT 60000 13013
+RANDDATA FILL14.DAT 60000 14014
+RANDDATA FILL15.DAT 60000 15015
+FREE
+# Use up most of the rest (~90 blocks -> ~80 used, ~10 left)
+RANDDATA FILL16.DAT 40000 16016
+FREE
+# Step 3: Attempt to create a file that exceeds remaining space
+# RANDDATA creates the file then fails mid-write (partial file)
+RANDDATA TOOBIG.DAT 60000 99999
+# CF also fails when disk is full
+CF SCOTT.TXT NOSPACE.TXT
+# Step 4: Verify existing files are still readable after errors
+SUM FILL01.DAT
+SUM FILL08.DAT
+SUM FILL13.DAT
+SUM FILL16.DAT
+# Step 5: Delete some files and verify space is recovered
+RF FILL01.DAT
+RF FILL02.DAT
+FREE
+# Step 6: Create a new file in recovered space (proves reuse)
+RANDDATA REUSE.DAT 10000 55555
+SUM REUSE.DAT
+# Step 7: Clean up all remaining files
+RF REUSE.DAT
+RF TOOBIG.DAT
+# RF NOSPACE.TXT expected to say "Not found" — CF failed on full disk so
+# the file was never created. We attempt removal as a safety net in case
+# CF behavior changes.
+RF NOSPACE.TXT
+RF FILL03.DAT
+RF FILL04.DAT
+RF FILL05.DAT
+RF FILL06.DAT
+RF FILL07.DAT
+RF FILL08.DAT
+RF FILL09.DAT
+RF FILL10.DAT
+RF FILL11.DAT
+RF FILL12.DAT
+RF FILL13.DAT
+RF FILL14.DAT
+RF FILL15.DAT
+RF FILL16.DAT
+# Verify filesystem is clean
+DIR
+FREE
+HALT

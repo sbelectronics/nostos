@@ -1,0 +1,52 @@
+A:/> C:
+C:/> 
+C:/> # xsend no args
+C:/> 
+C:/> xsend.app
+Usage: XSEND <filename>
+C:/> 
+C:/> # xrecv no args
+C:/> 
+C:/> xrecv.app
+Usage: XRECV <filename>
+C:/> 
+C:/> # xsend SERI not assigned (SERI=UN: by default)
+C:/> 
+C:/> xsend.app XTEST.TXT
+XSEND: XMODEM Send
+Error: SERI not assigned to a serial device.
+Use AS SERI <device> first.
+C:/> 
+C:/> # xrecv SERI not assigned
+C:/> 
+C:/> xrecv.app TEST.TXT
+XRECV: XMODEM Receive
+Error: SERI not assigned to a serial device.
+Use AS SERI <device> first.
+C:/> 
+C:/> # Assign SERI to ACIA, SERO still UN:
+C:/> 
+C:/> AS SERI: ACIA:
+Assigned.
+C:/> 
+C:/> # xsend SERO not assigned
+C:/> 
+C:/> xsend.app XTEST.TXT
+XSEND: XMODEM Send
+Error: SERO not assigned to a serial device.
+Use AS SERO <device> first.
+C:/> 
+C:/> # xrecv SERO not assigned
+C:/> 
+C:/> xrecv.app TEST.TXT
+XRECV: XMODEM Receive
+Error: SERO not assigned to a serial device.
+Use AS SERO <device> first.
+C:/> 
+C:/> # Restore SERI to UN:
+C:/> 
+C:/> AS SERI: UN:
+Assigned.
+C:/> 
+C:/> HALT
+CPU halted

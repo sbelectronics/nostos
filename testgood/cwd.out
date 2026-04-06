@@ -1,0 +1,62 @@
+A:/> C:
+C:/> 
+C:/> MD SUB
+C:/> 
+C:/> CF SCOTT.TXT SUB/ORIG.TXT
+C:/> 
+C:/> CD SUB
+C:/SUB> 
+C:/SUB> LF ORIG.TXT
+scott was here
+C:/SUB> 
+C:/SUB> CF ORIG.TXT COPY.TXT
+C:/SUB> 
+C:/SUB> LF COPY.TXT
+scott was here
+C:/SUB> 
+C:/SUB> NF COPY.TXT MOVED.TXT
+C:/SUB> 
+C:/SUB> LF MOVED.TXT
+scott was here
+C:/SUB> 
+C:/SUB> LD
+Directory Listing:
+    15 ORIG.TXT
+    15 MOVED.TXT
+C:/SUB> 
+C:/SUB> RF MOVED.TXT
+C:/SUB> 
+C:/SUB> LD
+Directory Listing:
+    15 ORIG.TXT
+C:/SUB> 
+C:/SUB> RF ORIG.TXT
+C:/SUB> 
+C:/SUB> CD /
+C:/> 
+C:/> RD SUB
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> HALT
+CPU halted

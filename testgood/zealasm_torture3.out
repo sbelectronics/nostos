@@ -1,0 +1,307 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Zealasm Torture Test 3
+C:/> 
+C:/> # Tests: LD (nn),A/LD A,(nn), BIT/SET/RES, RLC/RRC/RL/RR,
+C:/> 
+C:/> # conditional RET, LD A,(DE)/LD (DE),A, CPL/SCF/CCF/JP C,
+C:/> 
+C:/> # INC/DEC reg16, CALL C/RET C conditions.
+C:/> 
+C:/> # Expected output: "ABCDEFGH OK"
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # --- Build TORTURE3.ASM using ED ---
+C:/> 
+C:/> A:ED
+*
+*i
+
+    org 0
+
+    jp main
+
+cono equ 0x82
+
+cwrite equ 15
+
+cwstr equ 16
+
+sysexit equ 0
+
+kernel equ 0x0010
+
+; --- printchar: print A as character ---
+
+printchar:
+
+    push bc
+
+    push de
+
+    ld e, a
+
+    ld b, cono
+
+    ld c, cwrite
+
+    call kernel
+
+    pop de
+
+    pop bc
+
+    ret
+
+; --- fail: print ! and halt ---
+
+fail:
+
+    ld a, 0x21
+
+    call printchar
+
+    halt
+
+; ========== MAIN ==========
+
+main:
+
+; --- Test A: LD (nn),A / LD A,(nn) ---
+
+    ld a, 0x41
+
+    ld (var1), a
+
+    xor a
+
+    ld a, (var1)
+
+    cp 0x41
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test B: BIT, SET, RES ---
+
+    ld a, 0x00
+
+    set 1, a
+
+    set 6, a
+
+    bit 1, a
+
+    jp z, fail
+
+    res 1, a
+
+    bit 1, a
+
+    jp nz, fail
+
+    set 1, a
+
+    cp 0x42
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test C: RLC ---
+
+    ld a, 0xA1
+
+    rlc a
+
+    cp 0x43
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test D: Conditional RET (RET NZ) ---
+
+    ld a, 0
+
+    or a
+
+    call ret_test_z
+
+    cp 0x44
+
+    jp nz, fail
+
+    call printchar
+
+    jp test_e
+
+ret_test_z:
+
+    ret nz
+
+    ld a, 0x44
+
+    ret
+
+; --- Test E: LD A,(DE) / LD (DE),A ---
+
+test_e:
+
+    ld de, var2
+
+    ld a, 0x45
+
+    ld (de), a
+
+    xor a
+
+    ld a, (de)
+
+    cp 0x45
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test F: CPL, SCF, CCF, JP C/JP NC ---
+
+test_f:
+
+    ld a, 0xB9
+
+    cpl
+
+    cp 0x46
+
+    jp nz, fail
+
+    call printchar
+
+    scf
+
+    jp nc, fail
+
+    ccf
+
+    jp c, fail
+
+; --- Test G: INC/DEC reg16 ---
+
+test_g:
+
+    ld hl, 0
+
+    ld b, 5
+
+test_g_loop:
+
+    inc hl
+
+    dec b
+
+    jp nz, test_g_loop
+
+    ld a, l
+
+    cp 5
+
+    jp nz, fail
+
+    ld de, 3
+
+    dec de
+
+    dec de
+
+    dec de
+
+    ld a, e
+
+    or d
+
+    jp nz, fail
+
+    ld a, 0x47
+
+    call printchar
+
+; --- Test H: CALL C, RET C ---
+
+test_h:
+
+    scf
+
+    call c, get_h
+
+    cp 0x48
+
+    jp nz, fail
+
+    call printchar
+
+    jp done
+
+get_h:
+
+    ld a, 0x48
+
+    ret
+
+; --- Done: print " OK" and exit ---
+
+done:
+
+    ld de, msg_ok
+
+    ld b, cono
+
+    ld c, cwstr
+
+    call kernel
+
+    ld c, sysexit
+
+    call kernel
+
+msg_ok:
+
+    defm " OK"
+
+    defb 0x0D
+
+    defb 0x0A
+
+    defb 0
+
+var1:
+
+    defb 0
+
+var2:
+
+    defb 0
+
+.
+*
+*w TORTURE3.ASM
+2150
+*
+*Q
+C:/> 
+C:/> # --- Assemble and run ---
+C:/> 
+C:/> ZEALASM.APP TORTURE3.ASM TORTURE3.APP
+Zealasm v0.2
+Assembling TORTURE3.ASM
+Code: 208 bytes, Relocs: 32
+C:/> 
+C:/> TORTURE3.APP
+ABCDEFGH OK
+C:/> 
+C:/> HALT
+CPU halted

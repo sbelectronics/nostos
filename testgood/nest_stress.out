@@ -1,0 +1,335 @@
+A:/> C:
+C:/> 
+C:/> # Nested subdirectory stress test
+C:/> 
+C:/> # Creates multiple levels of nesting, with files at each level,
+C:/> 
+C:/> # verifies directory listings, then cleans up everything.
+C:/> 
+C:/> # Uses short names for deep nesting (CUR_DIR is capped at 31 chars).
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Build 8-level deep tree using CD ---
+C:/> 
+C:/> # /A/B/C/D/E/F/G/H = 16 chars in CUR_DIR, well within limit
+C:/> 
+C:/> MD A
+C:/> 
+C:/> CD A
+C:/A> 
+C:/A> CF /SCOTT.TXT L1.TXT
+C:/A> 
+C:/A> MD B
+C:/A> 
+C:/A> CD B
+C:/A/B> 
+C:/A/B> CF /SCOTT.TXT L2.TXT
+C:/A/B> 
+C:/A/B> MD C
+C:/A/B> 
+C:/A/B> CD C
+C:/A/B/C> 
+C:/A/B/C> CF /SCOTT.TXT L3.TXT
+C:/A/B/C> 
+C:/A/B/C> MD D
+C:/A/B/C> 
+C:/A/B/C> CD D
+C:/A/B/C/D> 
+C:/A/B/C/D> CF /SCOTT.TXT L4.TXT
+C:/A/B/C/D> 
+C:/A/B/C/D> MD E
+C:/A/B/C/D> 
+C:/A/B/C/D> CD E
+C:/A/B/C/D/E> 
+C:/A/B/C/D/E> CF /SCOTT.TXT L5.TXT
+C:/A/B/C/D/E> 
+C:/A/B/C/D/E> MD F
+C:/A/B/C/D/E> 
+C:/A/B/C/D/E> CD F
+C:/A/B/C/D/E/F> 
+C:/A/B/C/D/E/F> CF /SCOTT.TXT L6.TXT
+C:/A/B/C/D/E/F> 
+C:/A/B/C/D/E/F> MD G
+C:/A/B/C/D/E/F> 
+C:/A/B/C/D/E/F> CD G
+C:/A/B/C/D/E/F/G> 
+C:/A/B/C/D/E/F/G> CF /SCOTT.TXT L7.TXT
+C:/A/B/C/D/E/F/G> 
+C:/A/B/C/D/E/F/G> MD H
+C:/A/B/C/D/E/F/G> 
+C:/A/B/C/D/E/F/G> CD H
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> CF /SCOTT.TXT L8.TXT
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> LD
+Directory Listing:
+    15 L8.TXT
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> # --- Navigate back and verify via full paths ---
+C:/A/B/C/D/E/F/G/H> 
+C:/A/B/C/D/E/F/G/H> CD /
+C:/> 
+C:/> LF A/L1.TXT
+scott was here
+C:/> 
+C:/> LF A/B/L2.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/L3.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/D/L4.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/D/E/L5.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/D/E/F/L6.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/D/E/F/G/L7.TXT
+scott was here
+C:/> 
+C:/> LF A/B/C/D/E/F/G/H/L8.TXT
+scott was here
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Create siblings at intermediate levels ---
+C:/> 
+C:/> MD A/B/C/SIB1
+C:/> 
+C:/> MD A/B/C/SIB2
+C:/> 
+C:/> CF /SCOTT.TXT A/B/C/SIB1/S1.TXT
+C:/> 
+C:/> CF /SCOTT.TXT A/B/C/SIB2/S2.TXT
+C:/> 
+C:/> CD A/B/C
+C:/A/B/C> 
+C:/A/B/C> LD
+Directory Listing:
+    15 L3.TXT
+ <DIR> D
+ <DIR> SIB1
+ <DIR> SIB2
+C:/A/B/C> 
+C:/A/B/C> CD SIB1
+C:/A/B/C/SIB1> 
+C:/A/B/C/SIB1> LD
+Directory Listing:
+    15 S1.TXT
+C:/A/B/C/SIB1> 
+C:/A/B/C/SIB1> CD /
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Build a second deep tree with longer names ---
+C:/> 
+C:/> # /ALPHA/BRAVO/GAMMA/DELTA = 24 chars, within 31-char limit
+C:/> 
+C:/> MD ALPHA
+C:/> 
+C:/> CD ALPHA
+C:/ALPHA> 
+C:/ALPHA> MD BRAVO
+C:/ALPHA> 
+C:/ALPHA> CD BRAVO
+C:/ALPHA/BRAVO> 
+C:/ALPHA/BRAVO> MD GAMMA
+C:/ALPHA/BRAVO> 
+C:/ALPHA/BRAVO> CD GAMMA
+C:/ALPHA/BRAVO/GAMMA> 
+C:/ALPHA/BRAVO/GAMMA> MD DELTA
+C:/ALPHA/BRAVO/GAMMA> 
+C:/ALPHA/BRAVO/GAMMA> CD DELTA
+C:/ALPHA/BRAVO/GAMMA/DELTA> 
+C:/ALPHA/BRAVO/GAMMA/DELTA> CF /SCOTT.TXT DEEP.TXT
+C:/ALPHA/BRAVO/GAMMA/DELTA> 
+C:/ALPHA/BRAVO/GAMMA/DELTA> LD
+Directory Listing:
+    15 DEEP.TXT
+C:/ALPHA/BRAVO/GAMMA/DELTA> 
+C:/ALPHA/BRAVO/GAMMA/DELTA> CD /
+C:/> 
+C:/> 
+C:/> 
+C:/> # Verify via full path
+C:/> 
+C:/> LF ALPHA/BRAVO/GAMMA/DELTA/DEEP.TXT
+scott was here
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Create multiple branches at one level ---
+C:/> 
+C:/> CD A/B
+C:/A/B> 
+C:/A/B> MD X1
+C:/A/B> 
+C:/A/B> MD X2
+C:/A/B> 
+C:/A/B> MD X3
+C:/A/B> 
+C:/A/B> MD X4
+C:/A/B> 
+C:/A/B> CF /SCOTT.TXT X1/F1.TXT
+C:/A/B> 
+C:/A/B> CF /SCOTT.TXT X2/F2.TXT
+C:/A/B> 
+C:/A/B> CF /SCOTT.TXT X3/F3.TXT
+C:/A/B> 
+C:/A/B> CF /SCOTT.TXT X4/F4.TXT
+C:/A/B> 
+C:/A/B> LD
+Directory Listing:
+    15 L2.TXT
+ <DIR> C
+ <DIR> X1
+ <DIR> X2
+ <DIR> X3
+ <DIR> X4
+C:/A/B> 
+C:/A/B> CD /
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Verify root dir still works ---
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> A
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+ <DIR> ALPHA
+     7 TWELVE.TXT
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Cleanup branches at A/B ---
+C:/> 
+C:/> RF A/B/X1/F1.TXT
+C:/> 
+C:/> RF A/B/X2/F2.TXT
+C:/> 
+C:/> RF A/B/X3/F3.TXT
+C:/> 
+C:/> RF A/B/X4/F4.TXT
+C:/> 
+C:/> RD A/B/X1
+C:/> 
+C:/> RD A/B/X2
+C:/> 
+C:/> RD A/B/X3
+C:/> 
+C:/> RD A/B/X4
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Cleanup second tree ---
+C:/> 
+C:/> RF ALPHA/BRAVO/GAMMA/DELTA/DEEP.TXT
+C:/> 
+C:/> RD ALPHA/BRAVO/GAMMA/DELTA
+C:/> 
+C:/> RD ALPHA/BRAVO/GAMMA
+C:/> 
+C:/> RD ALPHA/BRAVO
+C:/> 
+C:/> RD ALPHA
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Cleanup siblings ---
+C:/> 
+C:/> RF A/B/C/SIB1/S1.TXT
+C:/> 
+C:/> RF A/B/C/SIB2/S2.TXT
+C:/> 
+C:/> RD A/B/C/SIB1
+C:/> 
+C:/> RD A/B/C/SIB2
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Cleanup deep tree (bottom up) ---
+C:/> 
+C:/> RF A/B/C/D/E/F/G/H/L8.TXT
+C:/> 
+C:/> RD A/B/C/D/E/F/G/H
+C:/> 
+C:/> RF A/B/C/D/E/F/G/L7.TXT
+C:/> 
+C:/> RD A/B/C/D/E/F/G
+C:/> 
+C:/> RF A/B/C/D/E/F/L6.TXT
+C:/> 
+C:/> RD A/B/C/D/E/F
+C:/> 
+C:/> RF A/B/C/D/E/L5.TXT
+C:/> 
+C:/> RD A/B/C/D/E
+C:/> 
+C:/> RF A/B/C/D/L4.TXT
+C:/> 
+C:/> RD A/B/C/D
+C:/> 
+C:/> RF A/B/C/L3.TXT
+C:/> 
+C:/> RD A/B/C
+C:/> 
+C:/> RF A/B/L2.TXT
+C:/> 
+C:/> RD A/B
+C:/> 
+C:/> RF A/L1.TXT
+C:/> 
+C:/> RD A
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Final dir should show original contents ---
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> HALT
+CPU halted

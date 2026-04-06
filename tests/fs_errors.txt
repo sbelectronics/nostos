@@ -1,0 +1,65 @@
+C:
+# ============================================================
+# Filesystem Error Handling Test
+# Tests that the filesystem reports errors correctly and
+# remains in a consistent state after each error.
+#
+# Exercises:
+#   - RF on non-existent file
+#   - RD on non-empty directory
+#   - CD to non-existent directory
+#   - Create duplicate file (CF to existing name)
+#   - NF (rename) to existing name
+#   - CF to non-existent subdirectory path
+#   - MD duplicate directory
+#   - SUM of non-existent file
+#   - RF on a directory (should fail)
+#   - RD on a file (should fail)
+#   - Filesystem remains consistent after all errors
+# ============================================================
+# Step 1: Remove non-existent file
+RF NOSUCHFILE.TXT
+# Step 2: CD to non-existent directory
+CD NOSUCHDIR
+# Step 3: Create a test directory with a file for further tests
+MD TESTDIR
+CF SCOTT.TXT TESTDIR/FILE.TXT
+# Step 4: RD on non-empty directory
+RD TESTDIR
+# Step 5: Create duplicate file (CF where dest already exists)
+# This should succeed (CF overwrites by design)
+CF SCOTT.TXT DUPE.TXT
+CF SCOTT.TXT DUPE.TXT
+SUM DUPE.TXT
+# Step 6: NF (rename) to existing name
+NF DUPE.TXT SCOTT.TXT
+# Step 7: CF to path with non-existent intermediate directory
+CF SCOTT.TXT FAKEDIR/FILE.TXT
+# Step 8: MD duplicate directory
+MD TESTDIR
+# Step 9: SUM of non-existent file
+SUM GHOST.TXT
+# Step 10: RF on a directory (not a file)
+RF TESTDIR
+# Step 11: RD on a file (not a directory)
+RD DUPE.TXT
+# Step 12: LF non-existent file
+LF MISSING.TXT
+# Step 13: CD to a file (not a directory)
+CD DUPE.TXT
+# Step 14: NF (rename) non-existent source
+NF PHANTOM.TXT NEWNAME.TXT
+# Step 15: MD in non-existent parent
+MD FAKEDIR/SUBDIR
+# Step 16: Verify filesystem is still consistent
+DIR
+# Step 17: Verify files are still accessible after all the errors
+SUM DUPE.TXT
+SUM TESTDIR/FILE.TXT
+# Step 18: Clean up
+RF DUPE.TXT
+RF TESTDIR/FILE.TXT
+RD TESTDIR
+DIR
+FREE
+HALT

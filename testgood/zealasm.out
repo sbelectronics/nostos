@@ -1,0 +1,16 @@
+A:/> C:
+C:/> 
+C:/> # Test zealasm assembler
+C:/> 
+C:/> # Assemble sample.asm into sample.app, then run it
+C:/> 
+C:/> ZEALASM.APP SAMPLE.ASM SAMPLE.APP
+Zealasm v0.2
+Assembling SAMPLE.ASM
+Code: 41 bytes, Relocs: 1
+C:/> 
+C:/> SAMPLE.APP
+Hello from Zealasm!
+C:/> 
+C:/> HALT
+CPU halted

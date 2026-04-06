@@ -1,0 +1,5 @@
+C:
+eliza.app
+HELLO
+QUIT
+HALT

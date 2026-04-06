@@ -1,0 +1,74 @@
+C:
+# ============================================================
+# Copy-Between-Directories Torture Test
+# Tests copying files between subdirectories using paths,
+# including cross-directory copies, copies into CWD, and
+# verifying content integrity via SUM checksums.
+#
+# Exercises:
+#   - CF with source and dest in different subdirectories
+#   - CF from root into subdirectory (and vice versa)
+#   - CF using trailing-slash dest (auto basename)
+#   - SUM of files via path from a different CWD
+#   - Content integrity across all copies
+# ============================================================
+# Step 1: Set up directories and seed files
+MD ALPHA
+MD BRAVO
+# Create test files with known checksums in root
+RANDDATA ROOT1.DAT 2048 11111
+RANDDATA ROOT2.DAT 1500 22222
+# Step 2: Copy from root into subdirectory using explicit path
+CF ROOT1.DAT ALPHA/FILE1.DAT
+CF ROOT2.DAT ALPHA/FILE2.DAT
+# Verify copies in ALPHA match originals
+SUM ROOT1.DAT
+SUM ALPHA/FILE1.DAT
+SUM ROOT2.DAT
+SUM ALPHA/FILE2.DAT
+# Step 3: Copy from one subdirectory to another
+CF ALPHA/FILE1.DAT BRAVO/COPY1.DAT
+CF ALPHA/FILE2.DAT BRAVO/COPY2.DAT
+# Verify copies in BRAVO
+SUM BRAVO/COPY1.DAT
+SUM BRAVO/COPY2.DAT
+# Step 4: Copy using trailing-slash dest (auto basename)
+CF ROOT1.DAT BRAVO/
+SUM BRAVO/ROOT1.DAT
+# Step 5: CD into BRAVO and copy from ALPHA via absolute path
+CD BRAVO
+LD
+CF /ALPHA/FILE1.DAT LOCAL.DAT
+SUM LOCAL.DAT
+# Step 6: Copy from CWD (BRAVO) back to ALPHA
+CF COPY1.DAT /ALPHA/FROM_B.DAT
+CD /
+SUM ALPHA/FROM_B.DAT
+SUM ALPHA/FILE1.DAT
+# Step 7: List both directories to verify contents
+CD ALPHA
+LD
+CD /BRAVO
+LD
+# Step 8: Copy between subdirs while CWD is root
+CD /
+CF ALPHA/FILE2.DAT BRAVO/FILE2.DAT
+SUM BRAVO/FILE2.DAT
+SUM ALPHA/FILE2.DAT
+# Step 9: Clean up
+RF ALPHA/FILE1.DAT
+RF ALPHA/FILE2.DAT
+RF ALPHA/FROM_B.DAT
+RD ALPHA
+RF BRAVO/COPY1.DAT
+RF BRAVO/COPY2.DAT
+RF BRAVO/ROOT1.DAT
+RF BRAVO/LOCAL.DAT
+RF BRAVO/FILE2.DAT
+RD BRAVO
+RF ROOT1.DAT
+RF ROOT2.DAT
+# Verify filesystem is clean
+DIR
+FREE
+HALT

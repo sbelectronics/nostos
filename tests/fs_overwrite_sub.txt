@@ -1,0 +1,54 @@
+C:
+# ============================================================
+# Overwrite-in-Subdirectory Test
+# Tests that CF correctly overwrites existing files inside
+# subdirectories, preserving the new content and updating the
+# file size.
+#
+# Exercises:
+#   - Overwrite file in subdir with same-size file
+#   - Overwrite file in subdir with larger file
+#   - Overwrite file in subdir with smaller file
+#   - Verify content and size after each overwrite
+# ============================================================
+# Step 1: Set up
+MD TESTDIR
+RANDDATA TESTDIR/ORIG.DAT 2048 11111
+SUM TESTDIR/ORIG.DAT
+# Step 2: Overwrite with same-size file (different content)
+RANDDATA TESTDIR/ORIG.DAT 2048 22222
+SUM TESTDIR/ORIG.DAT
+# Step 3: Overwrite with larger file
+RANDDATA TESTDIR/ORIG.DAT 4096 33333
+SUM TESTDIR/ORIG.DAT
+# Step 4: Overwrite with smaller file
+RANDDATA TESTDIR/ORIG.DAT 512 44444
+SUM TESTDIR/ORIG.DAT
+# Step 5: Verify directory listing shows correct final size
+CD TESTDIR
+LD
+# Step 6: Overwrite using CF (copy) from root into subdir
+CD /
+CF SCOTT.TXT TESTDIR/ORIG.DAT
+SUM TESTDIR/ORIG.DAT
+SUM SCOTT.TXT
+# Step 7: Overwrite via CF between subdirectories
+MD SRCDIR
+RANDDATA SRCDIR/BIG.DAT 3000 55555
+CF SRCDIR/BIG.DAT TESTDIR/ORIG.DAT
+SUM TESTDIR/ORIG.DAT
+SUM SRCDIR/BIG.DAT
+# Verify sizes are correct
+CD TESTDIR
+LD
+CD /SRCDIR
+LD
+# Step 8: Clean up
+CD /
+RF TESTDIR/ORIG.DAT
+RD TESTDIR
+RF SRCDIR/BIG.DAT
+RD SRCDIR
+DIR
+FREE
+HALT

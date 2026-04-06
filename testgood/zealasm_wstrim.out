@@ -1,0 +1,205 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Zealasm Whitespace Trim Test
+C:/> 
+C:/> # Tests that spaces around commas in operands are handled
+C:/> 
+C:/> # correctly (e.g. "LD A ,B" and "LD A,  B" and "LD A , B").
+C:/> 
+C:/> # Assembles a program with various whitespace styles around
+C:/> 
+C:/> # commas, then runs it to verify correct code generation.
+C:/> 
+C:/> # Expected output: "ABCDEFG OK"
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # --- Build WSTRIM.ASM using ED ---
+C:/> 
+C:/> A:ED
+*
+*i
+
+    org 0
+
+    jp main
+
+cono equ 0x82
+
+cwrite equ 15
+
+cwstr equ 16
+
+sysexit equ 0
+
+kernel equ 0x0010
+
+; --- printchar: print A as character ---
+
+printchar:
+
+    push bc
+
+    push de
+
+    ld e, a
+
+    ld b, cono
+
+    ld c, cwrite
+
+    call kernel
+
+    pop de
+
+    pop bc
+
+    ret
+
+; --- fail: print ! and halt ---
+
+fail:
+
+    ld a, 0x21
+
+    call printchar
+
+    halt
+
+; ========== MAIN ==========
+
+main:
+
+; --- Test A: space before comma, imm8 "LD A ,0x41" ---
+
+    ld a ,0x41
+
+    cp 0x41
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test B: space after comma, imm8 "LD A, 0x42" (normal) ---
+
+    ld a, 0x42
+
+    cp 0x42
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test C: spaces both sides, imm8 "LD A , 0x43" ---
+
+    ld a , 0x43
+
+    cp 0x43
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test D: no spaces, imm8 "LD A,0x44" ---
+
+    ld a,0x44
+
+    cp 0x44
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test E: space before comma, reg-reg "LD B ,A" ---
+
+    ld a, 0x45
+
+    ld b ,a
+
+    ld a, 0
+
+    ld a, b
+
+    cp 0x45
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test F: space before comma, imm16 "LD DE ,0x0046" ---
+
+    ld de ,0x0046
+
+    ld a, e
+
+    cp 0x46
+
+    jp nz, fail
+
+    call printchar
+
+; --- Test G: space before comma, mem store "LD (HL) ,0x47" ---
+
+    ld hl, var1
+
+    ld (hl) ,0x47
+
+    ld a, (hl)
+
+    cp 0x47
+
+    jp nz, fail
+
+    call printchar
+
+; --- Done: print " OK" and exit ---
+
+done:
+
+    ld de, msg_ok
+
+    ld b, cono
+
+    ld c, cwstr
+
+    call kernel
+
+    ld c, sysexit
+
+    call kernel
+
+msg_ok:
+
+    defm " OK"
+
+    defb 0x0D
+
+    defb 0x0A
+
+    defb 0
+
+var1:
+
+    defb 0
+
+.
+*
+*w WSTRIM.ASM
+1602
+*
+*Q
+C:/> 
+C:/> # --- Assemble and run ---
+C:/> 
+C:/> ZEALASM.APP WSTRIM.ASM WSTRIM.APP
+Zealasm v0.2
+Assembling WSTRIM.ASM
+Code: 124 bytes, Relocs: 18
+C:/> 
+C:/> WSTRIM.APP
+ABCDEFG OK
+C:/> 
+C:/> HALT
+CPU halted

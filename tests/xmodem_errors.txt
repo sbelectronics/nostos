@@ -1,0 +1,18 @@
+C:
+# xsend no args
+xsend.app
+# xrecv no args
+xrecv.app
+# xsend SERI not assigned (SERI=UN: by default)
+xsend.app XTEST.TXT
+# xrecv SERI not assigned
+xrecv.app TEST.TXT
+# Assign SERI to ACIA, SERO still UN:
+AS SERI: ACIA:
+# xsend SERO not assigned
+xsend.app XTEST.TXT
+# xrecv SERO not assigned
+xrecv.app TEST.TXT
+# Restore SERI to UN:
+AS SERI: UN:
+HALT

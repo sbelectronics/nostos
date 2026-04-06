@@ -1,0 +1,88 @@
+A:/> C:
+C:/> STARTREK
+
+*** SUPER STAR TREK ***
+
+Your mission: destroy 19 Klingons in 45 stardates.
+There are 1 starbases.
+
+Entering Regulus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . . . . . . 
+Stardate: 2016  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 3000  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? N
+Course (1-8)? 1
+Warp (1-8)? 7
+Entering Arcturus I
+RED ALERT: 1 Klingon(s) detected!
+  1 2 3 4 5 6 7 8
+1 . . . . * . . . 
+2 . . . E . . . . 
+3 . . . . . . . . 
+4 . * . . . . . . 
+5 . . . . . . . . 
+6 . . * . . . * . 
+7 . . . . . . . . 
+8 . . . . . . . K 
+Stardate: 2017  Condition: RED
+Quadrant: 7,5  Sector: 2,4
+Energy: 2930  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? N
+Course (1-8)? 3
+Warp (1-8)? 8
+Entering Aldebaran I
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . E * . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . * . . . * 
+Stardate: 2018  Condition: GREEN
+Quadrant: 6,5  Sector: 2,4
+Energy: 2850  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? N
+Course (1-8)? 3
+Warp (1-8)? 8
+Entering Pollux I
+RED ALERT: 3 Klingon(s) detected!
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . E * . . . 
+3 . . . . . . . . 
+4 . K . . . . . . 
+5 . . K . . . . . 
+6 . . . . . . . . 
+7 . . . K . . . * 
+8 . . . . . . . * 
+Stardate: 2019  Condition: RED
+Quadrant: 5,5  Sector: 2,4
+Energy: 2770  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? P
+Energy to fire? 2000
+Klingon hit.
+*** Klingon destroyed! ***
+*** Klingon destroyed! ***
+*** Ship hit! ***
+Command? P
+Energy to fire? 700
+Klingon hit.
+*** Ship hit! ***
+
+*** THE ENTERPRISE HAS BEEN DESTROYED ***
+C:/> HALTCPU halted

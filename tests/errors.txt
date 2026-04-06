@@ -1,0 +1,26 @@
+C:
+# RD nonempty
+MD FULL
+CF SCOTT.TXT FULL/FILE.TXT
+RD FULL
+# RD nonexistent
+RD NOSUCHDIR
+# RF nonexistent
+RF NOSUCHFILE.TXT
+# NF nonexistent
+NF NOSUCHFILE.TXT NEW.TXT
+# MD duplicate
+MD FULL
+# CD nonexistent
+CD NOSUCHDIR
+# LF nonexistent
+LF NOSUCHFILE.TXT
+# HF nonexistent
+HF NOSUCHFILE.TXT
+# ST nonexistent
+ST NOSUCHFILE.TXT
+# Cleanup
+RF FULL/FILE.TXT
+RD FULL
+LD
+HALT

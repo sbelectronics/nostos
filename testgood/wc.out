@@ -1,0 +1,4 @@
+A:/> C:
+C:/> wc.app XTEST.TXT
+  1  1  5 XTEST.TXT
+C:/> HALTCPU halted

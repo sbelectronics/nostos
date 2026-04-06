@@ -1,0 +1,282 @@
+A:/> C:
+C:/> 
+C:/> FORTH.APP
+
+8080 fig-FORTH 1.1
+ OK
+( === FORTH Torture Test === ) OK
+ OK
+( --- Basic arithmetic --- ) OK
+ OK
+2 3 + . CR 5 
+OK
+ OK
+10 3 - . CR 7 
+OK
+ OK
+6 7 * . CR 42 
+OK
+ OK
+100 7 / . CR 14 
+OK
+ OK
+100 7 MOD . CR 2 
+OK
+ OK
+( --- Stack operations --- ) OK
+ OK
+1 2 3 . . . CR 3 2 1 
+OK
+ OK
+5 DUP + . CR 10 
+OK
+ OK
+10 20 SWAP . . CR 10 20 
+OK
+ OK
+3 5 OVER . . . CR 3 5 3 
+OK
+ OK
+1 2 3 ROT . . . CR 1 3 2 
+OK
+ OK
+( --- Comparison --- ) OK
+ OK
+5 3 > . CR 1 
+OK
+ OK
+3 5 > . CR 0 
+OK
+ OK
+5 5 = . CR 1 
+OK
+ OK
+5 3 < . CR 0 
+OK
+ OK
+( --- Boolean via 0= --- ) OK
+ OK
+0 0= . CR 1 
+OK
+ OK
+1 0= . CR 0 
+OK
+ OK
+42 0= . CR 0 
+OK
+ OK
+( --- Negate via 0 SWAP - --- ) OK
+ OK
+42 0 SWAP - . CR -42 
+OK
+ OK
+( --- ABS --- ) OK
+ OK
+-42 ABS . CR 42 
+OK
+ OK
+42 ABS . CR 42 
+OK
+ OK
+( --- MIN and MAX --- ) OK
+ OK
+3 7 MIN . CR 3 
+OK
+ OK
+3 7 MAX . CR 7 
+OK
+ OK
+( --- IF ELSE THEN --- ) OK
+ OK
+: TEST-IF 0 > IF ." POS" ELSE ." NEG" THEN CR ; OK
+ OK
+5 TEST-IF POS
+OK
+ OK
+-3 TEST-IF NEG
+OK
+ OK
+0 TEST-IF NEG
+OK
+ OK
+( --- BEGIN UNTIL loop --- ) OK
+ OK
+: COUNTUP 0 BEGIN 1 + DUP 10 = UNTIL . CR ; OK
+ OK
+COUNTUP 10 
+OK
+ OK
+( --- BEGIN WHILE REPEAT --- ) OK
+ OK
+: COUNTDOWN 10 BEGIN DUP 0 > WHILE DUP . 1 - REPEAT DROP CR ; OK
+ OK
+COUNTDOWN 10 9 8 7 6 5 4 3 2 1 
+OK
+ OK
+( --- DO LOOP --- ) OK
+ OK
+: SQUARES 6 1 DO I DUP * . LOOP CR ; OK
+ OK
+SQUARES 1 4 9 16 25 
+OK
+ OK
+( --- DO +LOOP --- ) OK
+ OK
+: EVENS 11 0 DO I . 2 +LOOP CR ; OK
+ OK
+EVENS 0 2 4 6 8 10 
+OK
+ OK
+( --- Nested DO --- ) OK
+ OK
+: TABLE 4 1 DO I 4 1 DO DUP I * . LOOP DROP CR LOOP ; OK
+ OK
+TABLE 1 2 3 
+2 4 6 
+3 6 9 
+OK
+ OK
+( --- User words calling each other --- ) OK
+ OK
+: DOUBLE DUP + ; OK
+ OK
+: QUADRUPLE DOUBLE DOUBLE ; OK
+ OK
+7 DOUBLE . CR 14 
+OK
+ OK
+7 QUADRUPLE . CR 28 
+OK
+ OK
+3 DOUBLE DOUBLE DOUBLE . CR 24 
+OK
+ OK
+( --- Variables --- ) OK
+ OK
+0 VARIABLE MYVAR OK
+ OK
+42 MYVAR ! OK
+ OK
+MYVAR @ . CR 42 
+OK
+ OK
+99 MYVAR ! OK
+ OK
+MYVAR @ . CR 99 
+OK
+ OK
+MYVAR @ 1 + MYVAR ! OK
+ OK
+MYVAR @ . CR 100 
+OK
+ OK
+( --- Constants via CONSTANT --- ) OK
+ OK
+42 CONSTANT LIFE OK
+ OK
+LIFE . CR 42 
+OK
+ OK
+LIFE LIFE + . CR 84 
+OK
+ OK
+( --- String output --- ) OK
+ OK
+: GREET ." Hello, FORTH!" CR ; OK
+ OK
+GREET Hello, FORTH!
+OK
+ OK
+( --- Base conversion --- ) OK
+ OK
+HEX FF . CR FF 
+OK
+ OK
+A0 . CR A0 
+OK
+ OK
+DECIMAL 255 . CR 255 
+OK
+ OK
+( --- R-stack --- ) OK
+ OK
+: RTEST 5 >R R . R> . CR ; OK
+ OK
+RTEST 5 5 
+OK
+ OK
+( --- Memory operations --- ) OK
+ OK
+HERE 10 32 FILL OK
+ OK
+HERE 10 TYPE CR TYPE     
+OK
+ OK
+( --- Computed sum 1..10 --- ) OK
+ OK
+: SUM10 0 11 1 DO I + LOOP ; OK
+ OK
+SUM10 . CR 55 
+OK
+ OK
+( --- Fibonacci --- ) OK
+ OK
+: FIBS 0 1 10 0 DO OVER + SWAP LOOP DROP ; OK
+ OK
+FIBS . CR 55 
+OK
+ OK
+( --- Factorial via loop --- ) OK
+ OK
+: FACT 1 SWAP 1 + 1 DO I * LOOP ; OK
+ OK
+5 FACT . CR 120 
+OK
+ OK
+10 FACT . CR 24320 
+OK
+ OK
+( --- Char emit --- ) OK
+ OK
+: STARS 0 DO 42 EMIT LOOP CR ; OK
+ OK
+5 STARS *****
+OK
+ OK
+10 STARS **********
+OK
+ OK
+( --- Conditional word --- ) OK
+ OK
+: TSIGN DUP 0 > IF DROP ." POSITIVE" ELSE DUP 0 < IF DROP ." NEGATIVE" ELSE DROP
+ ." ZERO" THEN THEN CR ; OK
+ OK
+5 TSIGN POSITIVE
+OK
+ OK
+-3 TSIGN NEGATIVE
+OK
+ OK
+0 TSIGN ZERO
+OK
+ OK
+( --- Stack manipulation --- ) OK
+ OK
+1 2 SWAP 2DUP + . . . CR 3 1 2 
+OK
+ OK
+( --- Large loop --- ) OK
+ OK
+: BIGLOOP 0 1000 0 DO 1 + LOOP ; OK
+ OK
+BIGLOOP . CR 1000 
+OK
+ OK
+( --- All done --- ) OK
+ OK
+." ALL TESTS COMPLETE" CR ALL TESTS COMPLETE
+OK
+ OK
+BYE C:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,23 @@
+C:
+CF a:aesop/01_COCK.TXT c:
+cf a:aesop/02_LAMB.TXT c:/
+cf a:/aesop/03_SHADOW.TXT c:
+cf a:/aesop/04_SHARE.TXT c:/
+a:
+cd /aesop
+cf 05_CRANE.TXT c:
+cf 06_SERPENT.TXT c:/
+c:
+cd /
+mkdir aesop
+cf a:aesop/07_TOWN_MSE.TXT aesop/
+cf a:aesop/08_CROW.TXT /aesop/
+cf a:aesop/09_SICK.TXT c:aesop/
+cf a:aesop/10_LAPDOG.TXT c:/aesop/
+cd /aesop
+cf a:aesop/11_LION_MSE.TXT 11_LION_MSE.TXT
+cd /
+dir
+cd /aesop
+dir
+halt

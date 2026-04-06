@@ -1,0 +1,24 @@
+A:/> C:
+C:/> 
+C:/> # Extension relocation torture test
+C:/> 
+C:/> EXTTORTURE.EXT
+=== Extension Relocation Torture Test ===
+Test 1  JP forward:       PASS
+Test 2  CALL/RET:         PASS
+Test 3  LD HL data ptr:   PASS
+Test 4  JP via table:     PASS
+Test 5  Multi CALL:       PASS
+Test 6  JP backward:      PASS
+Test 7  CALL via ptr:     PASS
+Test 8  JP chain:         PASS
+Test 9  Cond JP:          PASS
+Test 10 Str ptr table:    PASS
+Test 11 Deep CALL chain:  PASS
+Test 12 Word data:        PASS
+Test 13 Ptr-to-data tbl:  PASS
+Test 14 Self-addr verify: PASS
+=== All tests complete ===
+C:/> 
+C:/> HALT
+CPU halted

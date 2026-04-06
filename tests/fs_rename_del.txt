@@ -1,0 +1,58 @@
+C:
+# ============================================================
+# Rename-After-Delete Torture Test
+# Tests that rename operates correctly when the directory has
+# holes (unused entries) from prior deletions, and that deleted
+# filenames become available for reuse via rename.
+#
+# Exercises:
+#   - Rename with freed slots preceding the target entry
+#   - Rename to the name of a previously deleted file
+#   - New file creation reusing a freed slot, then rename
+#   - Content integrity through multiple renames
+# ============================================================
+# Step 1: Create several files
+CF SCOTT.TXT ALPHA.TXT
+CF SCOTT.TXT BRAVO.TXT
+CF SCOTT.TXT CHARLIE.TXT
+CF SCOTT.TXT DELTA.TXT
+CF SCOTT.TXT ECHO.TXT
+DIR
+# Step 2: Delete some files to create holes in the directory
+RF BRAVO.TXT
+RF DELTA.TXT
+DIR
+# Step 3: Rename a file that comes after the holes
+# CHARLIE.TXT's entry is between the two freed slots
+NF CHARLIE.TXT CHARLIE2.TXT
+# Verify rename worked and content is intact
+LF CHARLIE2.TXT
+DIR
+# Step 4: Rename a file to the name of a deleted file
+# BRAVO.TXT was deleted — that name should be reusable
+NF ECHO.TXT BRAVO.TXT
+LF BRAVO.TXT
+DIR
+# Step 5: Create a new file that reuses a freed directory slot
+# then rename it
+CF SCOTT.TXT FOXTROT.TXT
+NF FOXTROT.TXT GOLF.TXT
+LF GOLF.TXT
+DIR
+# Step 6: Chain of renames — rename the same file multiple times
+NF ALPHA.TXT HOTEL.TXT
+NF HOTEL.TXT INDIA.TXT
+NF INDIA.TXT JULIET.TXT
+LF JULIET.TXT
+# Step 7: Verify rename to existing name fails gracefully
+# BRAVO.TXT exists; renaming CHARLIE2.TXT to BRAVO.TXT should fail
+NF CHARLIE2.TXT BRAVO.TXT
+# Step 8: Clean up
+RF JULIET.TXT
+RF BRAVO.TXT
+RF CHARLIE2.TXT
+RF GOLF.TXT
+# Verify filesystem is clean
+DIR
+FREE
+HALT

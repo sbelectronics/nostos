@@ -1,0 +1,112 @@
+C:
+# ============================================================
+# Filesystem Multi-Span Torture Test
+# Tests that large files with many non-contiguous spans
+# (inode span pairs) can be written and read back correctly.
+#
+# Strategy:
+#   1. Create 40 small 1-block files to fill contiguous space
+#   2. Delete every other file to create 1-block gaps
+#   3. Write a large file (RANDDATA) that must span many gaps
+#   4. Verify checksum to prove all spans read back correctly
+#   5. Clean up
+# ============================================================
+# Step 1: Create 40 small files to consume contiguous blocks
+CF SCOTT.TXT S001.TXT
+CF SCOTT.TXT S002.TXT
+CF SCOTT.TXT S003.TXT
+CF SCOTT.TXT S004.TXT
+CF SCOTT.TXT S005.TXT
+CF SCOTT.TXT S006.TXT
+CF SCOTT.TXT S007.TXT
+CF SCOTT.TXT S008.TXT
+CF SCOTT.TXT S009.TXT
+CF SCOTT.TXT S010.TXT
+CF SCOTT.TXT S011.TXT
+CF SCOTT.TXT S012.TXT
+CF SCOTT.TXT S013.TXT
+CF SCOTT.TXT S014.TXT
+CF SCOTT.TXT S015.TXT
+CF SCOTT.TXT S016.TXT
+CF SCOTT.TXT S017.TXT
+CF SCOTT.TXT S018.TXT
+CF SCOTT.TXT S019.TXT
+CF SCOTT.TXT S020.TXT
+CF SCOTT.TXT S021.TXT
+CF SCOTT.TXT S022.TXT
+CF SCOTT.TXT S023.TXT
+CF SCOTT.TXT S024.TXT
+CF SCOTT.TXT S025.TXT
+CF SCOTT.TXT S026.TXT
+CF SCOTT.TXT S027.TXT
+CF SCOTT.TXT S028.TXT
+CF SCOTT.TXT S029.TXT
+CF SCOTT.TXT S030.TXT
+CF SCOTT.TXT S031.TXT
+CF SCOTT.TXT S032.TXT
+CF SCOTT.TXT S033.TXT
+CF SCOTT.TXT S034.TXT
+CF SCOTT.TXT S035.TXT
+CF SCOTT.TXT S036.TXT
+CF SCOTT.TXT S037.TXT
+CF SCOTT.TXT S038.TXT
+CF SCOTT.TXT S039.TXT
+CF SCOTT.TXT S040.TXT
+# Step 2: Delete every other file to create 1-block gaps
+RF S001.TXT
+RF S003.TXT
+RF S005.TXT
+RF S007.TXT
+RF S009.TXT
+RF S011.TXT
+RF S013.TXT
+RF S015.TXT
+RF S017.TXT
+RF S019.TXT
+RF S021.TXT
+RF S023.TXT
+RF S025.TXT
+RF S027.TXT
+RF S029.TXT
+RF S031.TXT
+RF S033.TXT
+RF S035.TXT
+RF S037.TXT
+RF S039.TXT
+# Step 3: Write large files using RANDDATA into fragmented space
+# 10240 bytes = 20 blocks, should create ~20 spans
+RANDDATA MULTI1.DAT 10240 42000
+# 5120 bytes = 10 blocks, another multi-span file
+RANDDATA MULTI2.DAT 5120 99000
+# Step 4: Verify checksums (proves multi-span read works)
+# expect: checksum blocks (from RANDDATA output above, verified by SUM)
+SUM MULTI1.DAT
+SUM MULTI2.DAT
+# Step 5: Clean up - remove the gap files
+RF S002.TXT
+RF S004.TXT
+RF S006.TXT
+RF S008.TXT
+RF S010.TXT
+RF S012.TXT
+RF S014.TXT
+RF S016.TXT
+RF S018.TXT
+RF S020.TXT
+RF S022.TXT
+RF S024.TXT
+RF S026.TXT
+RF S028.TXT
+RF S030.TXT
+RF S032.TXT
+RF S034.TXT
+RF S036.TXT
+RF S038.TXT
+RF S040.TXT
+# Remove the test files
+RF MULTI1.DAT
+RF MULTI2.DAT
+# Verify filesystem is clean
+DIR
+FREE
+HALT

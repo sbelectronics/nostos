@@ -1,0 +1,4 @@
+C:
+pacman.app
+Q
+HALT

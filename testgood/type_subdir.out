@@ -1,0 +1,10 @@
+A:/> C:
+C:/> # MT CF A
+C:/> 
+C:/> # C:
+C:/> 
+C:/> LF mydir/myfile.txt
+this is a test
+C:/> 
+C:/> HALT
+CPU halted

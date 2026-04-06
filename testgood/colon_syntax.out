@@ -1,0 +1,37 @@
+A:/> C:
+C:/> 
+C:/> # Test colon syntax on FORMAT, MT, and ASSIGN commands
+C:/> 
+C:/> A:FORMAT RAMD: 744
+Formatted 744-block filesystem.
+C:/> 
+C:/> MT RAMD: B:
+Mounted.
+C:/> 
+C:/> LP
+18 B: on RAMD:
+17 C: on CF:
+16 A: on ROMD:
+6 RAMD:
+5 ROMD:
+255 UN:
+14 RND:
+1 NUL:
+2 ACIA:
+3 CF:
+C:/> 
+C:/> DIR B:
+Directory Listing:
+C:/> 
+C:/> # Assign with colons
+C:/> 
+C:/> ASSIGN X: B:
+Assigned.
+C:/> 
+C:/> X:
+X:/> 
+X:/> DIR
+Directory Listing:
+X:/> 
+X:/> HALT
+CPU halted

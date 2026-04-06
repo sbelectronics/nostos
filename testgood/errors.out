@@ -1,0 +1,81 @@
+A:/> C:
+C:/> 
+C:/> # RD nonempty
+C:/> 
+C:/> MD FULL
+C:/> 
+C:/> CF SCOTT.TXT FULL/FILE.TXT
+C:/> 
+C:/> RD FULL
+Error: Directory not empty.
+C:/> 
+C:/> # RD nonexistent
+C:/> 
+C:/> RD NOSUCHDIR
+Error: Not found.
+C:/> 
+C:/> # RF nonexistent
+C:/> 
+C:/> RF NOSUCHFILE.TXT
+Error: Not found.
+C:/> 
+C:/> # NF nonexistent
+C:/> 
+C:/> NF NOSUCHFILE.TXT NEW.TXT
+Error: Not found.
+C:/> 
+C:/> # MD duplicate
+C:/> 
+C:/> MD FULL
+Error: Already exists.
+C:/> 
+C:/> # CD nonexistent
+C:/> 
+C:/> CD NOSUCHDIR
+Error: Not found.
+C:/> 
+C:/> # LF nonexistent
+C:/> 
+C:/> LF NOSUCHFILE.TXT
+Error: Not found.
+C:/> 
+C:/> # HF nonexistent
+C:/> 
+C:/> HF NOSUCHFILE.TXT
+Error: Not found.
+C:/> 
+C:/> # ST nonexistent
+C:/> 
+C:/> ST NOSUCHFILE.TXT
+Error: Not found.
+C:/> 
+C:/> # Cleanup
+C:/> 
+C:/> RF FULL/FILE.TXT
+C:/> 
+C:/> RD FULL
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> HALT
+CPU halted

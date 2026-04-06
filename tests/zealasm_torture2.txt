@@ -1,0 +1,142 @@
+C:
+# ============================================================
+# Zealasm Torture Test 2
+# Tests: memory indirect, SUB/SBC/ADC, shifts, conditional
+# CALL/RET, JP cc, EX DE HL, LD (HL)/LD (nn), INC/DEC,
+# JR Z/NC/C, NEG, DEFW with forward refs, DEFB expressions.
+# Expected output: "ABCDEFGH OK"
+# ============================================================
+# --- Build TORTURE2.ASM using ED ---
+A:ED
+i
+    org 0
+    jp main
+cono equ 0x82
+cwrite equ 15
+cwstr equ 16
+sysexit equ 0
+kernel equ 0x0010
+; --- printchar: print A as character ---
+printchar:
+    push bc
+    push de
+    ld e, a
+    ld b, cono
+    ld c, cwrite
+    call kernel
+    pop de
+    pop bc
+    ret
+; --- fail: print ! and halt ---
+fail:
+    ld a, 0x21
+    call printchar
+    halt
+; ========== MAIN ==========
+main:
+; --- Test A: LD (HL), INC, DEC ---
+    ld hl, scratch
+    ld (hl), 0x40
+    inc (hl)
+    ld a, (hl)
+    cp 0x41
+    jp nz, fail
+    call printchar
+; --- Test B: SUB, NEG ---
+    ld a, 0x10
+    neg
+    sub 0xAE
+    cp 0x42
+    jp nz, fail
+    call printchar
+; --- Test C: ADC with carry ---
+    ld a, 0xFF
+    add a, 1
+    ld a, 0
+    adc a, 0x42
+    cp 0x43
+    jp nz, fail
+    call printchar
+; --- Test D: EX DE,HL, LD reg pairs ---
+    ld hl, 0x4400
+    ld de, 0x0000
+    ex de, hl
+    ld a, d
+    cp 0x44
+    jp nz, fail
+    call printchar
+; --- Test E: SLA, SRL, rotate ---
+    ld a, 0x22
+    sla a
+    cp 0x44
+    jp nz, fail
+    ld a, 0x8A
+    srl a
+    cp 0x45
+    jp nz, fail
+    call printchar
+; --- Test F: Conditional CALL ---
+    jp test_f_start
+get_f:
+    ld a, 0x46
+    ret
+test_f_start:
+    ld a, 1
+    or a
+    call nz, get_f
+    cp 0x46
+    jp nz, fail
+    call printchar
+; --- Test G: JR Z, JR C, JR NC forward ---
+test_g:
+    ld a, 0
+    or a
+    jr z, test_g_zok
+    jp fail
+test_g_zok:
+    scf
+    jr c, test_g_cok
+    jp fail
+test_g_cok:
+    or a
+    jr nc, test_g_ncok
+    jp fail
+test_g_ncok:
+    ld a, 0x47
+    call printchar
+; --- Test H: DEFW forward ref, indirect JP via table ---
+test_h:
+    ld hl, fntable
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    ex de, hl
+    jp (hl)
+fn_h:
+    ld a, 0x48
+    call printchar
+    jp done
+fntable:
+    defw fn_h
+; --- Done: print " OK" and exit ---
+done:
+    ld de, msg_ok
+    ld b, cono
+    ld c, cwstr
+    call kernel
+    ld c, sysexit
+    call kernel
+msg_ok:
+    defm " OK"
+    defb 0x0D
+    defb 0x0A
+    defb 0
+scratch:
+    defb 0
+.
+w TORTURE2.ASM
+Q
+# --- Assemble and run ---
+ZEALASM.APP TORTURE2.ASM TORTURE2.APP
+TORTURE2.APP
+HALT

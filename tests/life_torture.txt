@@ -1,0 +1,21 @@
+C:
+life.app 99999
+G
+S
+S
+S
+S
+S
+S
+S
+S
+S
+S
+B
+R
+S
+S
+S
+B
+Q
+HALT

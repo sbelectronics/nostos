@@ -1,0 +1,43 @@
+A:/> C:
+C:/> cf a:aesop/01_COCK.TXT /01_COCK.TXT
+C:/> 
+C:/> cf a:aesop/02_LAMB.TXT /01_COCK.TXT
+C:/> 
+C:/> mkdir aesop
+C:/> 
+C:/> cf a:aesop/01_COCK.TXT /aesop/01_COCK.TXT
+C:/> 
+C:/> cf a:aesop/02_LAMB.TXT /aesop/01_COCK.TXT
+C:/> 
+C:/> dir
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+   950 01_COCK.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+ <DIR> AESOP
+     7 TWELVE.TXT
+C:/> 
+C:/> cd /aesop
+C:/aesop> 
+C:/aesop> dir
+Directory Listing:
+   950 01_COCK.TXT
+C:/aesop> 
+C:/aesop> halt
+CPU halted

@@ -1,0 +1,111 @@
+C:
+FORTH.APP
+( === FORTH Torture Test === )
+( --- Basic arithmetic --- )
+2 3 + . CR
+10 3 - . CR
+6 7 * . CR
+100 7 / . CR
+100 7 MOD . CR
+( --- Stack operations --- )
+1 2 3 . . . CR
+5 DUP + . CR
+10 20 SWAP . . CR
+3 5 OVER . . . CR
+1 2 3 ROT . . . CR
+( --- Comparison --- )
+5 3 > . CR
+3 5 > . CR
+5 5 = . CR
+5 3 < . CR
+( --- Boolean via 0= --- )
+0 0= . CR
+1 0= . CR
+42 0= . CR
+( --- Negate via 0 SWAP - --- )
+42 0 SWAP - . CR
+( --- ABS --- )
+-42 ABS . CR
+42 ABS . CR
+( --- MIN and MAX --- )
+3 7 MIN . CR
+3 7 MAX . CR
+( --- IF ELSE THEN --- )
+: TEST-IF 0 > IF ." POS" ELSE ." NEG" THEN CR ;
+5 TEST-IF
+-3 TEST-IF
+0 TEST-IF
+( --- BEGIN UNTIL loop --- )
+: COUNTUP 0 BEGIN 1 + DUP 10 = UNTIL . CR ;
+COUNTUP
+( --- BEGIN WHILE REPEAT --- )
+: COUNTDOWN 10 BEGIN DUP 0 > WHILE DUP . 1 - REPEAT DROP CR ;
+COUNTDOWN
+( --- DO LOOP --- )
+: SQUARES 6 1 DO I DUP * . LOOP CR ;
+SQUARES
+( --- DO +LOOP --- )
+: EVENS 11 0 DO I . 2 +LOOP CR ;
+EVENS
+( --- Nested DO --- )
+: TABLE 4 1 DO I 4 1 DO DUP I * . LOOP DROP CR LOOP ;
+TABLE
+( --- User words calling each other --- )
+: DOUBLE DUP + ;
+: QUADRUPLE DOUBLE DOUBLE ;
+7 DOUBLE . CR
+7 QUADRUPLE . CR
+3 DOUBLE DOUBLE DOUBLE . CR
+( --- Variables --- )
+0 VARIABLE MYVAR
+42 MYVAR !
+MYVAR @ . CR
+99 MYVAR !
+MYVAR @ . CR
+MYVAR @ 1 + MYVAR !
+MYVAR @ . CR
+( --- Constants via CONSTANT --- )
+42 CONSTANT LIFE
+LIFE . CR
+LIFE LIFE + . CR
+( --- String output --- )
+: GREET ." Hello, FORTH!" CR ;
+GREET
+( --- Base conversion --- )
+HEX FF . CR
+A0 . CR
+DECIMAL 255 . CR
+( --- R-stack --- )
+: RTEST 5 >R R . R> . CR ;
+RTEST
+( --- Memory operations --- )
+HERE 10 32 FILL
+HERE 10 TYPE CR
+( --- Computed sum 1..10 --- )
+: SUM10 0 11 1 DO I + LOOP ;
+SUM10 . CR
+( --- Fibonacci --- )
+: FIBS 0 1 10 0 DO OVER + SWAP LOOP DROP ;
+FIBS . CR
+( --- Factorial via loop --- )
+: FACT 1 SWAP 1 + 1 DO I * LOOP ;
+5 FACT . CR
+10 FACT . CR
+( --- Char emit --- )
+: STARS 0 DO 42 EMIT LOOP CR ;
+5 STARS
+10 STARS
+( --- Conditional word --- )
+: TSIGN DUP 0 > IF DROP ." POSITIVE" ELSE DUP 0 < IF DROP ." NEGATIVE" ELSE DROP ." ZERO" THEN THEN CR ;
+5 TSIGN
+-3 TSIGN
+0 TSIGN
+( --- Stack manipulation --- )
+1 2 SWAP 2DUP + . . . CR
+( --- Large loop --- )
+: BIGLOOP 0 1000 0 DO 1 + LOOP ;
+BIGLOOP . CR
+( --- All done --- )
+." ALL TESTS COMPLETE" CR
+BYE
+HALT

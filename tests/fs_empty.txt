@@ -1,0 +1,46 @@
+C:
+# ============================================================
+# Empty File Test
+# Tests that zero-byte files can be created, copied, checked,
+# and deleted correctly.
+#
+# Exercises:
+#   - Create an empty file (RANDDATA with 0 bytes)
+#   - SUM of empty file
+#   - CF (copy) of empty file
+#   - LF (type) of empty file (should print nothing)
+#   - DIR shows correct 0-byte size
+#   - Empty file in subdirectory
+# ============================================================
+# Step 1: Create an empty file using RANDDATA
+RANDDATA EMPTY.DAT 0 12345
+# Step 2: Verify SUM and DIR
+SUM EMPTY.DAT
+LD
+# Step 3: Copy empty file
+CF EMPTY.DAT EMPTY2.DAT
+SUM EMPTY2.DAT
+# Step 4: LF (type) of empty file — should output nothing
+LF EMPTY.DAT
+# Step 5: Empty file in subdirectory
+MD SUBDIR
+CF EMPTY.DAT SUBDIR/EMPTY3.DAT
+SUM SUBDIR/EMPTY3.DAT
+CD SUBDIR
+LD
+CD /
+# Step 6: Overwrite empty file with non-empty content
+RANDDATA EMPTY.DAT 1024 99999
+SUM EMPTY.DAT
+# Step 7: Overwrite non-empty file with empty file
+RANDDATA EMPTY.DAT 0 11111
+SUM EMPTY.DAT
+LD
+# Step 8: Clean up
+RF EMPTY.DAT
+RF EMPTY2.DAT
+RF SUBDIR/EMPTY3.DAT
+RD SUBDIR
+DIR
+FREE
+HALT

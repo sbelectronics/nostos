@@ -1,0 +1,3 @@
+C:
+more.app XTEST.TXT
+HALT

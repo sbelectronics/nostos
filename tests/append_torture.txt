@@ -1,0 +1,31 @@
+C:
+# Append torture test - build a file exceeding 2 blocks (1024 bytes)
+# Each line includes text + CRLF (2 bytes)
+A:APPEND BIG.TXT Line 01: The quick brown fox jumps over the lazy dog
+A:APPEND BIG.TXT Line 02: Pack my box with five dozen liquor jugs
+A:APPEND BIG.TXT Line 03: How vexingly quick daft zebras jump
+A:APPEND BIG.TXT Line 04: The five boxing wizards jump quickly
+A:APPEND BIG.TXT Line 05: Bright vixens jump dozy fowl quack
+A:APPEND BIG.TXT Line 06: Jinxed wizards pluck ivy from the big quilt
+A:APPEND BIG.TXT Line 07: Crazy Frederick bought many very exquisite opal jewels
+A:APPEND BIG.TXT Line 08: We promptly judged antique ivory buckles for the next prize
+A:APPEND BIG.TXT Line 09: A mad boxer shot a quick gloved jab to the jaw of his dizzy opponent
+A:APPEND BIG.TXT Line 10: The job requires extra pluck and zeal from every young wage earner
+A:APPEND BIG.TXT Line 11: Just keep examining every low bid quoted for zinc etchings
+A:APPEND BIG.TXT Line 12: How razorback jumping frogs can level six piqued gymnasts
+A:APPEND BIG.TXT Line 13: Grumpy wizards make toxic brew for the evil queen and jack
+A:APPEND BIG.TXT Line 14: All questions asked by five watched experts amaze the judge
+A:APPEND BIG.TXT Line 15: The lazy major was fixing Cupids broken quiver
+A:APPEND BIG.TXT Line 16: A quick movement of the enemy will jeopardize six gunboats
+A:APPEND BIG.TXT Line 17: Few quips galvanized the mock jury box
+A:APPEND BIG.TXT Line 18: The quick brown fox jumps right over the lazy dog again
+A:APPEND BIG.TXT Line 19: Jackdaws love my big sphinx of quartz
+A:APPEND BIG.TXT Line 20: Pack my box with five dozen liquor jugs once more
+A:APPEND BIG.TXT Line 21: Sixty zippers were quickly picked from the woven jute bag
+A:APPEND BIG.TXT Line 22: Amazingly few discotheques provide jukeboxes
+A:APPEND BIG.TXT Line 23: My girl wove six dozen plaid jackets before she quit
+A:APPEND BIG.TXT Line 24: The explorer was frozen in his survey of big chunks of ice for the project
+TYPE BIG.TXT
+ST BIG.TXT
+RF BIG.TXT
+HALT

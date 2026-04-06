@@ -1,0 +1,345 @@
+A:/> C:
+C:/> STARTREK
+
+*** SUPER STAR TREK ***
+
+Your mission: destroy 19 Klingons in 45 stardates.
+There are 1 starbases.
+
+Entering Regulus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . . . . . . 
+Stardate: 2016  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 3000  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . . . . . . 
+Stardate: 2016  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 3000  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? N
+Course (1-8)? 1
+Warp (1-8)? 7
+Entering Arcturus I
+RED ALERT: 1 Klingon(s) detected!
+  1 2 3 4 5 6 7 8
+1 . . . . * . . . 
+2 . . . E . . . . 
+3 . . . . . . . . 
+4 . * . . . . . . 
+5 . . . . . . . . 
+6 . . * . . . * . 
+7 . . . . . . . . 
+8 . . . . . . . K 
+Stardate: 2017  Condition: RED
+Quadrant: 7,5  Sector: 2,4
+Energy: 2930  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . * . . . 
+2 . . . E . . . . 
+3 . . . . . . . . 
+4 . * . . . . . . 
+5 . . . . . . . . 
+6 . . * . . . * . 
+7 . . . . . . . . 
+8 . . . . . . . K 
+Stardate: 2017  Condition: RED
+Quadrant: 7,5  Sector: 2,4
+Energy: 2930  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+001 004 004 
+001 104 001 
+006 012 308 
+Command? N
+Course (1-8)? 3
+Warp (1-8)? 7
+Entering Aldebaran I
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . * . . . 
+3 . . . E . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . * . . . * 
+Stardate: 2018  Condition: GREEN
+Quadrant: 6,5  Sector: 3,4
+Energy: 2860  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . * . . . 
+3 . . . E . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . * 
+8 . . . * . . . * 
+Stardate: 2018  Condition: GREEN
+Quadrant: 6,5  Sector: 3,4
+Energy: 2860  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+005 303 205 
+001 004 004 
+001 104 001 
+Command? N
+Course (1-8)? 5
+Warp (1-8)? 7
+Entering Canopus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . E . . . 
+4 . * . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . . . 
+Stardate: 2019  Condition: GREEN
+Quadrant: 6,4  Sector: 3,5
+Energy: 2790  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . E . . . 
+4 . * . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . . . 
+Stardate: 2019  Condition: GREEN
+Quadrant: 6,4  Sector: 3,5
+Energy: 2790  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+001 005 303 
+003 001 004 
+006 001 104 
+Command? N
+Course (1-8)? 7
+Warp (1-8)? 7
+Entering Regulus IV
+  1 2 3 4 5 6 7 8
+1 . . . . * . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . . . 
+Stardate: 2020  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2720  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . * . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . . . 
+Stardate: 2020  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2720  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? N
+Course (1-8)? 2
+Warp (1-8)? 2
+Entering Canopus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . . * . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . E . 
+Stardate: 2021  Condition: GREEN
+Quadrant: 6,4  Sector: 8,7
+Energy: 2700  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . . * . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . . . . . . 
+8 . . . . . . E . 
+Stardate: 2021  Condition: GREEN
+Quadrant: 6,4  Sector: 8,7
+Energy: 2700  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+001 005 303 
+003 001 004 
+006 001 104 
+Command? N
+Course (1-8)? 6
+Warp (1-8)? 2
+Entering Regulus IV
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2022  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2680  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2022  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2680  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? N
+Course (1-8)? 8
+Warp (1-8)? 2
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . . . . . 
+4 . . . . . . E . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2023  Condition: GREEN
+Quadrant: 7,4  Sector: 4,7
+Energy: 2660  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . . . . . 
+3 . . . . . . . . 
+4 . . . . . . E . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2023  Condition: GREEN
+Quadrant: 7,4  Sector: 4,7
+Energy: 2660  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? N
+Course (1-8)? 4
+Warp (1-8)? 2
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2024  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2640  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? S
+  1 2 3 4 5 6 7 8
+1 . . . . . . . . 
+2 . . . . E . . . 
+3 . . . . . . . . 
+4 . . . . . . . . 
+5 . . . . . . . . 
+6 . . . . . . . . 
+7 . . . * . . . . 
+8 . . . . . . . . 
+Stardate: 2024  Condition: GREEN
+Quadrant: 7,4  Sector: 2,5
+Energy: 2640  Shields: 0
+Torpedoes: 10  Klingons: 19
+Command? L
+Long range scan:
+003 001 004 
+006 001 104 
+001 006 012 
+Command? C
+1=Galaxy map, 2=Status? 1
+Galaxy Map:
+... ... ... ... ... ... ... ... 
+... ... ... ... ... ... ... ... 
+... ... ... ... ... ... ... ... 
+... ... ... ... ... ... ... ... 
+... ... 001 005 303 205 ... ... 
+... ... 003 001 004 004 ... ... 
+... ... 006 001 104 001 ... ... 
+... ... 001 006 012 308 ... ... 
+Command? C
+1=Galaxy map, 2=Status? 2
+Remaining: 19 Klingons, 1 Starbases, 37 Stardates
+Command? Q
+Resigned.
+C:/> HALTCPU halted

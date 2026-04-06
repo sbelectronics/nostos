@@ -1,0 +1,326 @@
+A:/> C:
+C:/> 
+C:/> # Setup
+C:/> 
+C:/> A:FORMAT RAMD: 744
+Formatted 744-block filesystem.
+C:/> 
+C:/> MT RAMD: B:
+Mounted.
+C:/> 
+C:/> #
+C:/> 
+C:/> # MD: bare, drive:, drive:/dir/
+C:/> 
+C:/> MD TESTDIR
+C:/> 
+C:/> MD B:BDIR
+C:/> 
+C:/> MD C:MYDIR/SUB1
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+ <DIR> TESTDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> DIR B:
+Directory Listing:
+ <DIR> BDIR
+C:/> 
+C:/> CD MYDIR
+C:/MYDIR> 
+C:/MYDIR> LD
+Directory Listing:
+    15 MYFILE.TXT
+ <DIR> SUB1
+C:/MYDIR> 
+C:/MYDIR> CD /
+C:/> 
+C:/> #
+C:/> 
+C:/> # RD: bare, drive:, drive:/dir/
+C:/> 
+C:/> RD TESTDIR
+C:/> 
+C:/> RD B:BDIR
+C:/> 
+C:/> RD C:MYDIR/SUB1
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> DIR B:
+Directory Listing:
+C:/> 
+C:/> CD MYDIR
+C:/MYDIR> 
+C:/MYDIR> LD
+Directory Listing:
+    15 MYFILE.TXT
+C:/MYDIR> 
+C:/MYDIR> CD /
+C:/> 
+C:/> #
+C:/> 
+C:/> # CF dest: bare, drive:, drive:/dir/
+C:/> 
+C:/> CF SCOTT.TXT COPY1.TXT
+C:/> 
+C:/> CF SCOTT.TXT B:COPY2.TXT
+C:/> 
+C:/> CF SCOTT.TXT C:MYDIR/COPY3.TXT
+C:/> 
+C:/> LF COPY1.TXT
+scott was here
+C:/> 
+C:/> LF B:COPY2.TXT
+scott was here
+C:/> 
+C:/> LF C:MYDIR/COPY3.TXT
+scott was here
+C:/> 
+C:/> #
+C:/> 
+C:/> # RF: bare, drive:, drive:/dir/
+C:/> 
+C:/> RF COPY1.TXT
+C:/> 
+C:/> RF B:COPY2.TXT
+C:/> 
+C:/> RF C:MYDIR/COPY3.TXT
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> DIR B:
+Directory Listing:
+C:/> 
+C:/> CD MYDIR
+C:/MYDIR> 
+C:/MYDIR> LD
+Directory Listing:
+    15 MYFILE.TXT
+C:/MYDIR> 
+C:/MYDIR> CD /
+C:/> 
+C:/> #
+C:/> 
+C:/> # NF: bare, drive:, drive:/dir/
+C:/> 
+C:/> NF SCOTT.TXT RENAMED.TXT
+C:/> 
+C:/> LF RENAMED.TXT
+scott was here
+C:/> 
+C:/> CF RENAMED.TXT B:BFILE.TXT
+C:/> 
+C:/> NF B:BFILE.TXT BNAMED.TXT
+C:/> 
+C:/> LF B:BNAMED.TXT
+scott was here
+C:/> 
+C:/> NF C:MYDIR/MYFILE.TXT NEWFILE.TXT
+C:/> 
+C:/> CD MYDIR
+C:/MYDIR> 
+C:/MYDIR> LD
+Directory Listing:
+    15 NEWFILE.TXT
+C:/MYDIR> 
+C:/MYDIR> CD /
+C:/> 
+C:/> #
+C:/> 
+C:/> # CF source: drive:, drive:/dir/
+C:/> 
+C:/> CF RENAMED.TXT B:SRCTEST.TXT
+C:/> 
+C:/> CF B:SRCTEST.TXT FROMBS.TXT
+C:/> 
+C:/> LF FROMBS.TXT
+scott was here
+C:/> 
+C:/> RF FROMBS.TXT
+C:/> 
+C:/> CF C:MYDIR/NEWFILE.TXT FROMSUB.TXT
+C:/> 
+C:/> LF FROMSUB.TXT
+this is a test
+C:/> 
+C:/> RF FROMSUB.TXT
+C:/> 
+C:/> RF B:SRCTEST.TXT
+C:/> 
+C:/> #
+C:/> 
+C:/> # LF: bare, drive:, drive:/dir/
+C:/> 
+C:/> LF RENAMED.TXT
+scott was here
+C:/> 
+C:/> LF B:BNAMED.TXT
+scott was here
+C:/> 
+C:/> LF C:MYDIR/NEWFILE.TXT
+this is a test
+C:/> 
+C:/> #
+C:/> 
+C:/> # HF: bare, drive:, drive:/dir/
+C:/> 
+C:/> HF RENAMED.TXT
+0000: 73 63 6F 74 74 20 77 61 73 20 68 65 72 65 0A      scott was here. 
+C:/> 
+C:/> HF B:BNAMED.TXT
+0000: 73 63 6F 74 74 20 77 61 73 20 68 65 72 65 0A      scott was here. 
+C:/> 
+C:/> HF C:MYDIR/NEWFILE.TXT
+0000: 74 68 69 73 20 69 73 20 61 20 74 65 73 74 0A      this is a test. 
+C:/> 
+C:/> #
+C:/> 
+C:/> # ST: bare, drive:, drive:/dir/
+C:/> 
+C:/> ST RENAMED.TXT
+Flags:      0x00
+Root Inode: 0x0005
+File Size:  0x0000000F
+Blk Pos:    0x0000
+Span First: 0x0000
+Span Last:  0x0000
+Span Off:   0xFFFF
+Blocks:
+  0004-0004
+C:/> 
+C:/> ST B:BNAMED.TXT
+Flags:      0x00
+Root Inode: 0x0004
+File Size:  0x0000000F
+Blk Pos:    0x0000
+Span First: 0x0000
+Span Last:  0x0000
+Span Off:   0xFFFF
+Blocks:
+  0005-0005
+C:/> 
+C:/> ST C:MYDIR/NEWFILE.TXT
+Flags:      0x00
+Root Inode: 0x0092
+File Size:  0x0000000F
+Blk Pos:    0x0000
+Span First: 0x0000
+Span Last:  0x0000
+Span Off:   0xFFFF
+Blocks:
+  0091-0091
+C:/> 
+C:/> #
+C:/> 
+C:/> # LD: bare, drive:, drive:/dir/
+C:/> 
+C:/> MD B:BSUB
+C:/> 
+C:/> CF RENAMED.TXT B:BSUB/BTEST.TXT
+C:/> 
+C:/> LD MYDIR
+Directory Listing:
+    15 NEWFILE.TXT
+C:/> 
+C:/> LD B:BSUB
+Directory Listing:
+    15 BTEST.TXT
+C:/> 
+C:/> LD C:MYDIR
+Directory Listing:
+    15 NEWFILE.TXT
+C:/> 
+C:/> RF B:BSUB/BTEST.TXT
+C:/> 
+C:/> RD B:BSUB
+C:/> 
+C:/> #
+C:/> 
+C:/> LD
+Directory Listing:
+    15 RENAMED.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> DIR B:
+Directory Listing:
+    15 BNAMED.TXT
+C:/> 
+C:/> HALT
+CPU halted

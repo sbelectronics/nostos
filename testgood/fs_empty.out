@@ -1,0 +1,167 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Empty File Test
+C:/> 
+C:/> # Tests that zero-byte files can be created, copied, checked,
+C:/> 
+C:/> # and deleted correctly.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - Create an empty file (RANDDATA with 0 bytes)
+C:/> 
+C:/> #   - SUM of empty file
+C:/> 
+C:/> #   - CF (copy) of empty file
+C:/> 
+C:/> #   - LF (type) of empty file (should print nothing)
+C:/> 
+C:/> #   - DIR shows correct 0-byte size
+C:/> 
+C:/> #   - Empty file in subdirectory
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Create an empty file using RANDDATA
+C:/> 
+C:/> RANDDATA EMPTY.DAT 0 12345
+0 0
+C:/> 
+C:/> # Step 2: Verify SUM and DIR
+C:/> 
+C:/> SUM EMPTY.DAT
+0 0
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     0 EMPTY.DAT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> # Step 3: Copy empty file
+C:/> 
+C:/> CF EMPTY.DAT EMPTY2.DAT
+C:/> 
+C:/> SUM EMPTY2.DAT
+0 0
+C:/> 
+C:/> # Step 4: LF (type) of empty file — should output nothing
+C:/> 
+C:/> LF EMPTY.DAT
+C:/> 
+C:/> # Step 5: Empty file in subdirectory
+C:/> 
+C:/> MD SUBDIR
+C:/> 
+C:/> CF EMPTY.DAT SUBDIR/EMPTY3.DAT
+C:/> 
+C:/> SUM SUBDIR/EMPTY3.DAT
+0 0
+C:/> 
+C:/> CD SUBDIR
+C:/SUBDIR> 
+C:/SUBDIR> LD
+Directory Listing:
+     0 EMPTY3.DAT
+C:/SUBDIR> 
+C:/SUBDIR> CD /
+C:/> 
+C:/> # Step 6: Overwrite empty file with non-empty content
+C:/> 
+C:/> RANDDATA EMPTY.DAT 1024 99999
+60978 2
+C:/> 
+C:/> SUM EMPTY.DAT
+60978 2
+C:/> 
+C:/> # Step 7: Overwrite non-empty file with empty file
+C:/> 
+C:/> RANDDATA EMPTY.DAT 0 11111
+0 0
+C:/> 
+C:/> SUM EMPTY.DAT
+0 0
+C:/> 
+C:/> LD
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     0 EMPTY.DAT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     0 EMPTY2.DAT
+ <DIR> SUBDIR
+     7 TWELVE.TXT
+C:/> 
+C:/> # Step 8: Clean up
+C:/> 
+C:/> RF EMPTY.DAT
+C:/> 
+C:/> RF EMPTY2.DAT
+C:/> 
+C:/> RF SUBDIR/EMPTY3.DAT
+C:/> 
+C:/> RD SUBDIR
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

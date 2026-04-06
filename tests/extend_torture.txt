@@ -1,0 +1,4 @@
+C:
+# Extension relocation torture test
+EXTTORTURE.EXT
+HALT

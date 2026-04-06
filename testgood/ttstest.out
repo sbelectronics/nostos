@@ -1,0 +1,417 @@
+A:/> C:
+C:/> 
+C:/> SPEECH.EXT
+SP0 device registered.
+C:/> 
+C:/> TTS.EXT
+TTS device registered.
+C:/> 
+C:/> LP
+19 TTS: on SP0:
+18 SP0:
+17 C: on CF:
+16 A: on ROMD:
+6 RAMD:
+5 ROMD:
+255 UN:
+14 RND:
+1 NUL:
+2 ACIA:
+3 CF:
+C:/> 
+C:/> TTSTEST
+a
+AX PA4 
+b
+BB1 PA4 
+c
+KK1 PA4 
+d
+DD1 PA4 
+e
+IY PA4 
+f
+FF PA4 
+g
+GG2 PA4 
+h
+PA4 
+i
+AY PA4 
+j
+JH PA4 
+k
+KK1 PA4 
+l
+LL PA4 
+m
+MM PA4 
+n
+NN1 PA4 
+o
+OW PA4 
+p
+PP PA4 
+q
+KK1 PA4 
+r
+RR1 PA4 
+s
+SS PA4 
+t
+TT1 PA4 
+u
+YY1 UW2 PA4 
+v
+VV PA4 
+w
+WW PA4 
+x
+KK1 SS PA4 
+y
+YY1 PA4 
+z
+ZZ PA4 
+one
+WW AX AX NN1 PA4 
+two
+TT1 UW2 PA4 
+three
+TH RR1 IY PA4 
+four
+FF AO RR1 PA4 
+five
+FF AY VV PA4 
+six
+SS IH KK1 SS PA4 
+seven
+SS IY VV EH NN1 PA4 
+eight
+EY TT1 PA4 
+nine
+NN1 AY NN1 PA4 
+ten
+TT1 EH NN1 PA4 
+alpha
+AO LL FF AX PA4 
+advertise
+AE DD1 VV ER1 TT1 AY ZZ PA4 
+aether
+AE EH DH1 ER1 PA4 
+aid
+EY DD1 PA4 
+all
+AO LL PA4 
+aloud
+AX LL AW DD1 PA4 
+anemone
+AE NN1 EH MM OW NN1 PA4 
+aptly
+AE PP TT1 LL IY PA4 
+awesome
+AO EH SS AX AX MM PA4 
+ball
+BB1 AO LL PA4 
+balloon
+BB1 AO LL UW2 NN1 PA4 
+baker
+BB1 EY KK1 ER1 PA4 
+base
+BB1 EY SS PA4 
+brekfast
+BB1 RR1 EH KK1 FF AE SS TT1 PA4 
+bring
+BB1 RR1 IH NG PA4 
+broadcast
+BB1 RR1 OW DD1 KK1 AE SS TT1 PA4 
+butiful
+BB1 YY1 UW2 TT1 IH FF UH LL PA4 
+cat
+KK1 AE TT1 PA4 
+certin
+SS ER1 TT1 IH NN1 PA4 
+chomp
+CH AA MM PP PA4 
+computer
+KK1 AA MM PP YY1 UW2 TT1 ER1 PA4 
+church
+CH ER1 CH PA4 
+coffee
+KK1 AO FF FF IY PA4 
+come
+KK1 AX AX MM PA4 
+country
+KK1 AW NN1 TT1 RR1 IY PA4 
+day
+DD1 EY PA4 
+delete
+DD1 IH LL IY TT1 PA4 
+doctor
+DD1 AA KK1 TT1 ER1 PA4 
+dog
+DD1 AA GG2 PA4 
+educated
+EH DD1 UW2 KK1 EY TT1 IH DD1 PA4 
+education
+EH DD1 UW2 KK1 EY SH AX NN1 PA4 
+either
+IY DH1 ER1 PA4 
+electroanalysis
+IY LL EH KK1 TT1 RR1 OW NN1 AE LL IH SS IH SS PA4 
+emergency
+IY MM ER1 JH EH NN1 SS IY PA4 
+every
+EH VV ER1 IY PA4 
+example
+EH KK1 SS AE MM PP AX LL PA4 
+exit
+EH KK1 SS IH TT1 PA4 
+far
+FF AA RR1 PA4 
+flywheel
+FF LL IH WH IY LL PA4 
+for
+FF AO RR1 PA4 
+fortran
+FF AO RR1 TT1 RR1 AE NN1 PA4 
+gave
+GG2 EY VV PA4 
+give
+GG2 IH VV PA4 
+go
+GG2 OW PA4 
+good
+GG2 UH DD1 PA4 
+half
+HH1 AO LL FF PA4 
+have
+HH1 AE VV PA4 
+hoard
+HH1 OW RR1 DD1 PA4 
+hotel
+HH1 OW TT1 EH LL PA4 
+if
+IH FF PA4 
+image
+IH MM IH JH PA4 
+imagery
+IH MM IH JH ER1 IY PA4 
+imagined
+IH MM AE JH IH NN1 DD1 PA4 
+india
+IH NN1 DD1 IH AX PA4 
+information
+IH NN1 FF AO RR1 MM EY SH AX NN1 PA4 
+isthmus
+IH SS TH MM AX AX SS PA4 
+joe
+JH OW PA4 
+joeseph
+JH OW IY ZZ EH FF PA4 
+just
+JH AX AX SS TT1 PA4 
+kaleidoscopes
+KK1 EY LL IY DD1 AA SS KK1 OW PP SS PA4 
+kilogram
+KK1 IH LL AA GG2 RR1 AE MM PA4 
+kilometer
+KK1 IH LL OW MM IY TT1 ER1 PA4 
+kitchen
+KK1 IH TT1 CH EH NN1 PA4 
+kitten
+KK1 IH TT1 TT1 EH NN1 PA4 
+knife
+NN1 AY FF PA4 
+knock
+NN1 AA KK1 PA4 
+know
+NN1 OW PA4 
+lima
+LL IH MM AX PA4 
+lime
+LL AY MM PA4 
+loose
+LL UW2 ZZ PA4 
+lonely
+LL OW NN1 LL IY PA4 
+lose
+LL OW ZZ PA4 
+lost
+LL OW SS TT1 PA4 
+lymph
+LL IH MM FF PA4 
+magazine
+MM AE GG2 AE ZZ IH NN1 PA4 
+medication
+MM EH DD1 IH KK1 EY SH AX NN1 PA4 
+men
+MM EH NN1 PA4 
+mingle
+MM IH NG GG2 AX LL PA4 
+mingles
+MM IH NG GG2 AX LL ZZ PA4 
+mingling
+MM IH NG GG2 AX LL IH NG PA4 
+mischievious
+MM IH SS CH IY EH VV IH AX SS PA4 
+mistake
+MM IH SS TT1 EY KK1 PA4 
+mosheenery
+MM AA SH IY NN1 ER1 IY PA4 
+muscle
+MM AX AX SS KK1 AX LL PA4 
+near
+NN1 IY RR1 PA4 
+nebraska
+NN1 EH BB1 RR1 AE SS KK1 AX PA4 
+next
+NN1 EH KK1 SS TT1 PA4 
+north
+NN1 AO RR1 TH PA4 
+nose
+NN1 OW ZZ PA4 
+now
+NN1 AW PA4 
+of
+AX VV PA4 
+open
+OW PP EH NN1 PA4 
+ouija
+AW IH JH AX PA4 
+out
+AW TT1 PA4 
+pause
+PP AO ZZ PA4 
+playground
+PP LL EY GG2 RR1 AW NN1 DD1 PA4 
+polygraph
+PP AA LL IH GG2 RR1 AE FF PA4 
+pronunsiation
+PP RR1 AX AX NN1 AX AX NN1 SS IH EY SH AX NN1 PA4 
+prowceejers
+PP RR1 OW SS IY JH ER1 ZZ PA4 
+pedal
+PP EH DD1 AX LL PA4 
+pepper
+PP EH PP PP ER1 PA4 
+petal
+PP EH TT1 AX LL PA4 
+quail
+KK1 WW EY LL PA4 
+quiet
+KK1 WW AY EH TT1 PA4 
+question
+KK1 WW EH SS CH AX NN1 PA4 
+round
+RR1 AW NN1 DD1 PA4 
+rodeo
+RR1 OW DD1 IY OW PA4 
+rowdeo
+RR1 OW DD1 IY OW PA4 
+rural
+RR1 UH RR1 AX LL PA4 
+scott
+SS KK1 AA TT1 TT1 PA4 
+separate
+SS EH PP EH RR1 EY TT1 PA4 
+simple
+SS IH MM PP AX LL PA4 
+sing
+SS IH NG PA4 
+sings
+SS IH NG ZZ PA4 
+some
+SS AX AX MM PA4 
+south
+SS AW TH PA4 
+speed
+SS PP IY DD1 PA4 
+speeded
+SS PP IY DD1 IH DD1 PA4 
+squash
+SS KK1 WW AE SH PA4 
+storm
+SS TT1 AO RR1 MM PA4 
+sun
+SS AX AX NN1 PA4 
+sunny
+SS AX AX NN1 NN1 IY PA4 
+system
+SS IH SS TT1 EH MM PA4 
+temple
+TT1 EH MM PP AX LL PA4 
+tenth
+TT1 EH NN1 TH PA4 
+test
+TT1 EH SS TT1 PA4 
+the
+DH1 AX PA4 
+their
+DH1 EH RR1 PA4 
+thing
+TH IH NG PA4 
+things
+TH IH NG ZZ PA4 
+thread
+TH RR1 EH DD1 PA4 
+threaded
+TH RR1 EH DD1 DD1 PA4 
+time
+TT1 AY MM PA4 
+timeless
+TT1 IH MM IY LL EH SS PA4 
+timely
+TT1 AY MM LL IY PA4 
+toast
+TT1 OW SS TT1 PA4 
+toggle
+TT1 AA GG2 AX LL PA4 
+tooth
+TT1 UW2 TH PA4 
+top
+TT1 AA PP PA4 
+tower
+TT1 OW ER1 PA4 
+type
+TT1 AY PP IY PA4 
+to
+TT1 UW2 PA4 
+unique
+YY1 UW2 NN1 IY KK1 PA4 
+use
+YY1 UW2 ZZ PA4 
+useless
+YY1 UW2 ZZ IY LL EH SS PA4 
+user
+YY1 UW2 ZZ ER1 PA4 
+utah
+YY1 UW2 TT1 AE PA4 
+variety
+VV EH RR1 AY EH TT1 IY PA4 
+vary
+VV EY RR1 IY PA4 
+venison
+VV EH NN1 IH ZZ AX NN1 PA4 
+very
+VV ER1 IY PA4 
+votrax
+VV AA TT1 RR1 AE KK1 SS PA4 
+walked
+WW AO KK1 TT1 PA4 
+who
+HH1 UW2 PA4 
+xerxes
+KK1 SS ER1 KK1 SS IH ZZ PA4 
+xilophone
+KK1 SS IH LL AA FF OW NN1 PA4 
+zany
+ZZ EH NN1 IY PA4 
+zero
+ZZ EH RR1 OW PA4 
+zoo
+ZZ UW2 PA4 
+zone
+ZZ OW NN1 PA4 
+C:/> 
+C:/> HALT
+CPU halted

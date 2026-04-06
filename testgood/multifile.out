@@ -1,0 +1,78 @@
+A:/> C:
+C:/> # Create test files for multifile tests
+C:/> 
+C:/> # 4 files of 512 bytes each (1 block) with different seeds
+C:/> 
+C:/> RANDDATA FILE1.TMP 512 1
+64291 1
+C:/> 
+C:/> RANDDATA FILE2.TMP 512 2
+64064 1
+C:/> 
+C:/> RANDDATA FILE3.TMP 512 3
+64985 1
+C:/> 
+C:/> RANDDATA FILE4.TMP 512 4
+63865 1
+C:/> 
+C:/> # 2 files of 1024 bytes each (2 blocks) for interleaved test
+C:/> 
+C:/> RANDDATA FILEA.TMP 1024 100
+59809 2
+C:/> 
+C:/> RANDDATA FILEB.TMP 1024 200
+59690 2
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 1: Open 4 files simultaneously, read each, print checksums
+C:/> 
+C:/> multifile.app 1
+Test 1: Multi-open read
+64291
+64064
+64985
+63865
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 2: Interleaved reads vs sequential reads
+C:/> 
+C:/> multifile.app 2
+Test 2: Interleaved I/O
+Interleaved sum A: 59808
+Interleaved sum B: 59689
+Sequential  sum A: 59808
+Sequential  sum B: 59689
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 3: Handle exhaustion and recovery
+C:/> 
+C:/> multifile.app 3
+Test 3: Handle exhaustion
+Handles opened: 7
+Exhaustion error: 6
+Recovery: open after close succeeded
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Cleanup
+C:/> 
+C:/> RF FILE1.TMP
+C:/> 
+C:/> RF FILE2.TMP
+C:/> 
+C:/> RF FILE3.TMP
+C:/> 
+C:/> RF FILE4.TMP
+C:/> 
+C:/> RF FILEA.TMP
+C:/> 
+C:/> RF FILEB.TMP
+C:/> 
+C:/> HALT
+CPU halted

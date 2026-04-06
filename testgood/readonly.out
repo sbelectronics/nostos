@@ -1,0 +1,52 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Read-Only Device Test
+C:/> 
+C:/> # Tests that write operations on the romdisk (A:) are rejected
+C:/> 
+C:/> # with "Read only" errors.
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Try to copy a file to A: (CF uses path_parse)
+C:/> 
+C:/> CF SCOTT.TXT A:SCOTT2.TXT
+Error: Read only.
+C:/> 
+C:/> # Step 2: Try to copy a file to A: with overwrite
+C:/> 
+C:/> CF SCOTT.TXT A:FORMAT.APP
+Error: Read only.
+C:/> 
+C:/> # Step 3: Verify A: is unchanged and still readable
+C:/> 
+C:/> DIR A:
+Directory Listing:
+ <DIR> AESOP
+ <DIR> JATAKA1
+ <DIR> JATAKA2
+   849 FORMAT.APP
+  1957 FDINIT.APP
+  4588 ED.APP
+  1318 APPEND.APP
+  2567 XRECV.APP
+  2625 XSEND.APP
+C:/> 
+C:/> TYPE A:AESOP/01_COCK.TXT
+The Cock and the Pearl
+======================
+
+A cock was once strutting up and down the farmyard among the hens when
+suddenly he espied something shinning amid the straw. “Ho! ho!” quoth
+he, “that’s for me,” and soon rooted it out from beneath the straw.
+“What did it turn out to be but a Pearl that by some chance had been
+lost in the yard? “You may be a treasure,” quoth Master Cock, “to men
+that prize you, but for me I would rather have a single barley-corn
+than a peck of pearls.”
+
+Precious things are for those that can prize them.
+C:/> 
+C:/> HALT
+CPU halted

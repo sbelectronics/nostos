@@ -1,0 +1,59 @@
+A:/> C:
+C:/> # BGETSIZE / BSETSIZE syscall tests
+C:/> 
+C:/> # Create test files with known sizes
+C:/> 
+C:/> RANDDATA SIZE1.TMP 512 1
+64291 1
+C:/> 
+C:/> RANDDATA SIZE2.TMP 1500 2
+61225 3
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 1: BGETSIZE on known files
+C:/> 
+C:/> sizetest.app 1
+Test 1: BGETSIZE known files
+SIZE1: 512
+SIZE2: 1500
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 2: BSETSIZE then BGETSIZE round-trip
+C:/> 
+C:/> sizetest.app 2
+Test 2: BSETSIZE round-trip
+After set: 12345
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 3: BSETSIZE to 0 and to 60000
+C:/> 
+C:/> sizetest.app 3
+Test 3: BSETSIZE zero and large
+After zero: 0
+After large: 60000
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Test 4: BSETSIZE persists across close/reopen
+C:/> 
+C:/> sizetest.app 4
+Test 4: BSETSIZE persists
+After reopen: 9999
+OK
+C:/> 
+C:/> #
+C:/> 
+C:/> # Cleanup
+C:/> 
+C:/> RF SIZE1.TMP
+C:/> 
+C:/> RF SIZE2.TMP
+C:/> 
+C:/> HALT
+CPU halted

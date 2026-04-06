@@ -1,0 +1,8 @@
+A:/> C:
+C:/> # MOUNT CF A
+C:/> 
+C:/> CF SCOTT.TXT CONO:
+scott was here
+C:/> 
+C:/> HALT
+CPU halted

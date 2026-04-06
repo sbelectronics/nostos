@@ -1,0 +1,8 @@
+C:
+chess.app
+ZZZZ
+A1A2
+A2A4
+E2E4
+Q
+HALT

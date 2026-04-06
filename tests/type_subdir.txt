@@ -1,0 +1,5 @@
+C:
+# MT CF A
+# C:
+LF mydir/myfile.txt
+HALT

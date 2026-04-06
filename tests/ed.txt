@@ -1,0 +1,22 @@
+C:
+A:ed
+h
+i
+Hello World
+This is line 2
+Third line
+.
+1,3p
+2d
+1,2p
+1,2n
+a
+Fourth line
+.
+1,3n
+w test.txt
+Q
+A:ed test.txt
+1,3n
+Q
+HALT

@@ -1,0 +1,108 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Zealasm Long Mnemonic Test
+C:/> 
+C:/> # Tests that an extremely long invalid mnemonic doesn't overflow
+C:/> 
+C:/> # the directive buffer and corrupt assembler state.
+C:/> 
+C:/> # The assembler should report an error for the bad line but
+C:/> 
+C:/> # not crash. Then assemble a clean file to prove state is OK.
+C:/> 
+C:/> # Expected: first assemble has error, second succeeds, prints "OK"
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # --- Build BAD.ASM with a very long mnemonic ---
+C:/> 
+C:/> A:ED
+*
+*i
+
+    org 0
+
+    abcdefghijklmnopqrstuvwxyz 1234
+
+    halt
+
+.
+*
+*w BAD.ASM
+58
+*
+*Q
+C:/> 
+C:/> # --- Build GOOD.ASM (clean) ---
+C:/> 
+C:/> A:ED
+*
+*i
+
+    org 0
+
+    jp main
+
+cono equ 0x82
+
+cwstr equ 16
+
+sysexit equ 0
+
+kernel equ 0x0010
+
+main:
+
+    ld de, msg
+
+    ld b, cono
+
+    ld c, cwstr
+
+    call kernel
+
+    ld c, sysexit
+
+    call kernel
+
+msg:
+
+    defm "OK"
+
+    defb 0x0D
+
+    defb 0x0A
+
+    defb 0
+
+.
+*
+*w GOOD.ASM
+259
+*
+*Q
+C:/> 
+C:/> # --- Assemble bad file (expect error, should not crash) ---
+C:/> 
+C:/> ZEALASM.APP BAD.ASM BAD.APP
+Zealasm v0.2
+Assembling BAD.ASM
+Line 2: Syntax error
+Assembly failed — errors detected
+Code: 1 bytes, Relocs: 0
+Errors: 1 error(s)
+C:/> 
+C:/> # --- Assemble and run good file (proves assembler state is intact) ---
+C:/> 
+C:/> ZEALASM.APP GOOD.ASM GOOD.APP
+Zealasm v0.2
+Assembling GOOD.ASM
+Code: 23 bytes, Relocs: 2
+C:/> 
+C:/> GOOD.APP
+OK
+C:/> 
+C:/> HALT
+CPU halted

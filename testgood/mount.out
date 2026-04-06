@@ -1,0 +1,35 @@
+A:/> C:
+C:/> 
+C:/> A:FORMAT RAMD: 744
+Formatted 744-block filesystem.
+C:/> 
+C:/> MT RAMD: B:
+Mounted.
+C:/> 
+C:/> LP
+18 B: on RAMD:
+17 C: on CF:
+16 A: on ROMD:
+6 RAMD:
+5 ROMD:
+255 UN:
+14 RND:
+1 NUL:
+2 ACIA:
+3 CF:
+C:/> 
+C:/> CF SCOTT.TXT B:TEST.TXT
+C:/> 
+C:/> LF B:TEST.TXT
+scott was here
+C:/> 
+C:/> MT NOSUCH: X:
+Unknown block device.
+C:/> 
+C:/> MT
+Usage: MT <blkdev> <newname>
+C:/> 
+C:/> RF B:TEST.TXT
+C:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,184 @@
+C:
+BASIC.APP
+BREAK 0
+5 REM === BASIC Torture Test ===
+6 REM Tests arithmetic, strings, control flow,
+7 REM arrays, nested loops, functions, and
+8 REM reserved-word collisions in var names.
+10 REM --- Basic arithmetic ---
+15 PRINT "10+3:"; 10+3
+16 PRINT "10-3:"; 10-3
+17 PRINT "6*7:"; 6*7
+18 PRINT "100/7:"; INT(100/7)
+20 REM --- FOR/NEXT with STEP ---
+30 LET X = 0
+40 FOR I = 1 TO 10 STEP 2
+50 LET X = X + I
+60 NEXT I
+70 PRINT "ODD SUM:"; X
+80 IF X <> 25 THEN PRINT "FAIL ODD"
+90 REM --- Nested FOR loops ---
+100 LET X = 0
+110 FOR I = 1 TO 3
+120 FOR J = 1 TO 4
+130 LET X = X + 1
+140 NEXT J
+150 NEXT I
+160 PRINT "NESTED 3x4:"; X
+170 IF X <> 12 THEN PRINT "FAIL NESTED"
+180 REM --- Negative STEP ---
+190 LET X = 0
+200 FOR I = 10 TO 1 STEP -1
+210 LET X = X + I
+220 NEXT I
+230 PRINT "REV SUM:"; X
+240 IF X <> 55 THEN PRINT "FAIL REV"
+250 REM --- GOSUB/RETURN ---
+260 LET X = 0
+270 GOSUB 2000
+280 PRINT "GOSUA:"; X
+290 IF X <> 42 THEN PRINT "FAIL GOSUB"
+300 REM --- Nested GOSUB (3 deep) ---
+310 LET X = 0
+320 GOSUB 2010
+330 PRINT "DEEP GOSUA:"; X
+340 IF X <> 3 THEN PRINT "FAIL DEEP"
+350 REM --- ON GOTO ---
+360 LET N = 2
+370 ON N GOTO 380, 390, 400
+380 PRINT "FAIL ON1": GOTO 410
+390 PRINT "ON GOTO: 2": GOTO 410
+400 PRINT "FAIL ON3"
+410 REM --- ON GOSUB ---
+420 LET N = 3
+430 ON N GOSUB 2030, 2030, 2040
+440 PRINT "ON GOSUA:"; X
+450 IF X <> 99 THEN PRINT "FAIL ONSUB"
+460 REM --- String operations ---
+500 LET A$ = "HELLO"
+510 LET B$ = "WORLD"
+520 PRINT A$ + " " + B$
+530 PRINT "LEN:"; LEN(A$)
+540 IF LEN(A$) <> 5 THEN PRINT "FAIL LEN"
+550 PRINT "LEFT:"; LEFT$(A$, 3)
+560 PRINT "RIGHT:"; RIGHT$(B$, 3)
+570 PRINT "MID:"; MID$(A$, 2, 3)
+580 PRINT "ASC:"; ASC(A$)
+590 IF ASC(A$) <> 72 THEN PRINT "FAIL ASC"
+600 PRINT "CHR:"; CHR$(65)
+610 PRINT "VAL:"; VAL("12345")
+620 IF VAL("12345") <> 12345 THEN PRINT "FAIL VAL"
+630 PRINT "STR:"; STR$(9876)
+640 REM --- String comparison ---
+650 IF "ABC" < "DEF" THEN PRINT "ABC<DEF OK"
+660 IF "ZZZ" > "AAA" THEN PRINT "ZZZ>AAA OK"
+670 IF "CAT" = "CAT" THEN PRINT "CAT=CAT OK"
+700 REM --- Numeric functions ---
+710 PRINT "ABS:"; ABS(-42)
+720 IF ABS(-42) <> 42 THEN PRINT "FAIL ABS"
+730 PRINT "SGN+:"; SGN(99)
+740 PRINT "SGN-:"; SGN(-5)
+750 PRINT "SGN0:"; SGN(0)
+760 PRINT "INT:"; INT(7.9)
+770 IF INT(7.9) <> 7 THEN PRINT "FAIL INT"
+780 PRINT "INT-:"; INT(-2.3)
+790 IF INT(-2.3) <> -3 THEN PRINT "FAIL INT-"
+800 REM --- HEX$ ---
+810 PRINT "HEX FF:"; HEX$(255)
+820 PRINT "HEX 1000:"; HEX$(4096)
+850 REM --- Arrays ---
+860 DIM Q(10)
+870 FOR I = 0 TO 10
+880 LET Q(I) = I * I
+890 NEXT I
+900 PRINT "Q(0):"; Q(0); " Q(5):"; Q(5); " Q(10):"; Q(10)
+910 IF Q(10) <> 100 THEN PRINT "FAIL ARR"
+920 REM --- Power of 2 loop ---
+930 LET X = 1
+940 FOR I = 1 TO 10
+950 LET X = X * 2
+960 NEXT I
+970 PRINT "2^10:"; X
+980 IF X <> 1024 THEN PRINT "FAIL POW"
+990 REM --- PEEK/POKE ---
+1000 POKE 28672, 123
+1010 PRINT "PEEK:"; PEEK(28672)
+1020 IF PEEK(28672) <> 123 THEN PRINT "FAIL PEEK"
+1050 REM --- DATA/READ ---
+1060 DATA 10, 20, 30, 40, 50
+1070 LET X = 0
+1080 FOR I = 1 TO 5
+1090 READ D
+1100 LET X = X + D
+1110 NEXT I
+1120 PRINT "DATA SUM:"; X
+1130 IF X <> 150 THEN PRINT "FAIL DATA"
+1200 REM === Reserved Word Collisions ===
+1201 REM NASCOM BASIC tokenizer finds keywords
+1202 REM greedily inside identifiers.
+1210 REM --- Safe single/two-char vars ---
+1220 LET A = 1: LET Z = 26
+1230 PRINT "B:"; A; " Z:"; Z
+1240 LET AA = 11: LET ZZ = 99
+1250 PRINT "AB:"; AA; " ZZ:"; ZZ
+1260 REM --- Vars with no keyword overlap ---
+1270 LET QQ = 77: LET YY = 88
+1280 PRINT "QQ:"; QQ; " YY:"; YY
+1290 REM --- Attempting keyword-containing names ---
+1291 REM Each of these would fail at RUN time
+1292 REM if they contain a keyword substring.
+1293 REM We use safe alternatives and note which
+1294 REM names are toxic.
+1300 REM TOTAL -> TO(keyword)+TAL: BROKEN
+1301 REM FOREST -> FOR(keyword)+EST: BROKEN
+1302 REM GRAND -> GR+AND(keyword): BROKEN
+1303 REM STORE -> ST+OR(keyword)+E: BROKEN
+1304 REM KNOT -> KN+OT (safe? no: K+NOT)
+1305 REM LIFE -> L+IF(keyword)+E: BROKEN
+1306 REM TONE -> T+ON(keyword)+E: BROKEN
+1307 REM POINT -> PO+INT(keyword): BROKEN
+1308 REM LETTER -> LET(keyword)+TER: BROKEN
+1309 REM GOAT -> GO+TO? No: GO(keyword)+AT: BROKEN
+1310 REM DEFEND -> DEF(keyword)+END(keyword): BROKEN
+1311 REM REMARK -> REM(keyword)+ARK: BROKEN
+1312 REM FORGET -> FOR(keyword)+GET: BROKEN
+1313 REM PRINTING -> PRINT(keyword)+ING: BROKEN
+1314 REM RESTORE -> RESTORE(keyword): BROKEN (is keyword)
+1320 REM --- Prove the collision ---
+1321 REM Try TOTAL as a var name on the next line
+1322 REM This should produce ?SN Error
+1325 LET TL = 100
+1326 PRINT "TL (safe):"; TL
+1400 REM --- Multichar safe var tests ---
+1410 LET AX = 10
+1420 LET BZ = 20
+1430 LET CW = 30
+1440 LET DK = 40
+1450 LET EH = 50
+1460 PRINT "SUM:"; AX+BZ+CW+DK+EH
+1470 IF AX+BZ+CW+DK+EH <> 150 THEN PRINT "FAIL VARS"
+1500 REM --- Float precision ---
+1510 PRINT "1/3:"; 1/3
+1520 PRINT "2/3:"; 2/3
+1530 PRINT "PI:"; 355/113
+1540 PRINT "SQR2:"; SQR(2)
+1600 REM --- Large loop ---
+1610 LET X = 0
+1620 FOR I = 1 TO 1000
+1630 LET X = X + 1
+1640 NEXT I
+1650 PRINT "LOOP 1000:"; X
+1660 IF X <> 1000 THEN PRINT "FAIL LOOP"
+1700 REM --- Summary ---
+1710 PRINT "ALL TESTS COMPLETE"
+1720 END
+2000 REM --- Subroutines ---
+2001 LET X = 42: RETURN
+2010 LET X = X + 1: GOSUB 2020: RETURN
+2020 LET X = X + 1: GOSUB 2025: RETURN
+2025 LET X = X + 1: RETURN
+2030 LET X = 0: RETURN
+2040 LET X = 99: RETURN
+RUN
+SYSTEM
+HALT

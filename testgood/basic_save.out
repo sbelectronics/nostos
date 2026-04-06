@@ -1,0 +1,45 @@
+A:/> C:
+C:/> 
+C:/> basic.app
+
+Nostos BASIC Ver 4.7c
+Copyright (C) 1978 by Microsoft
+37729 Bytes free
+Ok
+
+10 PRINT "HELLO"
+
+20 PRINT "WORLD"
+
+SAVE "TEST.BAS"
+Ok
+SYSTEM
+C:/> 
+C:/> basic.app
+
+Nostos BASIC Ver 4.7c
+Copyright (C) 1978 by Microsoft
+37729 Bytes free
+Ok
+
+LOAD "TEST.BAS"
+Ok
+
+LIST
+
+10 PRINT "HELLO"
+20 PRINT "WORLD"
+Ok
+
+
+
+RUN
+HELLO
+WORLD
+Ok
+
+
+SYSTEM
+C:/> 
+C:/> HALT
+CPU halted

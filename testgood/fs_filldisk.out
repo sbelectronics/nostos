@@ -1,0 +1,220 @@
+A:/> C:
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Fill Disk Torture Test
+C:/> 
+C:/> # Tests that the filesystem handles disk-full conditions
+C:/> 
+C:/> # correctly: proper error reporting, existing files remain
+C:/> 
+C:/> # accessible, and space is recoverable after deletion.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Strategy:
+C:/> 
+C:/> #   1. Check initial free space
+C:/> 
+C:/> #   2. Create large files to consume nearly all blocks
+C:/> 
+C:/> #   3. Attempt to create a file on a full disk (expect error)
+C:/> 
+C:/> #   4. Verify existing files are still readable
+C:/> 
+C:/> #   5. Delete files and verify space is recovered
+C:/> 
+C:/> #   6. Create a file in recovered space to prove reuse works
+C:/> 
+C:/> #   7. Clean up
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Record initial free space
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> # Step 2: Fill the disk with large files
+C:/> 
+C:/> # Each 60000-byte file uses 118 data blocks + 1 inode = 119 blocks
+C:/> 
+C:/> # 15 files = 1785 blocks, leaving ~90 free
+C:/> 
+C:/> RANDDATA FILL01.DAT 60000 1001
+50127 118
+C:/> 
+C:/> RANDDATA FILL02.DAT 60000 2002
+50275 118
+C:/> 
+C:/> RANDDATA FILL03.DAT 60000 3003
+52059 118
+C:/> 
+C:/> RANDDATA FILL04.DAT 60000 4004
+50315 118
+C:/> 
+C:/> RANDDATA FILL05.DAT 60000 5005
+56267 118
+C:/> 
+C:/> RANDDATA FILL06.DAT 60000 6006
+52101 118
+C:/> 
+C:/> RANDDATA FILL07.DAT 60000 7007
+46998 118
+C:/> 
+C:/> RANDDATA FILL08.DAT 60000 8008
+50395 118
+C:/> 
+C:/> RANDDATA FILL09.DAT 60000 9009
+36272 118
+C:/> 
+C:/> RANDDATA FILL10.DAT 60000 10010
+56177 118
+C:/> 
+C:/> RANDDATA FILL11.DAT 60000 11011
+53383 118
+C:/> 
+C:/> RANDDATA FILL12.DAT 60000 12012
+52185 118
+C:/> 
+C:/> RANDDATA FILL13.DAT 60000 13013
+38156 118
+C:/> 
+C:/> RANDDATA FILL14.DAT 60000 14014
+47078 118
+C:/> 
+C:/> RANDDATA FILL15.DAT 60000 15015
+53848 118
+C:/> 
+C:/> FREE
+Free Blocks:  34304 bytes (67 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> # Use up most of the rest (~90 blocks -> ~80 used, ~10 left)
+C:/> 
+C:/> RANDDATA FILL16.DAT 40000 16016
+Error: 6
+C:/> 
+C:/> FREE
+Free Blocks:  0 bytes (0 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> # Step 3: Attempt to create a file that exceeds remaining space
+C:/> 
+C:/> # RANDDATA creates the file then fails mid-write (partial file)
+C:/> 
+C:/> RANDDATA TOOBIG.DAT 60000 99999
+Error: 6
+C:/> 
+C:/> # CF also fails when disk is full
+C:/> 
+C:/> CF SCOTT.TXT NOSPACE.TXT
+Error: No space.
+C:/> 
+C:/> # Step 4: Verify existing files are still readable after errors
+C:/> 
+C:/> SUM FILL01.DAT
+50127 118
+C:/> 
+C:/> SUM FILL08.DAT
+50395 118
+C:/> 
+C:/> SUM FILL13.DAT
+38156 118
+C:/> 
+C:/> SUM FILL16.DAT
+6016 66
+C:/> 
+C:/> # Step 5: Delete some files and verify space is recovered
+C:/> 
+C:/> RF FILL01.DAT
+C:/> 
+C:/> RF FILL02.DAT
+C:/> 
+C:/> FREE
+Free Blocks:  121856 bytes (238 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> # Step 6: Create a new file in recovered space (proves reuse)
+C:/> 
+C:/> RANDDATA REUSE.DAT 10000 55555
+5028 20
+C:/> 
+C:/> SUM REUSE.DAT
+5028 20
+C:/> 
+C:/> # Step 7: Clean up all remaining files
+C:/> 
+C:/> RF REUSE.DAT
+C:/> 
+C:/> RF TOOBIG.DAT
+Error: Not found.
+C:/> 
+C:/> # RF NOSPACE.TXT expected to say "Not found" — CF failed on full disk so
+C:/> 
+C:/> # the file was never created. We attempt removal as a safety net in case
+C:/> 
+C:/> # CF behavior changes.
+C:/> 
+C:/> RF NOSPACE.TXT
+Error: Not found.
+C:/> 
+C:/> RF FILL03.DAT
+C:/> 
+C:/> RF FILL04.DAT
+C:/> 
+C:/> RF FILL05.DAT
+C:/> 
+C:/> RF FILL06.DAT
+C:/> 
+C:/> RF FILL07.DAT
+C:/> 
+C:/> RF FILL08.DAT
+C:/> 
+C:/> RF FILL09.DAT
+C:/> 
+C:/> RF FILL10.DAT
+C:/> 
+C:/> RF FILL11.DAT
+C:/> 
+C:/> RF FILL12.DAT
+C:/> 
+C:/> RF FILL13.DAT
+C:/> 
+C:/> RF FILL14.DAT
+C:/> 
+C:/> RF FILL15.DAT
+C:/> 
+C:/> RF FILL16.DAT
+C:/> 
+C:/> # Verify filesystem is clean
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948224 bytes (1852 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

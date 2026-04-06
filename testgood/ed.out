@@ -1,0 +1,73 @@
+A:/> C:
+C:/> 
+C:/> A:ed
+*
+*h
+[n]p      print line
+[n,m]p    print lines n-m
+[n]n      print with numbers
+[n]d      delete line
+[n,m]d    delete lines n-m
+[n]i      insert before (. to end)
+[n]a      append after (. to end)
+[n]c      change (. to end)
+w [file]  write to file
+q         quit
+Q         quit no save
+.         current line #
+$         last line #
+h         this help
+*
+*i
+
+Hello World
+
+This is line 2
+
+Third line
+
+.
+*
+*1,3p
+Hello World
+This is line 2
+Third line
+*
+*2d
+*
+*1,2p
+Hello World
+Third line
+*
+*1,2n
+1	Hello World
+2	Third line
+*
+*a
+
+Fourth line
+
+.
+*
+*1,3n
+1	Hello World
+2	Third line
+3	Fourth line
+*
+*w test.txt
+38
+*
+*Q
+C:/> 
+C:/> A:ed test.txt
+35
+*
+*1,3n
+1	Hello World
+2	Third line
+3	Fourth line
+*
+*Q
+C:/> 
+C:/> HALT
+CPU halted

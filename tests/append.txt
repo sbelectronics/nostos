@@ -1,0 +1,12 @@
+C:
+# Test APPEND command
+# Create new file and append to it
+A:APPEND TEST.TXT Hello World
+TYPE TEST.TXT
+# Append again to existing file
+A:APPEND TEST.TXT Second Line
+TYPE TEST.TXT
+# Check file size
+ST TEST.TXT
+RF TEST.TXT
+HALT

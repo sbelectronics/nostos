@@ -1,0 +1,14 @@
+C:
+A:format ramd: 744
+mount ramd b
+dir c:
+copy odyssey.txt c:
+copy a:aesop/59_FOX_COCK.TXT c:
+copy a:aesop/60_WIND.TXT c:
+copy a:aesop/61_HERCULES.TXT c:
+copy a:aesop/62_MISER.TXT c:
+copy a:aesop/63_MAN_BOY.TXT c:
+dir c:
+copy c:/63_man_boy.txt b:
+dir b:
+HALT

@@ -1,0 +1,70 @@
+A:/> C:
+C:/> 
+C:/> # DUP extension test — negative cases and basic positive case
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: no arguments ---
+C:/> 
+C:/> DUP.EXT
+Usage: DUP.EXT name dev1 dev2
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: only device name, missing targets ---
+C:/> 
+C:/> DUP.EXT BOTH
+Usage: DUP.EXT name dev1 dev2
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: missing second target ---
+C:/> 
+C:/> DUP.EXT BOTH ACIA
+Usage: DUP.EXT name dev1 dev2
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: first target device not found ---
+C:/> 
+C:/> DUP.EXT BOTH FAKE1 ACIA
+Device 1 not found.
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: second target device not found ---
+C:/> 
+C:/> DUP.EXT BOTH ACIA FAKE2
+Device 2 not found.
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Negative: first target not char output (CF is block device) ---
+C:/> 
+C:/> DUP.EXT BOTH CF ACIA
+Device 1 not char output.
+C:/> 
+C:/> 
+C:/> 
+C:/> # --- Positive: duplicate ACIA output (chars printed twice) ---
+C:/> 
+C:/> DUP.EXT BOTH ACIA ACIA
+DUP device registered.
+C:/> 
+C:/> AS CONO BOTH
+AAssssiiggnneedd..
+
+CC:://>>  
+
+CC:://>>  HHEELLLLOO
+
+UUnnkknnoowwnn  ccoommmmaanndd..  TTyyppee  HHPP  oorr  HHEELLPP  ffoorr  ccoommmmaanndd  lliisstt..
+
+CC:://>>  
+
+CC:://>>  AASS  CCOONNOO  AACCIIAA
+
+Assigned.
+C:/> 
+C:/> HALT
+CPU halted

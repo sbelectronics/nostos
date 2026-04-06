@@ -1,0 +1,63 @@
+A:/> C:
+C:/> A:format ramd: 744
+Formatted 744-block filesystem.
+C:/> mount ramd b
+Mounted.
+C:/> dir c:
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> copy odyssey.txt c:
+C:/> copy a:aesop/59_FOX_COCK.TXT c:
+C:/> copy a:aesop/60_WIND.TXT c:
+C:/> copy a:aesop/61_HERCULES.TXT c:
+C:/> copy a:aesop/62_MISER.TXT c:
+C:/> copy a:aesop/63_MAN_BOY.TXT c:
+C:/> dir c:
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+  1011 59_FOX_COCK.TXT
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+   718 60_WIND.TXT
+   578 61_HERCULES.TXT
+   781 62_MISER.TXT
+     7 TWELVE.TXT
+  1648 63_MAN_BOY.TXT
+C:/> copy c:/63_man_boy.txt b:
+C:/> dir b:
+Directory Listing:
+  1648 63_MAN_BOY.TXT
+C:/> HALTCPU halted

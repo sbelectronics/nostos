@@ -1,0 +1,53 @@
+C:
+zork.app
+open mailbox
+get leaflet
+read leaflet
+s
+e
+open window
+enter
+get bottle
+get sack
+w
+get lamp
+get sword
+turn on lamp
+open case
+put sword in case
+put leaflet in case
+e
+u
+get rope
+get knife
+d
+w
+put knife in case
+put rope in case
+e
+e
+n
+n
+u
+get egg
+d
+s
+w
+w
+n
+move leaves
+s
+s
+e
+open window
+enter
+w
+put bottle in case
+put sack in case
+put egg in case
+look
+inventory
+score
+quit
+y
+HALT

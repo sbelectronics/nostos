@@ -1,0 +1,39 @@
+C:
+BASIC.APP
+BREAK 0
+10 REM Multiplication table with checksum
+20 LET SZ = 9
+30 LET GSUM = 0
+40 FOR C = 1 TO SZ
+50   PRINT TAB(C*4); C;
+60 NEXT C
+70 PRINT
+80 PRINT "------------------------------------"
+90 FOR R = 1 TO SZ
+100   LET RS = 0
+110   PRINT R;
+120   FOR C = 1 TO SZ
+130     LET V = R * C
+140     LET RS = RS + V
+150     PRINT TAB(C*4); V;
+160   NEXT C
+170   PRINT TAB(40); RS
+180   LET GSUM = GSUM + RS
+190 NEXT R
+200 PRINT "------------------------------------"
+210 PRINT "GSUM:"; GSUM
+220 PRINT "EXPECTED: 2025"
+230 IF GSUM = 2025 THEN GOTO 260
+240 PRINT "FAIL"
+250 GOTO 270
+260 PRINT "OK"
+270 END
+SAVE "sum.bas"
+SYSTEM
+STAT sum.bas
+BASIC.APP
+BREAK 0
+LOAD "sum.bas"
+run
+SYSTEM
+HALT

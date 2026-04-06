@@ -1,0 +1,100 @@
+C:
+# ============================================================
+# Zealasm Long JR/DJNZ Test
+# Tests relative jumps near the -128/+127 displacement limits
+# and jumps that cross 256-byte page boundaries.
+# Expected output: "ABCD OK"
+# ============================================================
+# --- Build LONGJR.ASM using ED ---
+A:ED
+i
+    org 0
+    jp main
+cono equ 0x82
+cwrite equ 15
+cwstr equ 16
+sysexit equ 0
+kernel equ 0x0010
+; --- printchar: print A as character ---
+printchar:
+    push bc
+    push de
+    ld e, a
+    ld b, cono
+    ld c, cwrite
+    call kernel
+    pop de
+    pop bc
+    ret
+; --- fail: print ! and halt ---
+fail:
+    ld a, 0x21
+    call printchar
+    halt
+; ========== MAIN ==========
+main:
+; --- Test A: Long forward JR (~120 bytes ahead) ---
+    ld a, 0x41
+    jr test_a_target
+    defs 118
+    jp fail
+test_a_target:
+    cp 0x41
+    jp nz, fail
+    call printchar
+; --- Test B: Long backward JR (~120 bytes back) ---
+; We jump forward past the pad, then JR back to test_b_top
+    jp test_b_start
+test_b_top:
+    cp 0x42
+    jp nz, fail
+    call printchar
+    jp test_c
+    defs 108
+test_b_start:
+    ld a, 0x42
+    jr test_b_top
+; --- Test C: Long forward JR crossing page boundary ---
+; This ensures the assembler's 16-bit displacement arithmetic
+; correctly computes the 8-bit signed offset when the target
+; is on a different 256-byte page than the JR instruction.
+test_c:
+    ld a, 0x43
+    jr test_c_target
+    defs 120
+    jp fail
+test_c_target:
+    cp 0x43
+    jp nz, fail
+    call printchar
+; --- Test D: DJNZ with moderate distance ---
+    ld a, 0
+    ld b, 5
+test_d_top:
+    add a, 1
+    defs 40
+    djnz test_d_top
+    cp 5
+    jp nz, fail
+    ld a, 0x44
+    call printchar
+; --- Done: print " OK" and exit ---
+done:
+    ld de, msg_ok
+    ld b, cono
+    ld c, cwstr
+    call kernel
+    ld c, sysexit
+    call kernel
+msg_ok:
+    defm " OK"
+    defb 0x0D
+    defb 0x0A
+    defb 0
+.
+w LONGJR.ASM
+Q
+# --- Assemble and run ---
+ZEALASM.APP LONGJR.ASM LONGJR.APP
+LONGJR.APP
+HALT

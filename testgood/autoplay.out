@@ -1,0 +1,29 @@
+A:/> A:FORMAT.APP RAMD: 744
+Formatted 744-block filesystem.
+A:/> MOUNT RAMD B
+Mounted.
+A:/> TYPE WELCOME.TXT
+Welcome to NostOS: The Nostalgia operation system!
+You may use "HELP" to get a list of available executive commands.
+A:/> # Verify autoplay ran: B: should be formatted and mounted
+A:/> 
+A:/> DIR B:
+Directory Listing:
+A:/> 
+A:/> # Copy a file to B: to prove it's writable
+A:/> 
+A:/> COPY A:FORMAT.APP B:
+A:/> 
+A:/> DIR B:
+Directory Listing:
+   849 FORMAT.APP
+A:/> 
+A:/> # Verify interactive mode works
+A:/> 
+A:/> C:
+C:/> 
+C:/> TYPE SCOTT.TXT
+scott was here
+C:/> 
+C:/> HALT
+CPU halted

@@ -1,0 +1,148 @@
+A:/> C:
+C:/> # ============================================================
+C:/> 
+C:/> # Overwrite-in-Subdirectory Test
+C:/> 
+C:/> # Tests that CF correctly overwrites existing files inside
+C:/> 
+C:/> # subdirectories, preserving the new content and updating the
+C:/> 
+C:/> # file size.
+C:/> 
+C:/> #
+C:/> 
+C:/> # Exercises:
+C:/> 
+C:/> #   - Overwrite file in subdir with same-size file
+C:/> 
+C:/> #   - Overwrite file in subdir with larger file
+C:/> 
+C:/> #   - Overwrite file in subdir with smaller file
+C:/> 
+C:/> #   - Verify content and size after each overwrite
+C:/> 
+C:/> # ============================================================
+C:/> 
+C:/> # Step 1: Set up
+C:/> 
+C:/> MD TESTDIR
+C:/> 
+C:/> RANDDATA TESTDIR/ORIG.DAT 2048 11111
+95 4
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+95 4
+C:/> 
+C:/> # Step 2: Overwrite with same-size file (different content)
+C:/> 
+C:/> RANDDATA TESTDIR/ORIG.DAT 2048 22222
+193 4
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+193 4
+C:/> 
+C:/> # Step 3: Overwrite with larger file
+C:/> 
+C:/> RANDDATA TESTDIR/ORIG.DAT 4096 33333
+5172 8
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+5172 8
+C:/> 
+C:/> # Step 4: Overwrite with smaller file
+C:/> 
+C:/> RANDDATA TESTDIR/ORIG.DAT 512 44444
+64952 1
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+64952 1
+C:/> 
+C:/> # Step 5: Verify directory listing shows correct final size
+C:/> 
+C:/> CD TESTDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+   512 ORIG.DAT
+C:/TESTDIR> 
+C:/TESTDIR> # Step 6: Overwrite using CF (copy) from root into subdir
+C:/TESTDIR> 
+C:/TESTDIR> CD /
+C:/> 
+C:/> CF SCOTT.TXT TESTDIR/ORIG.DAT
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+1382 1
+C:/> 
+C:/> SUM SCOTT.TXT
+1382 1
+C:/> 
+C:/> # Step 7: Overwrite via CF between subdirectories
+C:/> 
+C:/> MD SRCDIR
+C:/> 
+C:/> RANDDATA SRCDIR/BIG.DAT 3000 55555
+36316 6
+C:/> 
+C:/> CF SRCDIR/BIG.DAT TESTDIR/ORIG.DAT
+C:/> 
+C:/> SUM TESTDIR/ORIG.DAT
+36316 6
+C:/> 
+C:/> SUM SRCDIR/BIG.DAT
+36316 6
+C:/> 
+C:/> # Verify sizes are correct
+C:/> 
+C:/> CD TESTDIR
+C:/TESTDIR> 
+C:/TESTDIR> LD
+Directory Listing:
+  3000 ORIG.DAT
+C:/TESTDIR> 
+C:/TESTDIR> CD /SRCDIR
+C:/SRCDIR> 
+C:/SRCDIR> LD
+Directory Listing:
+  3000 BIG.DAT
+C:/SRCDIR> 
+C:/SRCDIR> # Step 8: Clean up
+C:/SRCDIR> 
+C:/SRCDIR> CD /
+C:/> 
+C:/> RF TESTDIR/ORIG.DAT
+C:/> 
+C:/> RD TESTDIR
+C:/> 
+C:/> RF SRCDIR/BIG.DAT
+C:/> 
+C:/> RD SRCDIR
+C:/> 
+C:/> DIR
+Directory Listing:
+    15 SCOTT.TXT
+ 21303 ODYSSEY.TXT
+    55 HELLOWORLD.APP
+  1339 RANDDATA.APP
+  2050 MULTIFILE.APP
+  1238 SIZETEST.APP
+  1108 MORE.APP
+  1579 WC.APP
+  1830 TAIL.APP
+  1158 HEAD.APP
+  1318 APPEND.APP
+     4 ONE.TXT
+ 21303 ODYSSEYF.TXT
+     6 THREE.TXT
+ <DIR> MYDIR
+     4 SIX.TXT
+     6 SEVEN.TXT
+     6 EIGHT.TXT
+     7 TWELVE.TXT
+C:/> 
+C:/> FREE
+Free Blocks:  948736 bytes (1853 blocks)
+Free Memory:  47087 bytes
+C:/> 
+C:/> HALT
+CPU halted

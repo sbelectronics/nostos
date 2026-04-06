@@ -1,0 +1,64 @@
+C:
+# ============================================================
+# Zealasm Tab/Space Separator Test
+# Tests that the assembler handles both spaces and tabs between
+# mnemonic and operands.
+# Test A: program using spaces (control)
+# Test B: program using tabs
+# Expected output: both print "OK"
+# ============================================================
+# --- Build TABSPC_A.ASM (spaces) using ED ---
+A:ED
+i
+	org 0
+	jp main
+cono equ 0x82
+cwstr equ 16
+sysexit equ 0
+kernel equ 0x0010
+main:
+	ld de, msg
+	ld b, cono
+	ld c, cwstr
+	call kernel
+	ld c, sysexit
+	call kernel
+msg:
+	defm "SPACE OK"
+	defb 0x0D
+	defb 0x0A
+	defb 0
+.
+w TABSPC_A.ASM
+Q
+# --- Build TABSPC_B.ASM (tabs) using ED ---
+# Note: lines below use TAB characters between mnemonic and operands
+A:ED
+i
+	org	0
+	jp	main
+cono	equ	0x82
+cwstr	equ	16
+sysexit	equ	0
+kernel	equ	0x0010
+main:
+	ld	de, msg
+	ld	b, cono
+	ld	c, cwstr
+	call	kernel
+	ld	c, sysexit
+	call	kernel
+msg:
+	defm	"TAB OK"
+	defb	0x0D
+	defb	0x0A
+	defb	0
+.
+w TABSPC_B.ASM
+Q
+# --- Assemble and run both ---
+ZEALASM.APP TABSPC_A.ASM TABSPC_A.APP
+TABSPC_A.APP
+ZEALASM.APP TABSPC_B.ASM TABSPC_B.APP
+TABSPC_B.APP
+HALT
