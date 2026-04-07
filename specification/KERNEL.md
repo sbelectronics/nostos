@@ -75,7 +75,7 @@ The RST vectors (including the syscall entry point at 0x0010) reside in ROM at a
         │  Kernel workspace       │  0xF800–0xFF7F
 0xF800  ├─────────────────────────┤  WORKSPACE_BASE
         │  Stack (grows down)     │  KERNEL_STACK = 0xF7F0
-0xF7F0  ├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤
+0xF7F0  ├  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  ┤
 0xF7EF  │  DYNAMIC_MEMTOP         │  (initialized to KERNEL_STACK − 1)
         │                         │
 0xF000  │  EXEC_RAM_START         │  Executive scratch space (used only
@@ -88,7 +88,7 @@ MEMBOT  │  DYNAMIC_MEMBOT         │  (grows upward as extensions load)
         │  ...                    │
         │  Extension 1            │
 0x4000  ├─────────────────────────┤  USER_PROGRAM_BASE (16K ROM)
-        │  Kernel + Executive ROM  │  0x0040–0x3FFF
+        │  Kernel + Executive ROM │  0x0040–0x3FFF
         │  (single 16 KB image)   │
 0x0040  ├─────────────────────────┤
         │  RST Vectors            │  0x0000–0x003F
