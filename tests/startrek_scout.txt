@@ -1,0 +1,9 @@
+C:
+STARTREK
+S
+N
+1
+8
+S
+Q
+HALT

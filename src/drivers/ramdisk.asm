@@ -306,14 +306,14 @@ rd_bread:
     LD   L, 0                   ; HL = WIN2 source
 
     ; Map page into WIN2, copy to DISK_BUFFER, restore WIN2
-    DI
+    SAFE_DI
     LD   A, (rd_temp_page)
     OUT  (MAPPER_WIN2_PORT), A
     LD   DE, DISK_BUFFER
     CALL rd_copy_512            ; WIN2 (HL) -> DISK_BUFFER (DE)
     LD   A, MAPPER_WIN2_RAM
     OUT  (MAPPER_WIN2_PORT), A
-    EI
+    SAFE_EI
 
     CALL rd_inc_curblock
 
@@ -391,13 +391,13 @@ rd_bwrite_do:
     LD   HL, DISK_BUFFER        ; HL = source (always DISK_BUFFER)
 
     ; Map page into WIN2, copy DISK_BUFFER to WIN2, restore
-    DI
+    SAFE_DI
     LD   A, (rd_temp_page)
     OUT  (MAPPER_WIN2_PORT), A
     CALL rd_copy_512            ; DISK_BUFFER (HL) -> WIN2 (DE)
     LD   A, MAPPER_WIN2_RAM
     OUT  (MAPPER_WIN2_PORT), A
-    EI
+    SAFE_EI
 
     CALL rd_inc_curblock
 

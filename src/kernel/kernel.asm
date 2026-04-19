@@ -26,6 +26,8 @@
 ; executive.
 ; ============================================================
 kernel_init:
+    DI                          ; ensure interrupts are off from the very start;
+                                ; on interrupt-driven builds platform_init will EI
     IFNDEF ROM_32K
     ; Window 0 stays ROM (we're executing from it right now).
     ; Switch windows 1-3 to RAM before touching the stack or workspace.
@@ -49,6 +51,8 @@ kernel_init:
     CALL devices_init           ; initialise ROM device drivers
     CALL logdev_table_init      ; assign logical devices from ROM table
     CALL automount_init         ; mount filesystems from ROM automount table
+    CALL platform_init          ; bootstrap-supplied final platform setup
+                                ; (e.g. enable interrupts on INT-driven UARTs)
 
     JP   exec_main              ; start the executive (never returns here)
 
@@ -106,6 +110,22 @@ workspace_init:
     LD   (HL), 0x00
     INC  HL
     LD   (HL), 0xC9
+
+    ; Initialize RAM-overridable RST vectors (RST 3..7).  Each is
+    ; written as "JP unexpected_rst".  The bootstrap's platform_init
+    ; (or any other code with interrupts disabled) may overwrite the
+    ; 16-bit target field to install a custom handler.
+    LD   HL, RST_RAM_VECTORS
+    LD   B, 5
+workspace_init_rst_loop:
+    LD   (HL), 0xC3                         ; JP opcode
+    INC  HL
+    LD   (HL), unexpected_rst & 0xFF
+    INC  HL
+    LD   (HL), unexpected_rst >> 8
+    INC  HL
+    DEC  B
+    JP   NZ, workspace_init_rst_loop
 
     RET
 
@@ -313,11 +333,67 @@ msg_unexpected_rst:
     INCLUDE "src/debug/printhex.asm"
 
 ; ============================================================
-; Board-specific bootstrap: PDT entries, device tables, automount
-; Pass -DUART_SIO, -DUART_SIO_SB, -DUART_Z180, or -DUART_SCC to select UART.
-; Pass -DBLKDEV_FDC to select ACIA+FDC (floppy) instead of ACIA+CF.
-; Default (no flag) is ACIA (MC6850) with CompactFlash.
+; Board-specific bootstrap: PDT entries, device tables, automount.
+;
+; The build picks one variant flag (which selects the bootstrap file)
+; and may pass capability flags that adjust the platform layout:
+;
+; Variant flags (pick one):
+;   -DUART_ACIA             6850 ACIA, polled
+;   -DUART_SIO              Z80 SIO/2, polled
+;   -DUART_SIO_INT_CF       Z80 SIO/2, interrupt-driven, CF
+;   -DUART_SIO_INT_FDC      Z80 SIO/2, interrupt-driven, FDC
+;   -DUART_ACIA_INT_CF      6850 ACIA, interrupt-driven, CF
+;   -DUART_ACIA_INT_FDC     6850 ACIA, interrupt-driven, FDC
+;   -DUART_SCC              Z85C30 SCC, polled
+;   -DUART_SCC_INT_FDC      Z85C30 SCC, interrupt-driven, FDC
+;   -DUART_SCC_INT_BUB      Z85C30 SCC, interrupt-driven, Bubble (32K ROM)
+;   -DUART_Z180             Z180 ASCI, polled
+;   -DUART_Z180_INT_FDC     Z180 ASCI, interrupt-driven (IM 2), FDC
+;   -DUART_16550_FDC_ZETA2  16550 UART, polled, FDC (Zeta2 board)
+;
+; Block device flags (combine with variant above):
+;   -DBLKDEV_FDC     Use WD37C65 FDC instead of CompactFlash
+;                    (only valid with -DUART_ACIA)
+;
+; Capability flags (orthogonal; combine with the variant above):
+;   -DWITH_RINGBUF   Required for any interrupt-driven UART variant.
+;                    Allocates the ring buffer RAM region below
+;                    WORKSPACE_BASE and the Z180 vector table that
+;                    z180_int needs; shifts KERNEL_STACK down.
+;   -DWITH_INTERRUPTS  Required for any interrupt-driven UART variant.
+;                    Enables SAFE_DI/SAFE_EI macros in drivers (fdc,
+;                    ramdisk, bubble); polled builds leave interrupts
+;                    permanently disabled after the DI in kernel_init.
+;   -DSIO_USE_SB     Use Scott's-board SIO port wiring instead of
+;                    the RC2014 standard wiring.  Affects both polled
+;                    sio.asm and interrupt-driven sio_int.asm.
 ; ============================================================
+    ; Interrupt-driven variants are checked first so they win over
+    ; the polled fallback if a build sets both (e.g. UART_SCC plus
+    ; UART_SCC_INT_BUB).  Order within the interrupt-driven group
+    ; doesn't matter; the mutex warning above covers that case.
+    IFDEF UART_SIO_INT_FDC
+    INCLUDE "src/bootstrap/512k-sio-int-fdc.asm"
+    ELSE
+    IFDEF UART_SIO_INT_CF
+    INCLUDE "src/bootstrap/512k-sio-int-cf.asm"
+    ELSE
+    IFDEF UART_ACIA_INT_FDC
+    INCLUDE "src/bootstrap/512k-acia-int-fdc.asm"
+    ELSE
+    IFDEF UART_ACIA_INT_CF
+    INCLUDE "src/bootstrap/512k-acia-int-cf.asm"
+    ELSE
+    IFDEF UART_SCC_INT_FDC
+    INCLUDE "src/bootstrap/512k-scc-int-fdc.asm"
+    ELSE
+    IFDEF UART_SCC_INT_BUB
+    INCLUDE "src/bootstrap/32k-scc-int-bub.asm"
+    ELSE
+    IFDEF UART_Z180_INT_FDC
+    INCLUDE "src/bootstrap/512k-z180-int-fdc.asm"
+    ELSE
     IFDEF UART_Z180
     INCLUDE "src/bootstrap/512k-z180.asm"
     ELSE
@@ -331,9 +407,10 @@ msg_unexpected_rst:
     IFDEF UART_SIO
     INCLUDE "src/bootstrap/512k-sio.asm"
     ELSE
-    IFDEF UART_SIO_SB
-    INCLUDE "src/bootstrap/512k-sio-sb.asm"
+    IFDEF UART_16550_FDC_ZETA2
+    INCLUDE "src/bootstrap/512k-16550-fdc-zeta2.asm"
     ELSE
+    IFDEF UART_ACIA
     IFDEF BLKDEV_FDC
     INCLUDE "src/bootstrap/512k-acia-fdc.asm"
     ELSE
@@ -341,6 +418,16 @@ msg_unexpected_rst:
     INCLUDE "src/bootstrap/32k-acia.asm"
     ELSE
     INCLUDE "src/bootstrap/512k-acia.asm"
+    ENDIF
+    ENDIF
+    ELSE
+    ERROR "No UART variant defined. Specify one of: -DUART_ACIA, -DUART_SIO, -DUART_SIO_INT_CF, -DUART_SIO_INT_FDC, -DUART_ACIA_INT_CF, -DUART_ACIA_INT_FDC, -DUART_SCC, -DUART_SCC_INT_FDC, -DUART_SCC_INT_BUB, -DUART_Z180, -DUART_Z180_INT_FDC, -DUART_16550_FDC_ZETA2"
+    ENDIF
+    ENDIF
+    ENDIF
+    ENDIF
+    ENDIF
+    ENDIF
     ENDIF
     ENDIF
     ENDIF

@@ -127,21 +127,32 @@ Each combines a kernel image with a starter disk.
 
 | File | Serial | Block device |
 |------|--------|--------------|
-| `nostos-prod-acia-512k.rom` | 6850 ACIA | CompactFlash |
-| `nostos-prod-sio-512k.rom` | Z80 SIO/2 | CompactFlash |
-| `nostos-prod-sio-sb-512k.rom` | Z80 SIO/2 (SCC) | CompactFlash |
-| `nostos-prod-z180-512k.rom` | Z180 ASCI | CompactFlash |
-| `nostos-prod-scc-512k.rom` | Z85C30 SCC | CompactFlash |
-| `nostos-prod-acia-fdc-512k.rom` | 6850 ACIA | WD37C65 floppy |
+| `nostos-prod-acia-cf-512k.rom` | 6850 ACIA (polled) | CompactFlash |
+| `nostos-prod-acia-fdc-512k.rom` | 6850 ACIA (polled) | WD37C65 floppy |
+| `nostos-prod-acia-int-cf-512k.rom` | 6850 ACIA (interrupt-driven) | CompactFlash |
+| `nostos-prod-acia-int-fdc-512k.rom` | 6850 ACIA (interrupt-driven) | WD37C65 floppy |
+| `nostos-prod-scc-cf-512k.rom` | Z85C30 SCC (polled) | CompactFlash |
+| `nostos-prod-scc-int-fdc-512k.rom` | Z85C30 SCC (interrupt-driven) | WD37C65 floppy |
+| `nostos-prod-16550-fdc-zeta2-512k.rom` | 16550 UART (polled, Zeta2 board) | WD37C65 floppy |
+| `nostos-prod-sio-cf-512k.rom` | Z80 SIO/2 (polled) | CompactFlash |
+| `nostos-prod-sio-cf-sb-512k.rom` | Z80 SIO/2 (polled, Scott's-board ports) | CompactFlash |
+| `nostos-prod-sio-int-cf-512k.rom` | Z80 SIO/2 (interrupt-driven) | CompactFlash |
+| `nostos-prod-sio-int-cf-sb-512k.rom` | Z80 SIO/2 (interrupt-driven, Scott's-board ports) | CompactFlash |
+| `nostos-prod-sio-int-fdc-512k.rom` | Z80 SIO/2 (interrupt-driven) | WD37C65 floppy |
+| `nostos-prod-sio-int-fdc-sb-512k.rom` | Z80 SIO/2 (interrupt-driven, Scott's-board ports) | WD37C65 floppy |
+| `nostos-prod-z180-cf-512k.rom` | Z180 ASCI (polled) | CompactFlash |
+| `nostos-prod-z180-int-fdc-512k.rom` | Z180 ASCI (interrupt-driven, IM 2) | WD37C65 floppy |
 
 #### 32KB non-banked production images (32K RAM + 32K EPROM)
 
 | File | Serial | Block device |
 |------|--------|--------------|
-| `nostos-prod-acia-32k.rom` | 6850 ACIA | Bubble memory |
-| `nostos-prod-acia-32k-bothbank.rom` | 6850 ACIA | Bubble memory (image duplicated for W27C512) |
-| `nostos-prod-scc-bub-32k.rom` | Z85C30 SCC | Bubble memory |
-| `nostos-prod-scc-bub-32k-bothbank.rom` | Z85C30 SCC | Bubble memory (image duplicated for W27C512) |
+| `nostos-prod-acia-32k.rom` | 6850 ACIA (polled) | ROM disk (no external storage) |
+| `nostos-prod-acia-32k-bothbank.rom` | 6850 ACIA (polled) | ROM disk (no external storage; image duplicated for W27C512) |
+| `nostos-prod-scc-bub-32k.rom` | Z85C30 SCC (polled) | Bubble memory |
+| `nostos-prod-scc-bub-32k-bothbank.rom` | Z85C30 SCC (polled) | Bubble memory (image duplicated for W27C512) |
+| `nostos-prod-scc-int-bub-32k.rom` | Z85C30 SCC (interrupt-driven) | Bubble memory |
+| `nostos-prod-scc-int-bub-32k-bothbank.rom` | Z85C30 SCC (interrupt-driven) | Bubble memory (image duplicated for W27C512) |
 
 #### 512KB testing images (16KB kernel + test disk)
 
@@ -150,7 +161,7 @@ production images.
 
 | File | Serial | Block device |
 |------|--------|--------------|
-| `nostos-testing-acia-512k.rom` | 6850 ACIA | CompactFlash |
+| `nostos-testing-acia-cf-512k.rom` | 6850 ACIA | CompactFlash |
 | `nostos-testing-acia-fdc-512k.rom` | 6850 ACIA | WD37C65 floppy |
 
 ## I/O Port Map
@@ -170,6 +181,7 @@ addressing where applicable.
 | 0x50 | WD37C65 MSR | Floppy Main Status Register (read) |
 | 0x51 | WD37C65 Data | Floppy Data Register (read/write) |
 | 0x58 | WD37C65 DOR | Floppy Digital Output Register (write) |
+| 0x68–0x6F | 16550 UART | Base port (Zeta2 board); RBR/THR (0x68), IER (0x69), FCR/IIR (0x6A), LCR (0x6B), MCR (0x6C), LSR (0x6D) |
 | 0x78 | Memory mapper window 0 | Set page for 0x0000–0x3FFF |
 | 0x79 | Memory mapper window 1 | Set page for 0x4000–0x7FFF |
 | 0x7A | Memory mapper window 2 | Set page for 0x8000–0xBFFF |

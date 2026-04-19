@@ -70,6 +70,7 @@ testing-native.img: $(FSTOOL)
 	$(FSTOOL) -H testing-native.img format 2000
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/maze.app MAZE.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/debug.app DEBUG.APP
+	$(FSTOOL) -H testing-native.img add ../apps/native/build/helloworld.app HELLO.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/xsend.app XSEND.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/xrecv.app XRECV.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/startrek.app STARTREK.APP
@@ -78,6 +79,7 @@ testing-native.img: $(FSTOOL)
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/pacman.app PACMAN.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/tetris.app TETRIS.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/eliza.app ELIZA.APP
+	$(FSTOOL) -H testing-native.img add ../apps/testing/build/dbgtest.app DBGTEST.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/more.app MORE.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/wc.app WC.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/tail.app TAIL.APP

@@ -1,0 +1,24 @@
+A:/> C:
+C:/> debug.app
+NostOS Debug
+Type ? for help
+-R
+AF=0000 BC=0000 DE=0000 HL=0000 SP=F7F0 PC=0000
+0000: C3 40 00      JP 0040
+-B
+No breakpoints set
+-L NONEXISTENT.APP
+Cannot open file
+-B 4100
+-B 4200
+-B
+4100
+4200
+-BC 4100
+-B
+4200
+-BC *
+-B
+No breakpoints set
+-Q
+C:/> HALTCPU halted

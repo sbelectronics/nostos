@@ -453,7 +453,7 @@ bbl_bread:
     JP   NZ, bbl_eof_pop
 
     ; Perform the bubble read
-    DI                          ; disable interrupts (timing critical)
+    SAFE_DI                     ; disable interrupts (timing critical)
 
     CALL bbl_abort
     CALL bbl_fifo_reset
@@ -481,7 +481,7 @@ bbl_bread_wait:
 
 bbl_bread_chk:
     IN   A, (BBL_CS)            ; final status
-    EI
+    SAFE_EI
 
     ; Check status: 0x40 or 0x42 = success
     CP   BBL_SR_OPC
@@ -496,7 +496,7 @@ bbl_bread_chk:
     RET
 
 bbl_bread_err:
-    EI
+    SAFE_EI
     POP  DE
     LD   A, ERR_IO
     LD   HL, 0
@@ -532,7 +532,7 @@ bbl_bwrite:
     JP   NZ, bbl_eof_pop
 
     ; Perform the bubble write
-    DI
+    SAFE_DI
 
     CALL bbl_abort
     CALL bbl_fifo_reset
@@ -560,7 +560,7 @@ bbl_bwrite_wait:
 
 bbl_bwrite_chk:
     IN   A, (BBL_CS)            ; final status
-    EI
+    SAFE_EI
 
     CP   BBL_SR_OPC
     JP   Z, bbl_bwrite_ok
@@ -573,7 +573,7 @@ bbl_bwrite_chk:
     RET
 
 bbl_bwrite_err:
-    EI
+    SAFE_EI
     POP  DE
     LD   A, ERR_IO
     LD   HL, 0

@@ -7,7 +7,7 @@ MKRELOC = python3 ../../tools/mkreloc.py
 
 ASM_FLAGS = -b -reloc-info -m -l
 
-APPS = randdata multifile sizetest ttstest
+APPS = randdata multifile sizetest ttstest dbgtest
 APP_BINS = $(foreach app,$(APPS),build/$(app).app)
 
 .PHONY: all clean

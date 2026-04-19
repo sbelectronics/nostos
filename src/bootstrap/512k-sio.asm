@@ -99,3 +99,11 @@ automount_table:
     DEFB 0                      ; autosel: not the default device
 
     DEFB 0                      ; end sentinel
+
+; ============================================================
+; platform_init: bootstrap-supplied final init step.
+; Called once by kernel_init after all device inits complete.
+; This board has no interrupt-driven peripherals, so nothing to do.
+; ============================================================
+platform_init:
+    RET

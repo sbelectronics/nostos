@@ -1,0 +1,14 @@
+C:
+debug.app
+L HELLO.APP 8000
+R
+U 8002
+B 8012
+G
+R
+T
+T
+R
+BC *
+Q
+HALT

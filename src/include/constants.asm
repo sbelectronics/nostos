@@ -4,6 +4,27 @@
 ; ============================================================
 
 ; ============================================================
+; Interrupt control macros
+;
+; SAFE_DI / SAFE_EI expand to DI / EI only when WITH_INTERRUPTS
+; is defined.  Polled-only builds leave them empty — interrupts
+; stay permanently disabled (enforced by a bare DI in kernel_init).
+; ============================================================
+        IFDEF WITH_INTERRUPTS
+SAFE_DI macro
+    DI
+endm
+SAFE_EI macro
+    EI
+endm
+        ELSE
+SAFE_DI macro
+endm
+SAFE_EI macro
+endm
+        ENDIF
+
+; ============================================================
 ; Memory Layout
 ; ============================================================
 
@@ -23,7 +44,21 @@ USER_PROGRAM_BASE   EQU 0x4000  ; user programs loaded and run from here
 
         ENDIF
 
-UNUSED_BASE         EQU WORKSPACE_BASE + 0x0000  ; unused space, previous RAM intvec table (64 bytes)
+; RAM-overridable RST vectors (RST 3..7).  Each is a 3-byte JP thunk
+; that workspace_init initialises to "JP unexpected_rst".  The
+; bootstrap's platform_init (or any other code with interrupts
+; disabled) may overwrite the 16-bit target field to install a
+; custom handler.  For example, the SIO-INT bootstraps' platform_init
+; patches RST7_RAM_VEC to point at sio_int_isr before enabling IM 1.
+; RST 0..2 are kernel-reserved (cold reset, exec entry, syscall)
+; and remain ROM-fixed.
+RST_RAM_VECTORS     EQU WORKSPACE_BASE + 0x0000  ; 15 bytes (RST 3..7 thunks)
+RST3_RAM_VEC        EQU RST_RAM_VECTORS + 0x00   ; RST 3 thunk (3 bytes)
+RST4_RAM_VEC        EQU RST_RAM_VECTORS + 0x03   ; RST 4 thunk (3 bytes)
+RST5_RAM_VEC        EQU RST_RAM_VECTORS + 0x06   ; RST 5 thunk (3 bytes)
+RST6_RAM_VEC        EQU RST_RAM_VECTORS + 0x09   ; RST 6 thunk (3 bytes)
+RST7_RAM_VEC        EQU RST_RAM_VECTORS + 0x0C   ; RST 7 thunk (3 bytes; IM 1 vector)
+UNUSED_BASE         EQU WORKSPACE_BASE + 0x000F  ; unused space (49 bytes, 0xF80F-0xF83F)
 LOGDEV_TABLE        EQU WORKSPACE_BASE + 0x0040  ; logical device table (128 bytes, 16 x 8)
 PHYSDEV_TABLE       EQU WORKSPACE_BASE + 0x00C0  ; RAM physical device table (512 bytes, 16 x 32)
 INPUT_BUFFER        EQU WORKSPACE_BASE + 0x02C0  ; command line input buffer (256 bytes)
@@ -58,7 +93,66 @@ MOUNT_SLOT_PTR      EQU KERN_TEMP_SPACE + 88 ; 2 bytes: PDT slot pointer
 
 EXEC_RAM_START      EQU 0xF000  ; start of RAM usable for executive commands. Overwritten when user program loads.
 
+; ============================================================
+; Generic ring buffer RAM (when WITH_RINGBUF defined)
+;
+; Allocated below WORKSPACE_BASE for any interrupt-driven UART
+; driver (sio_int / acia_int / scc_int / z180_int).  At most one
+; such driver per build; the two-channel layout fits the dual-
+; channel chips, and single-channel drivers like acia_int just
+; use channel A and ignore channel B.
+;
+; The Z180 internal interrupt vector table is also allocated here
+; (32 bytes, 32-byte aligned).  z180_int is its only consumer and
+; always requires WITH_RINGBUF, so we don't bother giving it a
+; separate capability flag — the 32 bytes are dead RAM in builds
+; that don't use Z180 vectored interrupts, which is fine.
+;
+; KERNEL_STACK shifts down to sit just below this region.
+;
+; --- Sizing constraint ---
+; RINGBUF_SIZE must be a power of 2, <= 128.  The 128 cap comes
+; from the bookkeeping: head/tail/count are single bytes, and the
+; "buffer full" check is CP RINGBUF_SIZE — an 8-bit immediate.
+; At size 256 the immediate would wrap to 0 and the check would
+; never trip.  WORKSPACE_BASE is 2KB-aligned so any pow2 <= 128
+; gives naturally-aligned data buffers, letting the ISR wrap the
+; head/tail with a single AND on the low byte.
+; ============================================================
+        IFDEF WITH_RINGBUF
+RINGBUF_SIZE        EQU 64
+RINGBUF_MASK        EQU RINGBUF_SIZE - 1
+RINGBUF_HIGH_WATER  EQU (RINGBUF_SIZE * 3) / 4   ; 48 for size=64
+RINGBUF_LOW_WATER   EQU RINGBUF_SIZE / 8         ;  8 for size=64
+
+; Two ring data buffers, adjacent, top-aligned to WORKSPACE_BASE.
+RINGBUF_B           EQU WORKSPACE_BASE - RINGBUF_SIZE
+RINGBUF_A           EQU RINGBUF_B  - RINGBUF_SIZE
+
+; Z180 internal interrupt vector table — 32 bytes, must be 32-byte
+; aligned.  The IL register only stores the high 3 bits of the
+; table's low byte (bits 4:0 are forced by hardware during the
+; interrupt acknowledge cycle), so a misaligned base would silently
+; lose the low bits and dispatch to the wrong address.  The
+; `& 0xFFE0` rounds down to a 32-byte boundary, keeping this
+; expression correct for any legal RINGBUF_SIZE; at the default
+; size 64 the mask is a no-op since RINGBUF_A already lands on a
+; 32-byte boundary.
+Z180_INTVEC_TABLE   EQU (RINGBUF_A - 32) & 0xFFE0
+
+; Bookkeeping (6 bytes), packed below the Z180 vector table.
+RINGBUF_BOOK        EQU Z180_INTVEC_TABLE - 6
+RINGBUF_HEAD_A      EQU RINGBUF_BOOK + 0
+RINGBUF_TAIL_A      EQU RINGBUF_BOOK + 1
+RINGBUF_COUNT_A     EQU RINGBUF_BOOK + 2
+RINGBUF_HEAD_B      EQU RINGBUF_BOOK + 3
+RINGBUF_TAIL_B      EQU RINGBUF_BOOK + 4
+RINGBUF_COUNT_B     EQU RINGBUF_BOOK + 5
+
+KERNEL_STACK        EQU RINGBUF_BOOK  ; stack tops out just below ring buffer RAM
+        ELSE
 KERNEL_STACK        EQU 0xF7F0  ; kernel/executive stack top (grows down, below workspace)
+        ENDIF
 KERNEL_BASE         EQU 0x0000  ; kernel start address (ROM, window 0)
 
 ; ============================================================
@@ -77,24 +171,77 @@ ACIA_RESET          EQU 0x03    ; master reset (CR1:CR0 = 11)
 ACIA_INIT           EQU 0x16    ; /64 clock, 8N1, RTS low, no interrupts
                                 ; 0x16 = 0001 0110
 
+; Interrupt-driven ACIA control register values (acia_int driver).
+; Bit 7 (RIE)   = 1   Rx interrupt enabled
+; Bits 6:5 (TC) = 00  RTS low,  Tx int disabled
+;               = 10  RTS high, Tx int disabled (RTS throttle)
+; Bits 4:2      = 101 8 data bits, no parity, 1 stop bit
+; Bits 1:0      = 10  /64 clock divisor
+ACIA_INIT_INT_RTS_LOW   EQU 0x96    ; 1001 0110: Rx int + RTS low
+ACIA_INIT_INT_RTS_HIGH  EQU 0xD6    ; 1101 0110: Rx int + RTS high (throttle)
+
+; ACIA status register
+ACIA_IRQ            EQU 0x80    ; bit 7: interrupt request (any source)
+
 ; Status register bit masks
 ACIA_RDRF           EQU 0x01    ; receive data register full (bit 0)
 ACIA_TDRE           EQU 0x02    ; transmit data register empty (bit 1)
+
+; ============================================================
+; 16550 UART - polled driver (Zeta2 board)
+; Base port 0x68, registers at base+0..base+7
+; ============================================================
+
+UART16550_BASE      EQU 0x68    ; base I/O port on Zeta2
+
+; Register offsets from base port
+UART16550_REG_IER   EQU 1       ; interrupt enable / DLM (DLAB=1)
+UART16550_REG_FCR   EQU 2       ; FIFO control (write-only)
+UART16550_REG_LCR   EQU 3       ; line control
+UART16550_REG_MCR   EQU 4       ; modem control
+UART16550_REG_LSR   EQU 5       ; line status
+
+; PDT user-data offsets (within PHYSDEV_OFF_DATA)
+UART16550_OFF_BASE  EQU 0       ; base I/O port stored in PDT user data (1 byte)
+
+; Baud rate divisor for 115200 @ 1.8432 MHz crystal: 1.8432e6 / (16 * 115200) = 1
+UART16550_DIV_LOW   EQU 0x01    ; DLL: low byte of divisor
+UART16550_DIV_HIGH  EQU 0x00    ; DLM: high byte of divisor
+
+; LCR values
+UART16550_LCR_DLAB  EQU 0x80    ; DLAB set (access baud rate registers)
+UART16550_LCR_8N1   EQU 0x03    ; 8 data bits, no parity, 1 stop bit, DLAB=0
+
+; FCR init value: enable FIFO, clear RX and TX FIFOs
+UART16550_FCR_INIT  EQU 0x07
+
+; MCR init value: assert DTR and RTS
+UART16550_MCR_INIT  EQU 0x03
+
+; LSR status bit masks
+UART16550_LSR_DR    EQU 0x01    ; data ready (bit 0): Rx data available
+UART16550_LSR_THRE  EQU 0x20    ; THRE (bit 5): transmitter holding register empty
 
 ; ============================================================
 ; SIO/2 (Z80 SIO) Serial I/O - dual-channel UART
 ; ============================================================
 
 SIO_BASE            EQU 0x80    ; SIO/2 register base port (RC2014 standard)
+
+; Port map: standard RC2014 wiring or Scott's-board wiring.  Selected
+; by the SIO_USE_SB build flag.  Both polled (sio.asm) and interrupt
+; (sio_int.asm) drivers consume these constants directly.
+        IFDEF SIO_USE_SB
+SIO_CTRL_A          EQU SIO_BASE + 2 ; channel A control/status (Scott's board)
+SIO_DATA_A          EQU SIO_BASE + 0 ; channel A data           (Scott's board)
+SIO_CTRL_B          EQU SIO_BASE + 3 ; channel B control/status (Scott's board)
+SIO_DATA_B          EQU SIO_BASE + 1 ; channel B data           (Scott's board)
+        ELSE
 SIO_CTRL_A          EQU SIO_BASE + 0 ; channel A control/status
 SIO_DATA_A          EQU SIO_BASE + 1 ; channel A data
 SIO_CTRL_B          EQU SIO_BASE + 2 ; channel B control/status
 SIO_DATA_B          EQU SIO_BASE + 3 ; channel B data
-
-SIO_SB_CTRL_A       EQU SIO_BASE + 2 ; channel A control/status
-SIO_SB_DATA_A       EQU SIO_BASE + 0 ; channel A data
-SIO_SB_CTRL_B       EQU SIO_BASE + 3 ; channel B control/status
-SIO_SB_DATA_B       EQU SIO_BASE + 1 ; channel B data
+        ENDIF
 
 ; SIO/2 physical device user data offsets (within PHYSDEV_OFF_DATA)
 SIO_OFF_PORT_CTRL   EQU 0       ; control/status port (1 byte)
@@ -111,14 +258,20 @@ SIO_8N1_DIV16       EQU 0x44    ; x16 clock, 1 stop bit, no parity
 SIO_8N1_DIV32       EQU 0x84    ; x32 clock, 1 stop bit, no parity
 SIO_8N1_DIV64       EQU 0xC4    ; x64 clock, 1 stop bit, no parity
 
+; WR5 values for RTS hardware handshake (sio_int driver)
+SIO_RTS_HIGH        EQU 0xE8    ; DTR + Tx 8-bit + Tx enable, RTS high (throttle)
+SIO_RTS_LOW         EQU 0xEA    ; DTR + Tx 8-bit + Tx enable, RTS low  (allow)
+
 ; ============================================================
 ; SCC (Z85C30) Serial I/O - dual-channel UART with built-in BRG
 ; ============================================================
 
-; These SCC port numbers match Scott's board, with A/B on A0
-; and control/data on A1.
-
-SCC_BASE            EQU 0x80    ; SCC register base port (RC2014 standard)
+; SCC port numbers — Scott's-board wiring.  A/B selected by A0,
+; control/data selected by A1.  No RC2014-standard SCC port map
+; is currently defined.  If a future board needs the standard
+; wiring, follow the SIO_USE_SB pattern: gate the four EQUs on a
+; new SCC_USE_SB-style flag and add the alternative values.
+SCC_BASE            EQU 0x80    ; SCC register base port
 SCC_CTRL_B          EQU SCC_BASE + 0 ; channel B control/status
 SCC_DATA_B          EQU SCC_BASE + 2 ; channel B data
 SCC_CTRL_A          EQU SCC_BASE + 1 ; channel A control/status
@@ -147,6 +300,17 @@ SCC_WR11_BRG        EQU 0x50    ; D7=0 (ext osc), D6:5=10 (Rx=BRG), D4:3=10 (Tx=
 ; WR14: BRG control (bit 1: 0=RTxC, 1=PCLK; bit 0: BRG enable)
 SCC_WR14_BRG_SRC    EQU 0x00    ; BRG source = RTxC, BRG disabled
 SCC_WR14_BRG_ENA    EQU 0x01    ; BRG source = RTxC, BRG enabled
+
+; WR9 (master interrupt control, chip-wide; written via channel A only)
+SCC_WR9_HW_RESET    EQU 0xC0    ; force hardware reset
+SCC_WR9_MIE_NV      EQU 0x09    ; MIE=1, No Vector (under IM 1, vector unused)
+
+; WR1 (per-channel interrupt enables)
+SCC_WR1_RX_INT_ALL  EQU 0x10    ; Rx int on all chars; Tx int off, ext/status off
+
+; WR5 values for RTS hardware handshake (scc_int driver)
+SCC_RTS_HIGH        EQU 0xE8    ; DTR + Tx 8-bit + Tx enable, RTS high (throttle)
+SCC_RTS_LOW         EQU 0xEA    ; DTR + Tx 8-bit + Tx enable, RTS low  (allow)
 
 ; BRG time constant presets for 7.3728 MHz RTxC, x16 clock mode
 ; TC = RTxC / (2 * 16 * baud) - 2
@@ -179,6 +343,7 @@ Z180_ASEXT0         EQU Z180_IO_BASE + 0x12 ; ASCI extension register, channel 0
 Z180_ASEXT1         EQU Z180_IO_BASE + 0x13 ; ASCI extension register, channel 1
 Z180_CMR            EQU Z180_IO_BASE + 0x1E ; clock multiplier register
 Z180_CCR            EQU Z180_IO_BASE + 0x1F ; CPU control register (clock divide)
+Z180_IL             EQU Z180_IO_BASE + 0x33 ; interrupt vector low register
 
 ; Z180 ASCI PDT user data: byte 0 = channel number (0 or 1).
 ; All register ports are computed at runtime as Z180_xxxN + channel.
@@ -187,6 +352,7 @@ Z180_CCR            EQU Z180_IO_BASE + 0x1F ; CPU control register (clock divide
 Z180_RDRF           EQU 0x80    ; bit 7: receive data register full
 Z180_TDRE           EQU 0x02    ; bit 1: transmit data register empty
 Z180_OVRN           EQU 0x40    ; bit 6: overrun error
+Z180_STAT_RIE       EQU 0x08    ; bit 3: receive interrupt enable
 
 ; CNTLA register bits
 Z180_CNTLA_RE       EQU 0x40    ; bit 6: receiver enable
@@ -195,6 +361,25 @@ Z180_CNTLA_8N1      EQU 0x64    ; 8 data bits, no parity, 1 stop, Rx+Tx enable
                                 ; bits: 0_1_1_0_0_1_0_0
                                 ; bit7=MPE off, bit6=RE, bit5=TE, bit4=RTS0 low
                                 ; bit3=EFR off, bit2=8-bit, bit1:0=no parity/1 stop
+
+; CNTLA0 with RTS0 throttled (channel 0 only — channel 1 has no
+; RTS pin on most Z180 packages).  Bit 4 = 1 deasserts RTS0; the
+; "RTS asserted" value is just Z180_CNTLA_8N1 (which has bit 4 = 0).
+Z180_CNTLA0_RTS_HIGH EQU Z180_CNTLA_8N1 | 0x10  ; 0x74
+
+; Z180 internal interrupt vector source offsets.  The hardware ORs
+; the source ID into the low byte of the vector address during
+; interrupt acknowledge; the rest of the address comes from I (top
+; byte) and IL bits 7:5.  Listed in priority order, INT1 highest:
+Z180_VEC_OFF_INT1   EQU 0x00    ; external interrupt 1
+Z180_VEC_OFF_INT2   EQU 0x02    ; external interrupt 2
+Z180_VEC_OFF_PRT0   EQU 0x04    ; programmable reload timer 0
+Z180_VEC_OFF_PRT1   EQU 0x06    ; programmable reload timer 1
+Z180_VEC_OFF_DMA0   EQU 0x08    ; DMA channel 0
+Z180_VEC_OFF_DMA1   EQU 0x0A    ; DMA channel 1
+Z180_VEC_OFF_CSIO   EQU 0x0C    ; clocked serial I/O
+Z180_VEC_OFF_ASCI0  EQU 0x0E    ; ASCI channel 0
+Z180_VEC_OFF_ASCI1  EQU 0x10    ; ASCI channel 1
 
 ; ASEXT register: ASCI extension control
 ; Default 0x60: disable CTS0 and DCD0 flow control (ch0 only).
@@ -411,7 +596,7 @@ DEVCAP_HANDLE       EQU 0x80    ; bit 7: open file/dir handle (closeable pseudo-
 PHYSDEV_ID_NUL      EQU 0x01    ; null device
 PHYSDEV_ID_ACIA     EQU 0x02    ; ACIA console
 PHYSDEV_ID_CF       EQU 0x03    ; CompactFlash block device
-PHYSDEV_ID_UNUSED4  EQU 0x04    ; reserved (unused)
+PHYSDEV_ID_16550    EQU 0x04    ; 16550 UART (polled)
 PHYSDEV_ID_ROMD     EQU 0x05    ; romdisk block device
 PHYSDEV_ID_RAMD     EQU 0x06    ; ramdisk block device
 PHYSDEV_ID_SIOA     EQU 0x07    ; SIO/2 channel A
