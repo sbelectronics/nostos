@@ -885,13 +885,26 @@ fdc_readblock:
     EX   (SP), HL               ; [3] now = user data ptr; HL = buffer ptr
     EX   DE, HL                 ; DE = buffer ptr
     LD   B, 0                   ; 256 iterations
+    ; ----- Critical section: FDC data transfer -----
+    ; The 765-compatible FDC streams data at the 500 kbps MFM media
+    ; rate — one byte every ~16 µs.  An interrupt taking longer than
+    ; that causes an underrun/overrun and the operation fails with
+    ; ERR_IO.  Any interrupt-driven UART ISR is well over 16 µs, so
+    ; we have to mask interrupts for the entire data transfer plus
+    ; the result phase that follows immediately after.  Cost is
+    ; ~8 ms of interrupt latency per sector — fine for human-rate
+    ; serial input, may drop bytes during fast paste.
+    ; On polled-only builds (WITH_INTERRUPTS not defined), SAFE_DI/SAFE_EI
+    ; are no-ops; interrupts remain permanently disabled by kernel_init.
+    SAFE_DI
     CALL fdc_read_data_256
-    JP   C, fdc_readblock_data_err ; timeout during transfer
+    JP   C, fdc_readblock_data_err
     CALL fdc_read_data_256
-    JP   C, fdc_readblock_data_err ; timeout during transfer
+    JP   C, fdc_readblock_data_err
 
-    ; Result phase (handles EOT=R termination with ST1 EN as success)
     CALL fdc_check_result       ; A = ERR_SUCCESS or ERR_IO
+    SAFE_EI
+    ; ----- End critical section -----
     OR   A
     JP   NZ, fdc_readblock_fail
 
@@ -906,8 +919,10 @@ fdc_readblock_prep_err:
     POP  DE                     ; [3] discard saved buffer ptr
     JP   fdc_readblock_err
 fdc_readblock_data_err:
-    ; FDC is in result phase — read and discard result bytes
+    ; Drain the result phase before re-enabling interrupts (see
+    ; the same comment in fdc_writeblock_data_err).
     CALL fdc_check_result
+    SAFE_EI
 fdc_readblock_fail:
     POP  HL                     ; [3] discard user data ptr
 fdc_readblock_err:
@@ -942,13 +957,17 @@ fdc_writeblock:
     EX   (SP), HL               ; [3] now = user data ptr; HL = source ptr
     EX   DE, HL                 ; DE = source ptr
     LD   B, 0                   ; 256 iterations
+    ; ----- Critical section: FDC data transfer -----
+    ; See fdc_readblock for the full rationale.
+    SAFE_DI
     CALL fdc_write_data_256
-    JP   C, fdc_writeblock_fail ; timeout during transfer
+    JP   C, fdc_writeblock_data_err
     CALL fdc_write_data_256
-    JP   C, fdc_writeblock_fail ; timeout during transfer
+    JP   C, fdc_writeblock_data_err
 
-    ; Result phase (handles EOT=R termination with ST1 EN as success)
     CALL fdc_check_result       ; A = ERR_SUCCESS or ERR_IO
+    SAFE_EI
+    ; ----- End critical section -----
     OR   A
     JP   NZ, fdc_writeblock_fail
 
@@ -962,6 +981,12 @@ fdc_writeblock:
 fdc_writeblock_prep_err:
     POP  DE                     ; [3] discard saved source ptr
     JP   fdc_writeblock_err
+fdc_writeblock_data_err:
+    ; Drain the result phase before re-enabling interrupts.  Without
+    ; this, the FDC's pending result bytes (and the IRQ that comes
+    ; with them) can destabilize the next command.
+    CALL fdc_check_result
+    SAFE_EI
 fdc_writeblock_fail:
     POP  HL                     ; [3] discard user data ptr
 fdc_writeblock_err:

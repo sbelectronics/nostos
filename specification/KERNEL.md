@@ -22,8 +22,39 @@ At power-on reset, the 74HCT670 register file mirrors the ROM page into all wind
 ## Boot Sequence
 
 1. The CPU resets to address 0x0000. The 74HCT670 mirrors ROM page 0 into all windows, so execution begins at the RST 0 vector which jumps to `kernel_init` (0x0040).
-2. `kernel_init` configures the memory mapper (window 0 = ROM, windows 1–3 = RAM), sets the stack pointer to `KERNEL_STACK` (0xF7F0), calls `workspace_init` (clears and populates the workspace), then calls `devices_init` (registers built-in devices and sets up logical device assignments).
-3. The kernel jumps to `exec_main`, handing control to the executive.
+2. `kernel_init` configures the memory mapper (window 0 = ROM, windows 1–3 = RAM) and sets the stack pointer to `KERNEL_STACK`. The default `KERNEL_STACK` is 0xF7F0, but it shifts down when `WITH_RINGBUF` is defined to make room for the ring-buffer RAM region below the workspace.
+3. `kernel_init` calls the init chain in order: `workspace_init` (zeros the workspace, installs the I/O trampolines, populates the RST RAM vectors with `JP unexpected_rst`), `devices_init` (copies ROM PDT entries to RAM and runs each driver's initialise hook), `logdev_table_init` (installs the well-known logical device names from the bootstrap), `automount_init` (mounts filesystems listed in the bootstrap automount table), and finally `platform_init` (a bootstrap-supplied hook for any final platform setup, such as installing an interrupt-driven driver's ISR into the RST 7 RAM vector and enabling CPU interrupts).
+4. The kernel jumps to `exec_main`, handing control to the executive.
+
+## Build-Time Variant Selection
+
+Each ROM build selects a UART driver and a block-device driver via `-D` flags passed to the assembler. Variants are mutually exclusive at build time — pick exactly one. The full list lives in [src/kernel/kernel.asm](../src/kernel/kernel.asm); a summary:
+
+| Family | Flags | Notes |
+|--------|-------|-------|
+| Polled ACIA | (none), `BLKDEV_FDC` | Default if no UART flag is given. `BLKDEV_FDC` swaps CompactFlash for the WD37C65 floppy controller. |
+| Polled SIO | `UART_SIO` (combine with `SIO_USE_SB` for Scott's-board ports) | Z80 SIO/2. |
+| Polled Z180 | `UART_Z180` | Z180 ASCI internal serial. |
+| Polled SCC | `UART_SCC` | Z85C30 SCC. |
+| Interrupt-driven SIO | `UART_SIO_INT_CF`, `UART_SIO_INT_FDC` (combine with `SIO_USE_SB` for Scott's-board ports) | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. |
+| Interrupt-driven ACIA | `UART_ACIA_INT_CF`, `UART_ACIA_INT_FDC` | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. |
+| Interrupt-driven SCC | `UART_SCC_INT_FDC`, `UART_SCC_INT_BUB` | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. `UART_SCC_INT_BUB` is a 32K ROM variant for Scott's Basic Bubble board (bubble memory as block device; combine with `ROM_32K`). |
+| Interrupt-driven Z180 ASCI | `UART_Z180_INT_FDC` | **IM 2** with vectored interrupts. Must be combined with `WITH_RINGBUF`. |
+
+Capability flags are orthogonal to variant selection and may be combined with the appropriate variant flag:
+
+- **`WITH_RINGBUF`** — required for any interrupt-driven UART driver. Allocates the generic ring-buffer RAM region below `WORKSPACE_BASE` (two 64-byte channel buffers, bookkeeping, and the Z180 internal interrupt vector table) and shifts `KERNEL_STACK` down to make room.
+- **`SIO_USE_SB`** — selects Scott's-board SIO port wiring instead of the RC2014 standard wiring. Affects both polled (`sio.asm`) and interrupt-driven (`sio_int.asm`) SIO drivers. Pass with any `UART_SIO*` variant.
+
+### Mutual exclusion of interrupt-driven UART drivers
+
+**At most one interrupt-driven UART driver may be selected per ROM build.** Two reasons:
+
+1. The IM 1 drivers (`sio_int`, `acia_int`, `scc_int`) install their ISR into the same `RST7_RAM_VEC` thunk and configure the CPU for IM 1. There is exactly one RST 38 entry point in the system, and only one driver can own it.
+
+2. The Z180 driver (`z180_int`) uses **IM 2** with a vectored interrupt table instead of IM 1. Combining it with any IM 1 driver creates a CPU mode conflict — whichever `platform_init` runs last wins, and the other driver's interrupts never fire.
+
+If two interrupt-driven UART variant flags are passed to the same build, the kernel's bootstrap-selection chain in [src/kernel/kernel.asm](../src/kernel/kernel.asm) silently picks the first match and ignores the rest. The build will succeed but only one of the drivers will actually be active. The polled UART drivers (`acia.asm`, `sio.asm`, `scc.asm`, `z180.asm`) may freely coexist with each other and with one interrupt-driven driver, since they don't claim any interrupt vector.
 
 ## Stack Conventions
 
@@ -39,7 +70,8 @@ The kernel maintains a 1,920-byte workspace in high RAM at `WORKSPACE_BASE` (0xF
 
 | Address | Size | Label | Contents |
 |---------|------|-------|----------|
-| 0xF800 | 64 bytes | — | Unused (previously RAM interrupt vectors) |
+| 0xF800 | 15 bytes | `RST_RAM_VECTORS` | RAM-overridable RST vectors (RST 3..7), 3-byte JP thunks |
+| 0xF80F | 49 bytes | `UNUSED_BASE` | Unused (legacy 64-byte region, now sharing with RST RAM vectors) |
 | 0xF840 | 128 bytes | `LOGDEV_TABLE` | Logical device table (16 entries × 8 bytes) |
 | 0xF8C0 | 512 bytes | `PHYSDEV_TABLE` | Physical device table (16 entries × 32 bytes) |
 | 0xFAC0 | 256 bytes | `INPUT_BUFFER` | Input buffer for reading strings from devices |

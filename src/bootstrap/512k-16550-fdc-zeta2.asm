@@ -1,11 +1,5 @@
-; 32K ROM variant for ACIA (no memory mapper, uses tinyramdisk)
-;
-; This configuration is for a minimal 32KB ROM / 32KB RAM system with
-;   * 32KB ROM
-;   * 32KB RAM
-;   * ACIA (MC6850)
-;
-; This configuration does not have compactflash, floppy, or bubble memory
+; Bootstrap for 16550 UART + WD37C65 FDC configuration (Zeta2 board).
+; Uses polled 16550 UART for serial console, FDC for disk.
 
 ; ============================================================
 ; Include Device Drivers (assembled as part of kernel image)
@@ -13,14 +7,21 @@
     INCLUDE "src/drivers/undev.asm"
     INCLUDE "src/drivers/nulldev.asm"
     INCLUDE "src/drivers/rnddev.asm"
-    INCLUDE "src/drivers/acia.asm"
-    INCLUDE "src/drivers/tinyramdisk.asm"
+    INCLUDE "src/drivers/uart16550.asm"
+    INCLUDE "src/drivers/fdc.asm"
+    INCLUDE "src/drivers/ramdisk.asm"
     INCLUDE "src/drivers/fs.asm"
 
 ; ============================================================
 ; Physical device table entries (ROM)
 ; All ROM PDT entries are declared here using driver macros.
 ; ============================================================
+
+physdev_uart16550:
+    PDTENTRY_16550 PHYSDEV_ID_16550, "U550", UART16550_BASE
+
+physdev_fdc:
+    PDTENTRY_FDC PHYSDEV_ID_FDC, "FD", 0, 18, 2, 2, 80, 0x1B, 0x00
 
 physdev_nul:
     PDTENTRY_NUL PHYSDEV_ID_NUL, "NUL"
@@ -32,19 +33,21 @@ physdev_un:
     PDTENTRY_UN PHYSDEV_ID_UN, "UN"
 
 physdev_romdisk:
-    PDTENTRY_TINYROMDISK PHYSDEV_ID_ROMD, "ROMD", 0x4000, 0x4000
+    PDTENTRY_ROMDISK PHYSDEV_ID_ROMD, "ROMD", 2, 31
 
-physdev_acia:
-    PDTENTRY_ACIA PHYSDEV_ID_ACIA, "ACIA", ACIA_CONTROL, ACIA_DATA
+physdev_ramdisk:
+    PDTENTRY_RAMDISK PHYSDEV_ID_RAMD, "RAMD", 35, 63
 
 ; Table of ROM PDT pointers for devices_init.
 ; Add a new entry here to register an additional ROM device.
 devices_rom_table:
+    DEFW physdev_uart16550
+    DEFW physdev_fdc
     DEFW physdev_nul
     DEFW physdev_rnd
     DEFW physdev_un
     DEFW physdev_romdisk
-    DEFW physdev_acia
+    DEFW physdev_ramdisk
 devices_rom_table_end:
 
 ; ROM template for the six well-known logical device entries.
@@ -57,11 +60,11 @@ logdev_init_table:
 
     DEFB LOGDEV_ID_CONI         ; ID
     DEFM "CONI", 0              ; Name: 4 chars + null = 5 bytes
-    DEFB PHYSDEV_ID_ACIA, 0     ; PhysID, pad
+    DEFB PHYSDEV_ID_16550, 0    ; PhysID, pad
 
     DEFB LOGDEV_ID_CONO         ; ID
     DEFM "CONO", 0              ; Name: 4 chars + null = 5 bytes
-    DEFB PHYSDEV_ID_ACIA, 0     ; PhysID, pad
+    DEFB PHYSDEV_ID_16550, 0    ; PhysID, pad
 
     DEFB LOGDEV_ID_SERI         ; ID
     DEFM "SERI", 0              ; Name: 4 chars + null = 5 bytes
@@ -85,6 +88,10 @@ automount_table:
     DEFB PHYSDEV_ID_ROMD        ; block device to mount
     DEFM "A", 0, 0, 0, 0        ; name for new FS device (5 bytes)
     DEFB 1                      ; autosel: set CUR_DEVICE to this device
+
+    DEFB PHYSDEV_ID_FDC         ; block device to mount
+    DEFM "C", 0, 0, 0, 0        ; name for new FS device (5 bytes)
+    DEFB 0                      ; autosel: not the default device
 
     DEFB 0                      ; end sentinel
 

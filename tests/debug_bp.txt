@@ -1,0 +1,14 @@
+C:
+debug.app
+R
+B
+L NONEXISTENT.APP
+B 4100
+B 4200
+B
+BC 4100
+B
+BC *
+B
+Q
+HALT

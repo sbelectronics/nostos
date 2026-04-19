@@ -1,0 +1,29 @@
+C:
+debug.app
+E 8000 3E 01 3C 3C 3C F7
+R PC=8000
+R SP=F700
+B 8002
+R
+T
+T
+R
+R PC=8000
+R SP=F700
+R A=00
+G
+R
+G
+R
+BC *
+R PC=8000
+R SP=F700
+R A=00
+P
+P
+P
+P
+P
+P
+Q
+HALT
