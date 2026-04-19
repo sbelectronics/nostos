@@ -11,6 +11,8 @@ the contrary, it's intentionally incompatible, being a new and unique operating 
 
 For in-depth information about NostOS, read the [specification](specification/README.md).
 
+For a list of recent changes, see the [changelog](CHANGELOG.md).
+
 ## NostOS natively supports the following hardware:
 
 * Z80, 8080, or 8085 CPU. Only Z80 is tested at the moment, but the code is written to be compliant
