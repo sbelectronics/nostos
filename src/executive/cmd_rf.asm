@@ -16,13 +16,15 @@ cmd_rf:
     CALL exec_upcase_delimit
     ; Try to open as a directory — if it succeeds, the target is a
     ; directory and RF should refuse to delete it.
-    LD   DE, (EXEC_ARGS_PTR)
+    LD   HL, (EXEC_ARGS_PTR)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENDIR
     CALL KERNELADDR
     CP   ERR_SUCCESS
     JP   Z, cmd_rf_is_dir      ; opened as dir → not a file
     ; Open-as-dir failed — resolve device and path, then DEV_FREMOVE
-    LD   DE, (EXEC_ARGS_PTR)
+    LD   HL, (EXEC_ARGS_PTR)
+    EX   DE, HL
     LD   C, SYS_PATH_PARSE
     CALL KERNELADDR             ; A = status, HL = device ID, DE = path component
     OR   A

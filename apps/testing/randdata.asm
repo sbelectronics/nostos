@@ -95,9 +95,11 @@ rd_fname_done:
 
     ; Arg 2: number of bytes (decimal)
     CALL rd_parse_dec16
-    LD   (rd_rem_bytes), DE
+    EX   DE, HL
+    LD   (rd_rem_bytes), HL
     ; Also save as file size
-    LD   (rd_filesize), DE
+    LD   (rd_filesize), HL
+    EX   DE, HL
     PUSH HL                     ; save parse position
     LD   HL, 0
     LD   (rd_filesize + 2), HL
@@ -114,7 +116,8 @@ rd_fname_done:
     LD   A, D
     OR   E
     JP   Z, rd_usage            ; seed must be non-zero
-    LD   (rd_seed), DE
+    EX   DE, HL
+    LD   (rd_seed), HL
 
     ; ---- Create the file ----
     ; Try to remove existing file first (ignore errors)
@@ -282,8 +285,9 @@ rd_write_done:
 
     ; ---- Print SYSV checksum ----
     ; Fold: checksum = (accum & 0xFFFF) + (accum >> 16)
+    LD   HL, (rd_accum + 2)
+    EX   DE, HL
     LD   HL, (rd_accum)
-    LD   DE, (rd_accum + 2)
     ADD  HL, DE
     JP   NC, rd_fold_nc
     INC  HL                     ; add carry back in

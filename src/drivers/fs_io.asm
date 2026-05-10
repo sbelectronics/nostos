@@ -227,8 +227,9 @@ fs_resolve_pba_miss:
     PUSH BC
 
     ; Compute SPAN_FIRST = PBA - remaining
+    LD   HL, (fs_temp_io_lba)   ; remaining LBA after span walk
+    EX   DE, HL
     LD   HL, (fs_temp_io_pba)
-    LD   DE, (fs_temp_io_lba)   ; remaining LBA after span walk
     LD   A, L
     SUB  E
     LD   L, A
@@ -247,15 +248,23 @@ fs_resolve_pba_miss:
     LD   (HL), B                ; SPAN_FIRST written
     INC  HL
 
-    LD   DE, (fs_temp_span_last)
+    PUSH HL
+    LD   HL, (fs_temp_span_last)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D                ; SPAN_LAST written
     INC  HL
 
     ; LBA_OFF = orig_lba - remaining
-    LD   DE, (fs_temp_orig_lba)
-    LD   BC, (fs_temp_io_lba)   ; remaining
+    PUSH HL
+    LD   HL, (fs_temp_orig_lba)
+    EX   DE, HL                 ; DE = orig_lba
+    LD   HL, (fs_temp_io_lba)   ; remaining
+    LD   B, H
+    LD   C, L                   ; BC = remaining
+    POP  HL
     LD   A, E
     SUB  C
     LD   (HL), A
@@ -378,7 +387,10 @@ fs_lba_found:
     LD   (fs_temp_span_last + 1), A
 
     ; Add Remaining LBA
-    LD   DE, (fs_temp_io_lba)
+    PUSH HL
+    LD   HL, (fs_temp_io_lba)
+    EX   DE, HL
+    POP  HL
     ADD  HL, DE                 ; HL = FirstBlock + Remaining LBA
 
     LD   (fs_temp_io_pba), HL

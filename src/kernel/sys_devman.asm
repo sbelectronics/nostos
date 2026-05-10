@@ -308,7 +308,10 @@ sys_dev_copy_loop:
     ; 4. Link new entry into PHYSDEV_LIST_HEAD
 sys_dev_copy_link:
     POP  HL                     ; Restore dest slot
-    LD   DE, (PHYSDEV_LIST_HEAD)
+    PUSH HL
+    LD   HL, (PHYSDEV_LIST_HEAD)
+    EX   DE, HL                 ; DE = old head pointer
+    POP  HL                     ; HL = dest slot
     LD   (HL), E                ; dest->next (offset 0) = old head (low)
     INC  HL
     LD   (HL), D                ; dest->next (offset 1) = old head (high)

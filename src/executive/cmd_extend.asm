@@ -49,9 +49,10 @@ cmd_extend:
     ;    the load address to extract code_length.
     LD   A, L
     LD   (cmd_extend_handle), A
-    LD   DE, (DYNAMIC_MEMBOT)
-    LD   (cmd_extend_loadaddr), DE
-    LD   B, L                   ; B = file handle
+    LD   HL, (DYNAMIC_MEMBOT)
+    LD   (cmd_extend_loadaddr), HL
+    EX   DE, HL                 ; DE = load_addr
+    LD   B, A                   ; B = file handle
     LD   C, DEV_BREAD           ; DE = load_addr (DYNAMIC_MEMBOT)
     CALL KERNELADDR
     CP   ERR_SUCCESS
@@ -88,14 +89,15 @@ cmd_extend:
     ; 6. Call SYS_EXEC: B=handle, DE=load_addr
     LD   A, (cmd_extend_handle)
     LD   B, A
-    LD   DE, (cmd_extend_loadaddr)
+    LD   HL, (cmd_extend_loadaddr)
+    EX   DE, HL
     LD   C, SYS_EXEC
     CALL KERNELADDR
 
     ; If we get here, SYS_EXEC failed (file already closed by kernel).
     ; Roll back DYNAMIC_MEMBOT.
-    LD   DE, (cmd_extend_loadaddr)
-    LD   (DYNAMIC_MEMBOT), DE
+    LD   HL, (cmd_extend_loadaddr)
+    LD   (DYNAMIC_MEMBOT), HL
     CALL exec_print_error
     RET
 

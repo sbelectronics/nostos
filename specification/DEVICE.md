@@ -147,7 +147,7 @@ The OpenFile and OpenDirectory functions return pseudo-device identifiers that c
 
 ## Well-Known Physical Device IDs
 
-Physical device IDs 0x01–0x0F are reserved for ROM-resident devices. IDs 0x10–0x7F are dynamically allocated at runtime for open file/directory handles, mounted filesystems, and extension devices.
+Physical device IDs 0x01–0x1F are reserved for ROM-resident devices (0x01–0x0F for the original RC2014 device set, 0x10–0x1F for additional board peripherals such as the piconet networking card). IDs 0x20–0x7F are dynamically allocated at runtime for open file/directory handles, mounted filesystems, and extension devices.
 
 | ID | Name | Caps | Type | Description |
 |----|------|------|------|-------------|
@@ -165,7 +165,10 @@ Physical device IDs 0x01–0x0F are reserved for ROM-resident devices. IDs 0x10�
 | 0x0D | FD | BI/BO | Block | WD37C65 floppy disk controller  |
 | 0x0E | RND | CI | Character | Random number generator |
 | 0x0F | BBL | BI/BO | Block | Intel 7220 bubble memory (32K SCC build only) |
-| 0x10+ | (varies) | (varies) | (varies) | Dynamically allocated — file/dir handles, mounted filesystems, and extension devices |
+| 0x10 | NETA | CI/CO | Character | Piconet networking board, channel A (SIO-clone) |
+| 0x11 | NETB | CI/CO | Character | Piconet networking board, channel B (SIO-clone) |
+| 0x12 | SD | — | Placeholder | SD card slot (Z180-MMU SDCARD bootstrap); no driver yet — read/write return ERR_NOT_SUPPORTED |
+| 0x20+ | (varies) | (varies) | (varies) | Dynamically allocated — file/dir handles, mounted filesystems, and extension devices |
 | 0xFF | UN | — | Sentinel | Unassigned device — marks end of physical device chain |
 
 **Caps key:** CI = char input, CO = char output, BI = block input, BO = block output, FS = filesystem, HND = handle (closeable).

@@ -115,7 +115,8 @@ sys_dev_cwrite_str_done:
 ; ------------------------------------------------------------
 ; sys_dev_cread_str
 ; Read a line from the console into a buffer (blocking).
-; Terminates on CR or LF; handles backspace (0x08) and DEL (0x7F).
+; Terminates on CR; LF is silently dropped (so CRLF senders don't
+; produce a phantom empty line); handles backspace (0x08) and DEL (0x7F).
 ; Inputs:
 ;   B  - device ID
 ;   DE - pointer to 256-byte destination buffer
@@ -142,8 +143,8 @@ sys_dev_cread_str_loop:
 
     CP   0x0D                   ; CR -> end of line
     JP   Z, sys_dev_cread_str_done
-    CP   0x0A                   ; LF -> end of line
-    JP   Z, sys_dev_cread_str_done
+    CP   0x0A                   ; LF -> ignore (so a CRLF sender doesn't double-trigger)
+    JP   Z, sys_dev_cread_str_bs_done   ; reuses LD H,D / LD L,E fix-up before re-loop
 
     CP   0x08                   ; BS
     JP   Z, sys_dev_cread_str_bs

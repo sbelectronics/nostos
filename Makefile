@@ -16,11 +16,11 @@ CF_IMAGE = images/testing.img
 FDC_IMAGE = images/floppy.img
 
 # Test lists — base image (core filesystem tests)
-TESTS_QUICK   = basic dir dirlog type type_notfound type_subdir type_odyssey type_odysseyf cd mkdir_rmdir rf cf nf helloworld cf_rom ld_rom cf_overwrite cf_to_con cf_from_con cf_con_con free format ed sum fs_multispan fs_direxpand fs_rename_del fs_filldisk fs_copydir fs_overwrite_sub fs_empty fs_errors fs_eof multifile sizetest colon_syntax path_syntax append readonly play mount assign help info longnames longpath cwd cf_cwd errors
+TESTS_QUICK   = basic dir dir_largefile dirlog type type_notfound type_subdir type_odyssey type_odysseyf cd mkdir_rmdir rf cf nf helloworld cf_rom ld_rom cf_overwrite cf_to_con cf_from_con cf_con_con free format ed sum fs_multispan fs_direxpand fs_rename_del fs_filldisk fs_copydir fs_overwrite_sub fs_empty fs_errors fs_eof multifile sizetest colon_syntax path_syntax append readonly play mount assign help info longnames longpath cwd cf_cwd errors
 TESTS_TORTURE = ed_torture ed_torture2 ed_torture3 fs_torture fs_torture2 romdisk_torture ramdisk_torture randdata_torture append_torture play_torture create_stress nest_stress more_torture wc_torture tail_torture textutil_torture
 
 # Test lists — native image (native apps)
-TESTS_QUICK_NATIVE   = debug debug_bp debug_tpu debug_step debug_load debug_guard xmodem_errors startrek chess chess_errors life pacman tetris eliza more wc tail head
+TESTS_QUICK_NATIVE   = debug debug_bp debug_tpu debug_step debug_load debug_guard xmodem_errors startrek chess chess_errors life pacman tetris eliza more wc tail head term
 TESTS_TORTURE_NATIVE = debug_torture startrek_torture startrek_torture2 startrek_lrs_nav startrek_combat startrek_destroy chess_torture chess_torture2 life_torture
 
 # Test lists — 3rdparty image (third-party apps)
@@ -68,10 +68,14 @@ ROM_SIO_INT_FDC_SB_IMAGE = $(BUILD)/nostos-sio-int-fdc-sb.bin
 ROM_ACIA_INT_IMAGE       = $(BUILD)/nostos-acia-int-cf.bin
 ROM_ACIA_INT_FDC_IMAGE   = $(BUILD)/nostos-acia-int-fdc.bin
 ROM_SCC_INT_FDC_IMAGE    = $(BUILD)/nostos-scc-int-fdc.bin
-ROM_Z180_INT_FDC_IMAGE   = $(BUILD)/nostos-z180-int-fdc.bin
-ROM_Z180_IMAGE           = $(BUILD)/nostos-z180-cf.bin
+ROM_Z180_INT_FDC_IMAGE         = $(BUILD)/nostos-z180-int-fdc.bin
+ROM_Z180_MMU_INT_CF_IMAGE      = $(BUILD)/nostos-z180-mmu-int-cf.bin
+ROM_Z180_MMU_INT_FDC_IMAGE     = $(BUILD)/nostos-z180-mmu-int-fdc.bin
+ROM_Z180_MMU_INT_SDCARD_IMAGE  = $(BUILD)/nostos-z180-mmu-int-sdcard.bin
+ROM_Z180_IMAGE                 = $(BUILD)/nostos-z180-cf.bin
 ROM_SCC_IMAGE            = $(BUILD)/nostos-scc-cf.bin
 ROM_FDC_IMAGE            = $(BUILD)/nostos-acia-fdc.bin
+ROM_PICONET_FDC_SB_IMAGE = $(BUILD)/nostos-piconet-fdc-sb.bin
 
 ROM_SCC_BUB_32K_IMAGE     = $(BUILD)/nostos-scc-bub-32k.bin
 ROM_SCC_INT_BUB_32K_IMAGE = $(BUILD)/nostos-scc-int-bub-32k.bin
@@ -90,10 +94,14 @@ PROD_SIO_INT_FDC_SB_512K_IMAGE = $(ROM_DIR)/nostos-prod-sio-int-fdc-sb-512k.rom
 PROD_ACIA_INT_512K_IMAGE       = $(ROM_DIR)/nostos-prod-acia-int-cf-512k.rom
 PROD_ACIA_INT_FDC_512K_IMAGE   = $(ROM_DIR)/nostos-prod-acia-int-fdc-512k.rom
 PROD_SCC_INT_FDC_512K_IMAGE    = $(ROM_DIR)/nostos-prod-scc-int-fdc-512k.rom
-PROD_Z180_INT_FDC_512K_IMAGE   = $(ROM_DIR)/nostos-prod-z180-int-fdc-512k.rom
-PROD_Z180_512K_IMAGE           = $(ROM_DIR)/nostos-prod-z180-cf-512k.rom
+PROD_Z180_INT_FDC_512K_IMAGE         = $(ROM_DIR)/nostos-prod-z180-int-fdc-512k.rom
+PROD_Z180_MMU_INT_CF_512K_IMAGE      = $(ROM_DIR)/nostos-prod-z180-mmu-int-cf-512k.rom
+PROD_Z180_MMU_INT_FDC_512K_IMAGE     = $(ROM_DIR)/nostos-prod-z180-mmu-int-fdc-512k.rom
+PROD_Z180_MMU_INT_SDCARD_512K_IMAGE  = $(ROM_DIR)/nostos-prod-z180-mmu-int-sdcard-512k.rom
+PROD_Z180_512K_IMAGE                 = $(ROM_DIR)/nostos-prod-z180-cf-512k.rom
 PROD_SCC_512K_IMAGE            = $(ROM_DIR)/nostos-prod-scc-cf-512k.rom
 PROD_FDC_512K_IMAGE            = $(ROM_DIR)/nostos-prod-acia-fdc-512k.rom
+PROD_PICONET_FDC_SB_512K_IMAGE = $(ROM_DIR)/nostos-prod-piconet-fdc-sb-512k.rom
 PROD_SCC_BUB_32K_IMAGE          = $(ROM_DIR)/nostos-prod-scc-bub-32k.rom
 PROD_SCC_BUB_32K_BOTHBANK_IMAGE = $(ROM_DIR)/nostos-prod-scc-bub-32k-bothbank.rom
 PROD_SCC_INT_BUB_32K_IMAGE      = $(ROM_DIR)/nostos-prod-scc-int-bub-32k.rom
@@ -105,9 +113,9 @@ ROM_16550_FDC_ZETA2_IMAGE        = $(BUILD)/nostos-16550-fdc-zeta2.bin
 PROD_16550_FDC_ZETA2_512K_IMAGE  = $(ROM_DIR)/nostos-prod-16550-fdc-zeta2-512k.rom
 
 # Aggregate lists (add new variants here)
-ALL_ROMS = $(ROM_ACIA_IMAGE) $(ROM_SIO_IMAGE) $(ROM_SIO_SB_IMAGE) $(ROM_SIO_INT_IMAGE) $(ROM_SIO_INT_SB_IMAGE) $(ROM_SIO_INT_FDC_IMAGE) $(ROM_SIO_INT_FDC_SB_IMAGE) $(ROM_ACIA_INT_IMAGE) $(ROM_ACIA_INT_FDC_IMAGE) $(ROM_SCC_INT_FDC_IMAGE) $(ROM_SCC_INT_BUB_32K_IMAGE) $(ROM_Z180_INT_FDC_IMAGE) $(ROM_Z180_IMAGE) $(ROM_SCC_IMAGE) $(ROM_FDC_IMAGE) $(ROM_SCC_BUB_32K_IMAGE) $(ROM_ACIA_32K_IMAGE) $(ROM_16550_FDC_ZETA2_IMAGE)
+ALL_ROMS = $(ROM_ACIA_IMAGE) $(ROM_SIO_IMAGE) $(ROM_SIO_SB_IMAGE) $(ROM_SIO_INT_IMAGE) $(ROM_SIO_INT_SB_IMAGE) $(ROM_SIO_INT_FDC_IMAGE) $(ROM_SIO_INT_FDC_SB_IMAGE) $(ROM_ACIA_INT_IMAGE) $(ROM_ACIA_INT_FDC_IMAGE) $(ROM_SCC_INT_FDC_IMAGE) $(ROM_SCC_INT_BUB_32K_IMAGE) $(ROM_Z180_INT_FDC_IMAGE) $(ROM_Z180_MMU_INT_CF_IMAGE) $(ROM_Z180_MMU_INT_FDC_IMAGE) $(ROM_Z180_MMU_INT_SDCARD_IMAGE) $(ROM_Z180_IMAGE) $(ROM_SCC_IMAGE) $(ROM_FDC_IMAGE) $(ROM_SCC_BUB_32K_IMAGE) $(ROM_ACIA_32K_IMAGE) $(ROM_16550_FDC_ZETA2_IMAGE) $(ROM_PICONET_FDC_SB_IMAGE)
 ALL_512K = $(ROM_ACIA_512K_IMAGE)
-ALL_PROD = $(PROD_ACIA_512K_IMAGE) $(PROD_SIO_512K_IMAGE) $(PROD_SIO_SB_512K_IMAGE) $(PROD_SIO_INT_512K_IMAGE) $(PROD_SIO_INT_SB_512K_IMAGE) $(PROD_SIO_INT_FDC_512K_IMAGE) $(PROD_SIO_INT_FDC_SB_512K_IMAGE) $(PROD_ACIA_INT_512K_IMAGE) $(PROD_ACIA_INT_FDC_512K_IMAGE) $(PROD_SCC_INT_FDC_512K_IMAGE) $(PROD_SCC_INT_BUB_32K_IMAGE) $(PROD_SCC_INT_BUB_32K_BOTHBANK_IMAGE) $(PROD_Z180_INT_FDC_512K_IMAGE) $(PROD_Z180_512K_IMAGE) $(PROD_SCC_512K_IMAGE) $(PROD_FDC_512K_IMAGE) $(PROD_SCC_BUB_32K_IMAGE) $(PROD_SCC_BUB_32K_BOTHBANK_IMAGE) $(PROD_ACIA_32K_IMAGE) $(PROD_ACIA_32K_BOTHBANK_IMAGE) $(PROD_16550_FDC_ZETA2_512K_IMAGE)
+ALL_PROD = $(PROD_ACIA_512K_IMAGE) $(PROD_SIO_512K_IMAGE) $(PROD_SIO_SB_512K_IMAGE) $(PROD_SIO_INT_512K_IMAGE) $(PROD_SIO_INT_SB_512K_IMAGE) $(PROD_SIO_INT_FDC_512K_IMAGE) $(PROD_SIO_INT_FDC_SB_512K_IMAGE) $(PROD_ACIA_INT_512K_IMAGE) $(PROD_ACIA_INT_FDC_512K_IMAGE) $(PROD_SCC_INT_FDC_512K_IMAGE) $(PROD_SCC_INT_BUB_32K_IMAGE) $(PROD_SCC_INT_BUB_32K_BOTHBANK_IMAGE) $(PROD_Z180_INT_FDC_512K_IMAGE) $(PROD_Z180_MMU_INT_CF_512K_IMAGE) $(PROD_Z180_MMU_INT_FDC_512K_IMAGE) $(PROD_Z180_MMU_INT_SDCARD_512K_IMAGE) $(PROD_Z180_512K_IMAGE) $(PROD_SCC_512K_IMAGE) $(PROD_FDC_512K_IMAGE) $(PROD_SCC_BUB_32K_IMAGE) $(PROD_SCC_BUB_32K_BOTHBANK_IMAGE) $(PROD_ACIA_32K_IMAGE) $(PROD_ACIA_32K_BOTHBANK_IMAGE) $(PROD_16550_FDC_ZETA2_512K_IMAGE) $(PROD_PICONET_FDC_SB_512K_IMAGE)
 
 # Source files
 KERNEL_SRC  = src/nostos.asm
@@ -161,8 +169,8 @@ endef
 .PHONY: all build-roms build-512k build-prod release \
         run-testing run-native run-native-throttled run-3rdparty run-extensions \
         run-fables run-fdc \
-        run-production run-production-sio run-production-sio-sb run-production-sio-int run-production-sio-int-sb run-production-sio-int-fdc run-production-sio-int-fdc-sb run-production-acia-int run-production-acia-int-fdc run-production-scc-int-fdc run-production-scc-int-bub-32k run-production-z180-int-fdc run-production-z180 run-production-scc run-production-scc-bub-32k run-production-acia-32k run-production-fdc run-production-16550-fdc-zeta2 \
-        test test-one test-quick test-torture test-fdc test-prod \
+        run-production run-production-sio run-production-sio-sb run-production-z180 run-production-scc run-production-scc-bub-32k run-production-acia-32k run-production-fdc run-production-16550-fdc-zeta2 \
+        test test-one test-quick test-torture test-fdc test-prod test-variants test-variants-nostorage \
         tools clean rebuild size FORCE \
 		test-exec-standalone
 
@@ -224,6 +232,7 @@ ROM_DEPS = $(BUILD) $(BUILD_INFO) $(KERNEL_SRC) FORCE \
            src/drivers/z180_int.asm \
            src/drivers/z180.asm \
            src/drivers/cf.asm \
+           src/drivers/sd.asm \
            src/drivers/ramdisk.asm \
            src/drivers/nulldev.asm \
            src/drivers/undev.asm \
@@ -247,7 +256,8 @@ ROM_DEPS = $(BUILD) $(BUILD_INFO) $(KERNEL_SRC) FORCE \
            src/drivers/fdc.asm \
            src/bootstrap/512k-acia-fdc.asm \
            src/drivers/uart16550.asm \
-           src/bootstrap/512k-16550-fdc-zeta2.asm
+           src/bootstrap/512k-16550-fdc-zeta2.asm \
+           src/bootstrap/512k-piconet-fdc.asm
 
 $(ROM_ACIA_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,ACIA,-DUART_ACIA)
@@ -282,6 +292,15 @@ $(ROM_SCC_INT_FDC_IMAGE): $(ROM_DEPS)
 $(ROM_Z180_INT_FDC_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,Z180-INT-FDC,-DUART_Z180_INT_FDC -DWITH_RINGBUF -DWITH_INTERRUPTS)
 
+$(ROM_Z180_MMU_INT_CF_IMAGE): $(ROM_DEPS)
+	$(call build_rom_variant,Z180-MMU-INT-CF,-DUART_Z180_MMU_INT_CF -DWITH_RINGBUF -DWITH_INTERRUPTS -DMAPPER_Z180_MMU)
+
+$(ROM_Z180_MMU_INT_FDC_IMAGE): $(ROM_DEPS)
+	$(call build_rom_variant,Z180-MMU-INT-FDC,-DUART_Z180_MMU_INT_FDC -DWITH_RINGBUF -DWITH_INTERRUPTS -DMAPPER_Z180_MMU)
+
+$(ROM_Z180_MMU_INT_SDCARD_IMAGE): $(ROM_DEPS)
+	$(call build_rom_variant,Z180-MMU-INT-SDCARD,-DUART_Z180_MMU_INT_SDCARD -DWITH_RINGBUF -DWITH_INTERRUPTS -DMAPPER_Z180_MMU -DSD_USE_CSIO)
+
 $(ROM_Z180_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,Z180,-DUART_Z180)
 
@@ -289,19 +308,22 @@ $(ROM_SCC_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,SCC,-DUART_SCC)
 
 $(ROM_SCC_BUB_32K_IMAGE): $(ROM_DEPS)
-	$(call build_rom_variant,SCC-BUB-32K,-DUART_SCC -DROM_32K)
+	$(call build_rom_variant,SCC-BUB-32K,-DUART_SCC -DROM_32K -DMAPPER_NONE)
 
 $(ROM_SCC_INT_BUB_32K_IMAGE): $(ROM_DEPS)
-	$(call build_rom_variant,SCC-INT-BUB-32K,-DUART_SCC_INT_BUB -DWITH_RINGBUF -DWITH_INTERRUPTS -DROM_32K)
+	$(call build_rom_variant,SCC-INT-BUB-32K,-DUART_SCC_INT_BUB -DWITH_RINGBUF -DWITH_INTERRUPTS -DROM_32K -DMAPPER_NONE)
 
 $(ROM_ACIA_32K_IMAGE): $(ROM_DEPS)
-	$(call build_rom_variant,ACIA-32K,-DUART_ACIA -DROM_32K)
+	$(call build_rom_variant,ACIA-32K,-DUART_ACIA -DROM_32K -DMAPPER_NONE)
 
 $(ROM_FDC_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,ACIA-FDC,-DUART_ACIA -DBLKDEV_FDC)
 
 $(ROM_16550_FDC_ZETA2_IMAGE): $(ROM_DEPS)
 	$(call build_rom_variant,16550-FDC-ZETA2,-DUART_16550_FDC_ZETA2)
+
+$(ROM_PICONET_FDC_SB_IMAGE): $(ROM_DEPS)
+	$(call build_rom_variant,PICONET-FDC-SB,-DBOARD_PICONET_FDC -DSIO_USE_SB)
 
 # ============================================================
 # 512KB testing ROM image (16KB ROM + fables disk at offset 32KB)
@@ -352,6 +374,15 @@ $(PROD_SCC_INT_FDC_512K_IMAGE): $(ROM_SCC_INT_FDC_IMAGE) $(PROD_IMG) | $(ROM_DIR
 $(PROD_Z180_INT_FDC_512K_IMAGE): $(ROM_Z180_INT_FDC_IMAGE) $(PROD_IMG) | $(ROM_DIR)
 	$(call build_512k,$(ROM_Z180_INT_FDC_IMAGE),$(PROD_IMG),prod-Z180-INT-FDC)
 
+$(PROD_Z180_MMU_INT_CF_512K_IMAGE): $(ROM_Z180_MMU_INT_CF_IMAGE) $(PROD_IMG) | $(ROM_DIR)
+	$(call build_512k,$(ROM_Z180_MMU_INT_CF_IMAGE),$(PROD_IMG),prod-Z180-MMU-INT-CF)
+
+$(PROD_Z180_MMU_INT_FDC_512K_IMAGE): $(ROM_Z180_MMU_INT_FDC_IMAGE) $(PROD_IMG) | $(ROM_DIR)
+	$(call build_512k,$(ROM_Z180_MMU_INT_FDC_IMAGE),$(PROD_IMG),prod-Z180-MMU-INT-FDC)
+
+$(PROD_Z180_MMU_INT_SDCARD_512K_IMAGE): $(ROM_Z180_MMU_INT_SDCARD_IMAGE) $(PROD_IMG) | $(ROM_DIR)
+	$(call build_512k,$(ROM_Z180_MMU_INT_SDCARD_IMAGE),$(PROD_IMG),prod-Z180-MMU-INT-SDCARD)
+
 $(PROD_Z180_512K_IMAGE): $(ROM_Z180_IMAGE) $(PROD_IMG) | $(ROM_DIR)
 	$(call build_512k,$(ROM_Z180_IMAGE),$(PROD_IMG),prod-Z180)
 
@@ -384,6 +415,9 @@ $(PROD_ACIA_32K_BOTHBANK_IMAGE): $(PROD_ACIA_32K_IMAGE) | $(ROM_DIR)
 
 $(PROD_16550_FDC_ZETA2_512K_IMAGE): $(ROM_16550_FDC_ZETA2_IMAGE) $(PROD_IMG) | $(ROM_DIR)
 	$(call build_512k,$(ROM_16550_FDC_ZETA2_IMAGE),$(PROD_IMG),prod-16550-FDC-ZETA2)
+
+$(PROD_PICONET_FDC_SB_512K_IMAGE): $(ROM_PICONET_FDC_SB_IMAGE) $(PROD_IMG) | $(ROM_DIR)
+	$(call build_512k,$(ROM_PICONET_FDC_SB_IMAGE),$(PROD_IMG),prod-PICONET-FDC-SB)
 
 # ============================================================
 # Disk image management
@@ -455,41 +489,10 @@ run-production-sio: $(PROD_SIO_512K_IMAGE)
 run-production-sio-sb: $(PROD_SIO_SB_512K_IMAGE)
 	$(call run_emulator,$(PROD_SIO_SB_512K_IMAGE),$(CF_IMAGE),sio_sb)
 
-# NOTE: current emulators do not deliver SIO interrupts; these targets
-# build and launch but the interrupt-driven Rx path will not function.
-# Real-hardware validation only.
-run-production-sio-int: $(PROD_SIO_INT_512K_IMAGE)
-	$(call run_emulator,$(PROD_SIO_INT_512K_IMAGE),$(CF_IMAGE),sio)
-
-run-production-sio-int-sb: $(PROD_SIO_INT_SB_512K_IMAGE)
-	$(call run_emulator,$(PROD_SIO_INT_SB_512K_IMAGE),$(CF_IMAGE),sio_sb)
-
-run-production-sio-int-fdc: $(PROD_SIO_INT_FDC_512K_IMAGE)
-	@test -f $(FDC_IMAGE) || $(DD) if=/dev/zero of=$(FDC_IMAGE) bs=512 count=2880 2>/dev/null
-	$(EMULATOR_GOCPUSIM) -f $(PROD_SIO_INT_FDC_512K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 --fdc-image $(FDC_IMAGE) -s sio
-
-run-production-sio-int-fdc-sb: $(PROD_SIO_INT_FDC_SB_512K_IMAGE)
-	@test -f $(FDC_IMAGE) || $(DD) if=/dev/zero of=$(FDC_IMAGE) bs=512 count=2880 2>/dev/null
-	$(EMULATOR_GOCPUSIM) -f $(PROD_SIO_INT_FDC_SB_512K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 --fdc-image $(FDC_IMAGE) -s sio_sb
-
-# NOTE: current emulators do not deliver ACIA interrupts; this target
-# builds and launches but the interrupt-driven Rx path will not function.
-# Real-hardware validation only.
-run-production-acia-int: $(PROD_ACIA_INT_512K_IMAGE)
-	$(call run_emulator,$(PROD_ACIA_INT_512K_IMAGE),$(CF_IMAGE),acia)
-
-run-production-acia-int-fdc: $(PROD_ACIA_INT_FDC_512K_IMAGE)
-	@test -f $(FDC_IMAGE) || $(DD) if=/dev/zero of=$(FDC_IMAGE) bs=512 count=2880 2>/dev/null
-	$(EMULATOR_GOCPUSIM) -f $(PROD_ACIA_INT_FDC_512K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 --fdc-image $(FDC_IMAGE) -s acia
-
-run-production-scc-int-fdc: $(PROD_SCC_INT_FDC_512K_IMAGE)
-	@test -f $(FDC_IMAGE) || $(DD) if=/dev/zero of=$(FDC_IMAGE) bs=512 count=2880 2>/dev/null
-	$(EMULATOR_GOCPUSIM) -f $(PROD_SCC_INT_FDC_512K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 --fdc-image $(FDC_IMAGE) -s scc_sb
-
-run-production-z180-int-fdc: $(PROD_Z180_INT_FDC_512K_IMAGE)
-	@test -f $(FDC_IMAGE) || $(DD) if=/dev/zero of=$(FDC_IMAGE) bs=512 count=2880 2>/dev/null
-	$(EMULATOR_GOCPUSIM) -f $(PROD_Z180_INT_FDC_512K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 --fdc-image $(FDC_IMAGE) -s asci
-
+# Interrupt-driven UART variants (sio-int, acia-int, scc-int, z180-int)
+# have no run-production targets: current emulators don't deliver
+# interrupts, so the Rx path can't be exercised.  Real-hardware only.
+# `make test-variants` covers the polled variants in the emulator.
 run-production-z180: $(PROD_Z180_512K_IMAGE)
 	$(call run_emulator,$(PROD_Z180_512K_IMAGE),$(CF_IMAGE),asci)
 
@@ -498,12 +501,6 @@ run-production-scc: $(PROD_SCC_512K_IMAGE)
 
 run-production-scc-bub-32k: $(PROD_SCC_BUB_32K_IMAGE)
 	$(EMULATOR_GOCPUSIM) -f $(PROD_SCC_BUB_32K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 -s scc_sb --fixed-32k
-
-# NOTE: current emulators do not deliver SCC interrupts; this target
-# builds and launches but the interrupt-driven Rx path will not function.
-# Real-hardware validation only.
-run-production-scc-int-bub-32k: $(PROD_SCC_INT_BUB_32K_IMAGE)
-	$(EMULATOR_GOCPUSIM) -f $(PROD_SCC_INT_BUB_32K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 -s scc_sb --fixed-32k
 
 run-production-acia-32k: $(PROD_ACIA_32K_IMAGE)
 	$(EMULATOR_GOCPUSIM) -f $(PROD_ACIA_32K_IMAGE) --cf-image $(CF_IMAGE) --cf-offset 1024 -s acia --fixed-32k
@@ -604,7 +601,7 @@ define run_fdc_tests
 	fi
 endef
 
-test: test-quick test-torture test-prod test-exec-standalone
+test: test-quick test-torture test-prod test-variants test-variants-nostorage test-exec-standalone
 
 # Run a single test: make test-one T=basic [I=tests/testdata/test_native.img]
 test-one: $(ROM_ACIA_512K_IMAGE)
@@ -628,6 +625,72 @@ test-fdc: $(ROM_FDC_512K_IMAGE)
 
 test-prod: $(PROD_ACIA_512K_IMAGE)
 	$(call run_tests,$(PROD_TESTS),$(PROD_ACIA_512K_IMAGE),prod test)
+
+# $(call run_sanity_for_variant,LABEL,ROM_IMAGE,SERIAL_TYPE)
+# Runs tests/sanity.txt against a single production variant and diffs
+# against testgood/sanity.out (shared across all variants -- the test
+# only touches ROMdisk + RAMdisk, which look identical regardless of
+# UART driver).
+define run_sanity_for_variant
+	@cp $(TEST_BASE_IMG) $(TEST_WORK_IMG)
+	@bash -o pipefail -c "timeout $(TEST_TIMEOUT) $(EMULATOR_GOCPUSIM) -f $(2) --cf-image $(TEST_WORK_IMG) --cf-offset 1024 -s $(3) -t tests/sanity.txt | head -c $(TEST_MAX_OUTPUT) > testout/sanity-$(1).out"
+	@sed 's/built on [0-9]*-[0-9]*-[0-9]*/built on DATE/' testgood/sanity.out > testout/sanity.expected
+	@sed 's/built on [0-9]*-[0-9]*-[0-9]*/built on DATE/' testout/sanity-$(1).out > testout/sanity-$(1).actual
+	@if diff -q testout/sanity.expected testout/sanity-$(1).actual >/dev/null; then \
+		echo "  $(1) passed."; \
+	else \
+		echo "  ERROR: $(1) FAILED."; \
+		diff -u testout/sanity.expected testout/sanity-$(1).actual; \
+		exit 1; \
+	fi
+endef
+
+# test-variants: regression coverage across the polled production
+# UART variants.  Skipped here (covered by test-variants-nostorage
+# instead): 32K and FDC variants, whose starter disks differ.
+# Skipped entirely: interrupt-driven variants (emulator doesn't
+# deliver interrupts), 16550 and Z180 MMU (not modelled by the
+# emulator).
+test-variants: $(PROD_ACIA_512K_IMAGE) $(PROD_SIO_512K_IMAGE) $(PROD_SIO_SB_512K_IMAGE) $(PROD_Z180_512K_IMAGE) $(PROD_SCC_512K_IMAGE)
+	@mkdir -p testout
+	@echo "Running sanity across polled production variants..."
+	$(call run_sanity_for_variant,acia,$(PROD_ACIA_512K_IMAGE),acia)
+	$(call run_sanity_for_variant,sio,$(PROD_SIO_512K_IMAGE),sio)
+	$(call run_sanity_for_variant,sio-sb,$(PROD_SIO_SB_512K_IMAGE),sio_sb)
+	$(call run_sanity_for_variant,z180,$(PROD_Z180_512K_IMAGE),asci)
+	$(call run_sanity_for_variant,scc,$(PROD_SCC_512K_IMAGE),scc_sb)
+	@echo "All variant sanity tests passed."
+
+# $(call check_variant_no_storage,LABEL,ROM_IMAGE,SERIAL_TYPE,EXTRA_FLAGS)
+# Runs tests/sanity-nostorage.txt and behaviorally asserts the boot
+# completed and the executive responded.  No diff against a testgood
+# file -- preamble (autoplay output, automount warnings) varies per
+# variant and we don't care.  All we want to know is "did the kernel
+# come up and the executive run a command?"
+define check_variant_no_storage
+	@cp $(TEST_BASE_IMG) $(TEST_WORK_IMG)
+	@bash -o pipefail -c "timeout $(TEST_TIMEOUT) $(EMULATOR_GOCPUSIM) -f $(2) --cf-image $(TEST_WORK_IMG) --cf-offset 1024 -s $(3) $(4) -t tests/sanity-nostorage.txt | head -c $(TEST_MAX_OUTPUT) > testout/sanity-nostorage-$(1).out"
+	@if grep -q '^NostOS commands:' testout/sanity-nostorage-$(1).out && grep -q 'CPU halted' testout/sanity-nostorage-$(1).out; then \
+		echo "  $(1) passed."; \
+	else \
+		echo "  ERROR: $(1) FAILED."; \
+		cat testout/sanity-nostorage-$(1).out; \
+		exit 1; \
+	fi
+endef
+
+# test-variants-nostorage: regression coverage for variants whose
+# starter disk is too small (32K) or whose default block device is
+# unformatted at boot (FDC), so the storage-touching test-variants
+# sanity script can't be reused.  Just confirms boot + serial work.
+test-variants-nostorage: $(PROD_ACIA_32K_IMAGE) $(PROD_SCC_BUB_32K_IMAGE) $(PROD_FDC_512K_IMAGE)
+	@mkdir -p testout
+	@$(DD) if=/dev/zero of=$(TEST_FDC_WORK_IMG) bs=512 count=2880 2>/dev/null
+	@echo "Running storage-free sanity across 32K and FDC variants..."
+	$(call check_variant_no_storage,acia-32k,$(PROD_ACIA_32K_IMAGE),acia,--fixed-32k)
+	$(call check_variant_no_storage,scc-bub-32k,$(PROD_SCC_BUB_32K_IMAGE),scc_sb,--fixed-32k)
+	$(call check_variant_no_storage,acia-fdc,$(PROD_FDC_512K_IMAGE),acia,--fdc-image $(TEST_FDC_WORK_IMG))
+	@echo "All variant nostorage sanity tests passed."
 
 test-exec-standalone: $(BUILD) $(BUILD_INFO)
 	$(ASM) $(ASM_FLAGS) -o=$(BUILD)/exec-standalone.bin src/exec-standalone.asm
@@ -654,7 +717,8 @@ size: $(ALL_ROMS)
 	    "$(ROM_FDC_IMAGE):$(ROM_SIZE):ACIA-FDC" \
 	    "$(ROM_SCC_BUB_32K_IMAGE):$(ROM_SIZE):SCC-BUB-32K" \
 	    "$(ROM_SCC_INT_BUB_32K_IMAGE):$(ROM_SIZE):SCC-INT-BUB-32K" \
-	    "$(ROM_ACIA_32K_IMAGE):$(ROM_SIZE):ACIA-32K"; do \
+	    "$(ROM_ACIA_32K_IMAGE):$(ROM_SIZE):ACIA-32K" \
+	    "$(ROM_PICONET_FDC_SB_IMAGE):$(ROM_SIZE):PICONET-FDC-SB"; do \
 	    binfile=$$(echo $$entry | cut -d: -f1); \
 	    limit=$$(echo $$entry  | cut -d: -f2); \
 	    tag=$$(echo $$entry    | cut -d: -f3); \

@@ -144,6 +144,9 @@ Each combines a kernel image with a starter disk.
 | `nostos-prod-sio-int-fdc-sb-512k.rom` | Z80 SIO/2 (interrupt-driven, Scott's-board ports) | WD37C65 floppy |
 | `nostos-prod-z180-cf-512k.rom` | Z180 ASCI (polled) | CompactFlash |
 | `nostos-prod-z180-int-fdc-512k.rom` | Z180 ASCI (interrupt-driven, IM 2) | WD37C65 floppy |
+| `nostos-prod-z180-mmu-int-cf-512k.rom` | Z180 ASCI (interrupt-driven, IM 2) | CompactFlash (Z180 internal MMU) |
+| `nostos-prod-z180-mmu-int-fdc-512k.rom` | Z180 ASCI (interrupt-driven, IM 2) | WD37C65 floppy (Z180 internal MMU) |
+| `nostos-prod-z180-mmu-int-sdcard-512k.rom` | Z180 ASCI (interrupt-driven, IM 2) | ROM disk only (SD slot stub; e.g. SC131) |
 
 #### 32KB non-banked production images (32K RAM + 32K EPROM)
 
@@ -184,15 +187,15 @@ addressing where applicable.
 | 0x51 | WD37C65 Data | Floppy Data Register (read/write) |
 | 0x58 | WD37C65 DOR | Floppy Digital Output Register (write) |
 | 0x68–0x6F | 16550 UART | Base port (Zeta2 board); RBR/THR (0x68), IER (0x69), FCR/IIR (0x6A), LCR (0x6B), MCR (0x6C), LSR (0x6D) |
-| 0x78 | Memory mapper window 0 | Set page for 0x0000–0x3FFF |
-| 0x79 | Memory mapper window 1 | Set page for 0x4000–0x7FFF |
-| 0x7A | Memory mapper window 2 | Set page for 0x8000–0xBFFF |
-| 0x7B | Memory mapper window 3 | Set page for 0xC000–0xFFFF |
-| 0x7C | Memory mapper enable | Write 1 to enable banking |
+| 0x78 | 74HCT670 mapper window 0 | Set page for 0x0000–0x3FFF (default mapper only) |
+| 0x79 | 74HCT670 mapper window 1 | Set page for 0x4000–0x7FFF |
+| 0x7A | 74HCT670 mapper window 2 | Set page for 0x8000–0xBFFF |
+| 0x7B | 74HCT670 mapper window 3 | Set page for 0xC000–0xFFFF |
+| 0x7C | 74HCT670 mapper enable | Write 1 to enable banking |
 | 0x80–0x81 | 6850 ACIA | Control/status (0x80), data (0x81) |
 | 0x80–0x83 | Z80 SIO/2 | Channels A/B control and data |
 | 0x80–0x83 | Z85C30 SCC | Channels A/B control and data |
-| 0xC0–0xDF | Z180 internal I/O | ASCI, timers, etc. (remapped from 0x00 via ICR) |
+| 0xC0–0xFF | Z180 internal I/O | ASCI, timers, MMU (CBR=0xF8, BBR=0xF9, CBAR=0xFA), etc. (remapped from 0x00 via ICR) |
 
 Note that ACIA, SIO/2, and SCC share the same base port (0x80) — only one
 serial chip is configured per ROM variant. Likewise, bubble memory and

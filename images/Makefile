@@ -84,6 +84,8 @@ testing-native.img: $(FSTOOL)
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/wc.app WC.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/tail.app TAIL.APP
 	$(FSTOOL) -H testing-native.img add ../apps/native/build/head.app HEAD.APP
+	$(FSTOOL) -H testing-native.img add ../apps/native/build/term.app TERM.APP
+	$(FSTOOL) -H testing-native.img add data/term.dir TERM.DIR
 	echo "test" > /tmp/fstool_xtest.txt
 	$(FSTOOL) -H testing-native.img add /tmp/fstool_xtest.txt XTEST.TXT
 	rm -f /tmp/fstool_xtest.txt
@@ -135,6 +137,8 @@ fables.img: $(FSTOOL)
 	$(FSTOOL) fables.img add ../apps/native/build/append.app APPEND.APP
 	$(FSTOOL) fables.img add ../apps/native/build/xrecv.app XRECV.APP
 	$(FSTOOL) fables.img add ../apps/native/build/xsend.app XSEND.APP
+	$(FSTOOL) fables.img add ../apps/native/build/term.app TERM.APP
+	$(FSTOOL) fables.img add data/term.dir TERM.DIR
 
 production.img: $(FSTOOL)
 	dd if=/dev/zero bs=512 count=900 of=production.img 2>/dev/null
@@ -160,6 +164,8 @@ production.img: $(FSTOOL)
 	$(FSTOOL) production.img add ../apps/native/build/debug.app DEBUG.APP
 	$(FSTOOL) production.img add ../apps/native/build/xrecv.app XRECV.APP
 	$(FSTOOL) production.img add ../apps/native/build/xsend.app XSEND.APP
+	$(FSTOOL) production.img add ../apps/native/build/term.app TERM.APP
+	$(FSTOOL) production.img add data/term.dir TERM.DIR
 	$(FSTOOL) production.img add data/production_auto.ply AUTO.PLY
 	$(FSTOOL) production.img add ../apps/extensions/build/helloext.ext helloext.ext
 	$(FSTOOL) production.img add ../apps/extensions/build/exttorture.ext exttorture.ext

@@ -1165,8 +1165,7 @@ FORFND: EX      DE,HL           ; Code string address to HL
         CALL    CHKSYN          ; Make sure "TO" is next
         DEFB    ZTO             ; "TO" token
         CALL    GETNUM          ; Get "TO" expression value
-        LD      DE,(FPREG)      ; Move "TO" value to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move "TO" value to BCDE
         PUSH    BC              ; Save "TO" value in block
         PUSH    DE
         LD      BC,8100H        ; BCDE - 1 (default STEP)
@@ -1178,8 +1177,7 @@ FORFND: EX      DE,HL           ; Code string address to HL
         JP      NZ,SAVSTP       ; No STEP given - Default to 1
         CALL    GETCHR          ; Jump over "STEP" token
         CALL    GETNUM          ; Get step value
-        LD      DE,(FPREG)      ; Move STEP to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move STEP to BCDE
         CALL    TSTSGN          ; Test sign of FPREG
 SAVSTP: PUSH    BC              ; Save the STEP value in block
         PUSH    DE
@@ -1208,7 +1206,9 @@ RUNCNT: CALL    TSTBRK          ; Execution driver - Test break
         LD      E,(HL)          ; Get LSB of line number
         INC     HL
         LD      D,(HL)          ; Get MSB of line number
-        LD      (LINEAT),DE     ; Save as current line number
+        EX      DE,HL
+        LD      (LINEAT),HL     ; Save as current line number
+        EX      DE,HL
 EXCUTE: CALL    GETCHR          ; Get key word
         LD      DE,RUNCNT       ; Where to RETurn to
         PUSH    DE              ; Save for RETurn
@@ -1524,20 +1524,14 @@ CRESTR: POP     DE              ; Restore address of string
 MVSTPT: CALL    BAKTMP          ; Back to last tmp-str entry
         POP     HL              ; Get string pointer
         EX      DE,HL           ; Move string pointer to var
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         POP     HL              ; Restore code string address
         RET
 
 LETNUM: PUSH    HL              ; Save address of variable
         LD      DE,FPREG        ; Move FPREG to variable
         EX      DE,HL
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         POP     DE              ; Restore address of variable
         POP     HL              ; Restore code string address
         RET
@@ -1764,10 +1758,7 @@ INPBIN: CALL    GETCHR          ; Get next character
         EX      (SP),HL         ; Save input ptr, Get var addr
         LD      DE,FPREG        ; Move FPREG to variable
         EX      DE,HL
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         POP     HL              ; Restore input pointer
 LTSTND: DEC     HL              ; DEC 'cos GETCHR INCs
         CALL    GETCHR          ; Get next character
@@ -1805,7 +1796,9 @@ FDTLP:  CALL    DATA            ; Get next statement
         LD      E,(HL)          ; LSB of line number
         INC     HL
         LD      D,(HL)          ; MSB of line number
-        LD      (DATLIN),DE     ; Set line of current DATA item
+        EX      DE,HL
+        LD      (DATLIN),HL     ; Set line of current DATA item
+        EX      DE,HL
 FANDT:  CALL    GETCHR          ; Get next character
         CP      ZDATA           ; "DATA" token
         JP      NZ,FDTLP        ; No "DATA" - Keep looking
@@ -1823,19 +1816,13 @@ NEXT1:  CALL    NZ,GETVAR       ; Get index address
         PUSH    AF              ; Save sign of STEP
         PUSH    DE              ; Save index address
         LD      DE,FPREG        ; Move index value to FPREG
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         EX      (SP),HL         ; Save address of TO value
         PUSH    HL              ; Save address of index
         CALL    ADDPHL          ; Add STEP to index value
         POP     DE              ; Restore address of index
         LD      HL,FPREG        ; Move FPREG to index variable
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         POP     HL              ; Restore address of TO value
         CALL    LOADFP          ; Move TO value to BCDE
         PUSH    HL              ; Save address of line of FOR
@@ -1928,10 +1915,12 @@ FOPRND: LD      A,D             ; < = > found ?
 STKTHS: PUSH    BC              ; Save last precedence & token
         LD      BC,EVAL3        ; Where to go on prec' break
         PUSH    BC              ; Save on stack for return
-        LD      BC,(FPREG)      ; LSB,NLSB of FPREG
-        PUSH    BC              ; Stack them
-        LD      BC,(FPREG+2)    ; MSB and exponent of FPREG
-        PUSH    BC              ; Stack them
+        PUSH    HL              ; save HL (code string ptr)
+        LD      HL,(FPREG)      ; HL = FPREG[0..1]
+        EX      (SP),HL         ; stack top = FPREG[0..1], HL = code string ptr
+        PUSH    HL              ; re-save HL
+        LD      HL,(FPREG+2)    ; HL = FPREG[2..3]
+        EX      (SP),HL         ; stack top = FPREG[2..3], HL = code string ptr
         LD      C,(HL)          ; Get LSB of routine address
         INC     HL
         LD      B,(HL)          ; Get MSB of routine address
@@ -2045,8 +2034,7 @@ PAND:   XOR     A               ; Flag "AND"
         POP     BC              ; <-  value
         EX      (SP),HL         ; <-  from
         EX      DE,HL           ; <-  stack
-        LD      (FPREG),DE      ; Move last value to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Move last value to FPREG
         PUSH    AF              ; Save "AND" / "OR" flag
         CALL    DEINT           ; Get integer -32768 to 32767
         POP     AF              ; Restore "AND" / "OR" flag
@@ -2289,7 +2277,10 @@ ARLDSV: PUSH    HL              ; Save code string address
         LD      HL,(VAREND)     ; Start of arrays
         DEFB    3EH             ; Skip "ADD HL,DE"
 FNDARY: ADD     HL,DE           ; Move to next array start
-        LD      DE,(ARREND)     ; End of arrays
+        PUSH    HL
+        LD      HL,(ARREND)     ; End of arrays
+        EX      DE,HL
+        POP     HL
         CALL    CPDEHL          ; End of arrays found?
         JP      Z,CREARY        ; Yes - Create array
         LD      A,(HL)          ; Get second byte of name
@@ -2491,10 +2482,7 @@ DOFN:   CALL    CHEKFN          ; Make sure FN follows
         PUSH    DE              ; Save FN code string address
         LD      DE,FNARG        ; DE = Value of argument
         LD      HL,FPREG        ; Move FPREG to argument
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         POP     HL              ; Get FN code string address
         CALL    GETNUM          ; Get value from function
         DEC     HL              ; DEC 'cos GETCHR INCs
@@ -2590,10 +2578,7 @@ TSTOPL: LD      DE,TMPSTR       ; Temporary string
         LD      A,1
         LD      (TYPE),A        ; Set type to string
         EX      DE,HL           ; Move string to pool
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         EX      DE,HL           ; Swap source destination
         CALL    CPDEHL          ; Out of string pool?
         LD      (TMSTPT),HL     ; Save new pointer
@@ -3039,8 +3024,7 @@ FPADD:  LD      A,B             ; Get FP exponent
         PUSH    HL              ; Stack them
         LD      HL,(FPREG+2)    ; MSB and exponent of FPREG
         PUSH    HL              ; Stack them
-        LD      (FPREG),DE      ; Move BCDE to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Move BCDE to FPREG
         POP     BC              ; Restore number from stack
         POP     DE
 NOSWAP: CP      24+1            ; Second number insignificant?
@@ -3128,9 +3112,7 @@ RONDB:  LD      HL,FPEXP        ; Point to exponent
         AND     10000000B       ; Only bit 7 needed
         XOR     C               ; Set correct sign
         LD      C,A             ; Save correct sign in number
-FPBCDE: LD      (FPREG),DE      ; Move BCDE to FPREG
-        LD      (FPREG+2),BC
-        RET
+FPBCDE: JP      MVBCFP          ; Move BCDE to FPREG
 
 FPROND: INC     E               ; Round LSB
         RET     NZ              ; Return if ok
@@ -3304,8 +3286,7 @@ DIV10:  LD      HL,(FPREG)      ; LSB,NLSB of FPREG
         PUSH    HL              ; Stack them
         LD      BC,8420H        ; BCDE = 10.
         LD      DE,0000H
-        LD      (FPREG),DE      ; Move 10 to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Move 10 to FPREG
 
 DIV:    POP     BC              ; Get number from stack
         POP     DE
@@ -3407,8 +3388,7 @@ OVTST3: POP     HL              ; Clear off return address
         JP      P,RESZER        ; Result zero
         JP      OVERR           ; Overflow error
 
-MLSP10: LD      DE,(FPREG)      ; Move FPREG to BCDE
-        LD      BC,(FPREG+2)
+MLSP10: CALL    MVFPBC          ; Move FPREG to BCDE
         LD      A,B             ; Get exponent
         OR      A               ; Is it zero?
         RET     Z               ; Yes - Result is zero
@@ -3464,10 +3444,7 @@ STAKFP: EX      DE,HL           ; Save code string address
         RET
 
 PHLTFP: LD      DE,FPREG        ; Number at HL to FPREG
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         RET
 
 LOADFP: LD      E,(HL+)         ; Get LSB of number, increment
@@ -3541,8 +3518,7 @@ FPINT:  LD      B,A             ; <- Move
         OR      A               ; Test exponent
         RET     Z               ; Zero - Return zero
         PUSH    HL              ; Save pointer to number
-        LD      DE,(FPREG)      ; Move FPREG to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move FPREG to BCDE
         CALL    SIGNS           ; Set MSBs & sign of result
         XOR     (HL)            ; Combine with sign of FPREG
         LD      H,A             ; Save combined signs
@@ -3737,8 +3713,7 @@ GTSIXD: CALL    DIV10           ; Divide by 10
 INRNG:  CALL    ROUND           ; Add 0.5 to FPREG
         INC     A
         CALL    FPINT           ; F.P to integer
-        LD      (FPREG),DE      ; Move BCDE to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Move BCDE to FPREG
         LD      BC,0306H        ; 1E+06 to 1E-03 range
         POP     AF              ; Restore count
         ADD     A,C             ; 6 digits before point
@@ -3767,8 +3742,7 @@ DIGTXT: DEC     B               ; Count digits before point
         PUSH    BC              ; Save digits before point
         PUSH    HL              ; Save buffer address
         EX      DE,HL           ; Save powers of ten table
-        LD      DE,(FPREG)      ; Move FPREG to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move FPREG to BCDE
         LD      B,'0'-1         ; ASCII '0' - 1
 TRYAGN: INC     B               ; Count subtractions
         LD      A,E             ; Get LSB
@@ -3787,8 +3761,7 @@ TRYAGN: INC     B               ; Count subtractions
         JP      NC,TRYAGN       ; No overflow - Try again
         CALL    PLUCDE          ; Restore number
         INC     HL              ; Start of next number
-        LD      (FPREG),DE      ; Angle to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Angle to FPREG
         EX      DE,HL           ; Save point in table
         POP     HL              ; Restore buffer address
         LD      (HL),B          ; Save digit in buffer
@@ -3852,10 +3825,7 @@ NEGAFT: LD      HL,INVSGN       ; Negate result
 SQR:    CALL    STAKFP          ; Put value on stack
         LD      HL,HALF         ; Set power to 1/2
         LD      DE,FPREG        ; Move 1/2 to FPREG
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
 
 POWER:  POP     BC              ; Get base from stack
         POP     DE
@@ -3871,8 +3841,7 @@ POWER1: OR      A               ; Base zero?
         PUSH    BC
         LD      A,C             ; Get MSB of base
         OR      01111111B       ; Get sign status
-        LD      DE,(FPREG)      ; Move power to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move power to BCDE
         JP      P,POWER2        ; Positive base - Ok
         PUSH    DE              ; Save power
         PUSH    BC
@@ -3939,18 +3908,14 @@ SUMSER: CALL    STAKFP          ; Put FPREG on stack
         LD      DE,MULT         ; Multiply by "X"
         PUSH    DE              ; To be done after
         PUSH    HL              ; Save address of table
-        LD      DE,(FPREG)      ; Move FPREG to BCDE
-        LD      BC,(FPREG+2)
+        CALL    MVFPBC          ; Move FPREG to BCDE
         CALL    FPMULT          ; Square the value
         POP     HL              ; Restore address of table
 SMSER1: CALL    STAKFP          ; Put value on stack
         LD      A,(HL)          ; Get number of coefficients
         INC     HL              ; Point to start of table
         LD      DE,FPREG        ; Move coefficient to FPREG
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         DEFB    06H             ; Skip "POP AF"
 SUMLP:  POP     AF              ; Restore count
         POP     BC              ; Restore number
@@ -3974,10 +3939,7 @@ RND:    CALL    TSTSGN          ; Test sign of FPREG
         JP      M,RESEED        ; Negative - Re-seed
         LD      HL,LSTRND       ; Last random number
         LD      DE,FPREG        ; Move last RND to FPREG
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         LD      HL,SEED+2       ; Random number seed
         RET     Z               ; Return if RND(0)
         ADD     A,(HL)          ; Add (SEED)+2)
@@ -4004,8 +3966,7 @@ RND:    CALL    TSTSGN          ; Test sign of FPREG
         LD      C,A             ; BC = Offset into table
         ADD     HL,BC           ; Point to value
         CALL    ADDPHL          ; Add value to FPREG
-RND1:   LD      DE,(FPREG)      ; Move FPREG to BCDE
-        LD      BC,(FPREG+2)
+RND1:   CALL    MVFPBC          ; Move FPREG to BCDE
         LD      A,E             ; Get LSB
         LD      E,C             ; LSB = MSB
         XOR     01001111B       ; Fiddle around
@@ -4027,10 +3988,7 @@ RND1:   LD      DE,(FPREG)      ; Move FPREG to BCDE
 RND2:   CALL    BNORM           ; Normalise number
         LD      DE,LSTRND       ; Save random number
         LD      HL,FPREG        ; Move FPREG to last and return
-        LDI                     ; 4 bytes to move (HL++)->(DE++)
-        LDI
-        LDI
-        LDI
+        CALL    MOVFP4          ; 4 bytes from (HL)->(DE), advance both
         RET
 
 RESEED: LD      (HL),A          ; Re-seed random numbers
@@ -4049,8 +4007,7 @@ COS:    LD      HL,HALFPI       ; Point to PI/2
 SIN:    CALL    STAKFP          ; Put angle on stack
         LD      BC,8349H        ; BCDE = 2 PI
         LD      DE,0FDBH
-        LD      (FPREG),DE      ; Move 2 PI to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Move 2 PI to FPREG
         POP     BC              ; Restore angle
         POP     DE
         CALL    DVBCDE          ; Divide angle by 2 PI
@@ -4093,8 +4050,7 @@ TAN:    CALL    STAKFP          ; Put angle on stack
         POP     HL
         CALL    STAKFP          ; Save SIN of angle
         EX      DE,HL           ; BCDE = Angle
-        LD      (FPREG),DE      ; Angle to FPREG
-        LD      (FPREG+2),BC
+        CALL    MVBCFP          ; Angle to FPREG
         CALL    COS             ; Get COS of angle
         JP      DIV             ; TAN = SIN / COS
 
@@ -4148,8 +4104,9 @@ WIDTH:  CALL    GETINT          ; Get integer 0-255 in A
 
 LINES:  CALL    GETNUM          ; Get a number
         CALL    DEINT           ; Get integer -32768 to 32767
-        LD      (LINESC),DE     ; Set lines counter
-        LD      (LINESN),DE     ; Set lines number
+        EX      DE,HL
+        LD      (LINESC),HL     ; Set lines counter
+        LD      (LINESN),HL     ; Set lines number
         RET
 
 BREAK:  CALL    GETNUM          ; Get a number
@@ -4337,21 +4294,33 @@ HLOAD:
         ret NZ                  ; return if any more on line
         call HLD_WAIT_COLON     ; wait for first colon and address data
         ld hl,(ARREND)          ; start of free memory
-        or a                    ; clear carry flag
-        sbc hl,de
+        ld a,l
+        sub e                   ; HL - DE
+        ld l,a
+        ld a,h
+        sbc a,d
+        ld h,a
         jp NC,OMERR             ; if address is below array end, out of memory
         dec de                  ; go one Byte lower
         ld hl,(LSTRAM)          ; get last ram address
-        or a                    ; clear carry flag
-        sbc hl,de
+        ld a,l
+        sub e                   ; HL - DE
+        ld l,a
+        ld a,h
+        sbc a,d
+        ld h,a
         jp C,HLD_HIGH_RAM       ; if last ram lower leave it, otherwise
-        ld (LSTRAM),de          ; store new last ram location
+        ex de,hl
+        ld (LSTRAM),hl          ; store new last ram location
+        ex de,hl
         ld hl,-50               ; reserve 50 bytes for string space
         add hl,de               ; allocate string space
         ld (STRSPC),hl          ; save string space location
 HLD_HIGH_RAM:
         inc de
-        ld (USR+1),de           ; store first address as "USR(x)" location
+        ex de,hl
+        ld (USR+1),hl           ; store first address as "USR(x)" location
+        ex de,hl                ; restore DE = target RAM address
         jp HLD_READ_DATA        ; now get the first data
 
 HLD_WAIT_COLON:
@@ -4378,7 +4347,8 @@ HLD_READ_DATA:
         call HLD_READ_BYTE
         ld (de),a               ; write the byte at the RAM address
         inc de                  ; increment address
-        djnz HLD_READ_DATA      ; if b non zero, loop to get more data
+        dec b
+        jp NZ,HLD_READ_DATA     ; if b non zero, loop to get more data
 
 HLD_READ_CHKSUM:
         call HLD_READ_BYTE      ; read checksum, but we don't need to keep it
@@ -5168,6 +5138,63 @@ bas_cstat:
         POP     BC
         POP     DE
         POP     HL
+        RET
+
+; ------------------------------------------------------------
+; MVFPBC - Load BCDE from FPREG (BASIC's 4-byte FP register).
+; 8080 replacement for "LD DE,(FPREG) / LD BC,(FPREG+2)".
+; Preserves HL.  DE = FPREG[0..1], BC = FPREG[2..3].
+; ------------------------------------------------------------
+MVFPBC: PUSH    HL
+        LD      HL,(FPREG)
+        EX      DE,HL
+        LD      HL,(FPREG+2)
+        LD      B,H
+        LD      C,L
+        POP     HL
+        RET
+
+; ------------------------------------------------------------
+; MVBCFP - Store BCDE to FPREG.
+; 8080 replacement for "LD (FPREG),DE / LD (FPREG+2),BC".
+; Preserves HL, DE, BC.
+; ------------------------------------------------------------
+MVBCFP: PUSH    HL
+        EX      DE,HL
+        LD      (FPREG),HL
+        EX      DE,HL
+        LD      H,B
+        LD      L,C
+        LD      (FPREG+2),HL
+        POP     HL
+        RET
+
+; ------------------------------------------------------------
+; MOVFP4 - Copy 4 bytes from (HL) to (DE), advancing both.
+; 8080 replacement for four consecutive byte loads/stores.
+; Advances HL/DE by 4 while preserving A, flags, and BC.
+; Unlike Z80 LDI, this helper does not update flags or decrement BC;
+; callers (e.g. SMSER1 in SUMSER) rely on A surviving the copy.
+; Clobbers: HL, DE (advanced past last byte). A, BC, F preserved.
+; ------------------------------------------------------------
+MOVFP4: PUSH    AF              ; preserve A and flags
+        LD      A,(HL)
+        LD      (DE),A
+        INC     HL
+        INC     DE
+        LD      A,(HL)
+        LD      (DE),A
+        INC     HL
+        INC     DE
+        LD      A,(HL)
+        LD      (DE),A
+        INC     HL
+        INC     DE
+        LD      A,(HL)
+        LD      (DE),A
+        INC     HL
+        INC     DE
+        POP     AF              ; restore A and flags
         RET
 
 WRKSPC:                         ; BASIC workspace starts here, immediately after code

@@ -234,8 +234,9 @@ _za_asm_has_label:
 
     ; Define the label at current binary position
     PUSH DE
+    LD   HL, (za_bin_size)
+    EX   DE, HL
     LD   HL, za_label_buf
-    LD   DE, (za_bin_size)
     ; Add ORG offset
     LD   A, (za_org_set)
     OR   A
@@ -291,13 +292,18 @@ _za_asm_no_operands:
     LD   DE, za_empty_str
 _za_asm_has_operands:
     ; Save operand pointer
-    LD   (za_operand_ptr), DE
+    EX   DE, HL
+    LD   (za_operand_ptr), HL
+    EX   DE, HL
 
     ; Lowercase the mnemonic
     CALL strtolower
 
     ; Call parser
-    LD   DE, (za_operand_ptr)
+    PUSH HL
+    LD   HL, (za_operand_ptr)
+    EX   DE, HL
+    POP  HL
     CALL parser_parse_line
     OR   A
     JP   NZ, za_err_parse
@@ -310,8 +316,9 @@ _za_asm_has_operands:
 
     ; Copy bytes from za_parse_buf to binary output
     LD   C, B               ; save count
+    LD   HL, (za_bin_size)
+    EX   DE, HL
     LD   HL, za_parse_buf
-    LD   DE, (za_bin_size)
     PUSH DE                 ; save starting binary offset
     PUSH BC
 
@@ -651,7 +658,8 @@ _za_dir_dw_label:
     AND  SYM_FLAG_EQU
     JP   NZ, _za_dir_dw_done
     ; Record relocation at bin_pos - 2
-    LD   DE, (za_bin_size)
+    LD   HL, (za_bin_size)
+    EX   DE, HL
     DEC  DE
     DEC  DE
     CALL za_add_reloc_entry
@@ -666,7 +674,8 @@ _za_dir_dw_fwd:
     CALL za_emit_byte
     ; Record forward ref at bin_pos - 2
     PUSH HL                 ; save label name
-    LD   DE, (za_bin_size)
+    LD   HL, (za_bin_size)
+    EX   DE, HL
     DEC  DE
     DEC  DE                 ; DE = offset of the address
     POP  HL                 ; HL = label name
@@ -896,8 +905,10 @@ za_write_app_output:
     JP   NZ, za_err_write
 
     ; Write binary code
+    LD   HL, (za_bin_size)
+    LD   B, H
+    LD   C, L
     LD   HL, za_bin_buffer
-    LD   BC, (za_bin_size)
     CALL file_write_output
     OR   A
     JP   NZ, za_err_write
@@ -915,17 +926,13 @@ za_write_app_output:
     JP   NZ, za_err_write
 
     ; Write relocation entries (each 2 bytes)
-    LD   HL, za_reloc_buf
-    LD   DE, (za_reloc_count)
-    ; Total bytes = reloc_count * 2
-    LD   A, D
-    OR   E
+    LD   HL, (za_reloc_count)
+    LD   A, H
+    OR   L
     JP   Z, _za_write_done
-    ; BC = DE * 2
-    EX   DE, HL             ; HL = count
     ADD  HL, HL             ; HL = count * 2
     LD   B, H
-    LD   C, L
+    LD   C, L               ; BC = count * 2
     LD   HL, za_reloc_buf
     CALL file_write_output
     OR   A
@@ -939,13 +946,14 @@ _za_write_done:
 
     ; Set file size
     ; Total = 2 + bin_size + 2 + reloc_count * 2
+    LD   HL, (za_reloc_count)
+    ADD  HL, HL             ; HL = reloc_count * 2
+    PUSH HL
     LD   HL, (za_bin_size)
     LD   DE, 4              ; header (2) + reloc header (2)
-    ADD  HL, DE
-    LD   DE, (za_reloc_count)
-    EX   DE, HL
-    ADD  HL, HL             ; reloc_count * 2
-    ADD  HL, DE             ; total size
+    ADD  HL, DE             ; HL = bin_size + 4
+    POP  DE                 ; DE = reloc_count * 2
+    ADD  HL, DE             ; HL = total size
     EX   DE, HL             ; DE = total size
     CALL file_set_output_size
 

@@ -1,0 +1,45 @@
+A:/> A:FORMAT.APP RAMD: 744
+Formatted 744-block filesystem.
+A:/> MOUNT RAMD B
+Mounted.
+A:/> TYPE WELCOME.TXT
+Welcome to NostOS: The Nostalgia operation system!
+You may use "HELP" to get a list of available executive commands.
+A:/> # Sanity check used by `make test-variants`: confirms serial I/O,
+A:/> # ROMdisk read, and RAMdisk write work for the selected variant.
+A:/> DIR
+Directory Listing:
+   849 FORMAT.APP
+  1957 FDINIT.APP
+ 11929 BASIC.APP
+  9181 FORTH.APP
+  4607 ED.APP
+  1315 APPEND.APP
+  1105 MORE.APP
+  1576 WC.APP
+  1827 TAIL.APP
+  1155 HEAD.APP
+ <DIR> GAMES
+  7867 DEBUG.APP
+  2567 XRECV.APP
+  2625 XSEND.APP
+  2720 TERM.APP
+   245 TERM.DIR
+    56 AUTO.PLY
+   231 HELLOEXT.EXT
+  1744 EXTTORTURE.EXT
+   252 SPEECH.EXT
+  7617 TTS.EXT
+   868 VFD.EXT
+   728 DUP.EXT
+ 16745 ZEALASM.APP
+   234 SAMPLE.ASM
+   119 WELCOME.TXT
+A:/> TYPE WELCOME.TXT
+Welcome to NostOS: The Nostalgia operation system!
+You may use "HELP" to get a list of available executive commands.
+A:/> COPY WELCOME.TXT B:
+A:/> DIR B:
+Directory Listing:
+   119 WELCOME.TXT
+A:/> HALTCPU halted

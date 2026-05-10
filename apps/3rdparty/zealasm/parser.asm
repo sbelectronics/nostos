@@ -1835,10 +1835,11 @@ _parse_ld_a_mnn:
     LD HL, za_parse_buf
     LD (HL), 0x3A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -1948,10 +1949,11 @@ _parse_ld_sp_nn:
     LD HL, za_parse_buf
     LD (HL), 0x31
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -1962,10 +1964,11 @@ _parse_ld_sp_mnn:
     INC HL
     LD (HL), 0x7B
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -1995,10 +1998,11 @@ _parse_ld_rr_nn:
     LD HL, za_parse_buf
     LD (HL), A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -2019,10 +2023,11 @@ _parse_ld_rr_mnn:
     INC HL
     LD (HL), A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2030,10 +2035,11 @@ _parse_ld_hl_mnn:
     LD HL, za_parse_buf
     LD (HL), 0x2A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -2055,10 +2061,11 @@ _parse_ld_ix_nn:
     INC HL
     LD (HL), 0x21
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2069,10 +2076,11 @@ _parse_ld_ix_mnn:
     INC HL
     LD (HL), 0x2A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2094,10 +2102,11 @@ _parse_ld_iy_nn:
     INC HL
     LD (HL), 0x21
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2108,10 +2117,11 @@ _parse_ld_iy_mnn:
     INC HL
     LD (HL), 0x2A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op2_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2201,8 +2211,8 @@ _parse_ld_mixd_n:
     LD A, (parser_ld_op1_disp)
     LD (HL), A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2246,8 +2256,8 @@ _parse_ld_miyd_n:
     LD A, (parser_ld_op1_disp)
     LD (HL), A
     INC HL
-    LD DE, (parser_ld_op2_val)
-    LD (HL), E
+    LD A, (parser_ld_op2_val)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2281,10 +2291,11 @@ _parse_ld_mnn_a:
     LD HL, za_parse_buf
     LD (HL), 0x32
     INC HL
-    LD DE, (parser_ld_op1_val)  ; (nn) address from op1
-    LD (HL), E
+    LD A, (parser_ld_op1_val)   ; (nn) address from op1
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op1_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -2293,10 +2304,11 @@ _parse_ld_mnn_hl:
     LD HL, za_parse_buf
     LD (HL), 0x22
     INC HL
-    LD DE, (parser_ld_op1_val)
-    LD (HL), E
+    LD A, (parser_ld_op1_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op1_val + 1)
+    LD (HL), A
     LD B, 3
     XOR A
     RET
@@ -2315,10 +2327,11 @@ _parse_ld_mnn_rr:
     INC HL
     LD (HL), A
     INC HL
-    LD DE, (parser_ld_op1_val)
-    LD (HL), E
+    LD A, (parser_ld_op1_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op1_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2329,10 +2342,11 @@ _parse_ld_mnn_ix:
     INC HL
     LD (HL), 0x22
     INC HL
-    LD DE, (parser_ld_op1_val)
-    LD (HL), E
+    LD A, (parser_ld_op1_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op1_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2343,10 +2357,11 @@ _parse_ld_mnn_iy:
     INC HL
     LD (HL), 0x22
     INC HL
-    LD DE, (parser_ld_op1_val)
-    LD (HL), E
+    LD A, (parser_ld_op1_val)
+    LD (HL), A
     INC HL
-    LD (HL), D
+    LD A, (parser_ld_op1_val + 1)
+    LD (HL), A
     LD B, 4
     XOR A
     RET
@@ -2529,9 +2544,10 @@ parser_fix_jr_ref:
     ; disp = target - (bin_size + org + 2)
     ; ORG is added because target includes ORG, bin_size does not
     EX DE, HL               ; DE = target value
-    LD HL, (za_bin_size)
     PUSH DE                  ; save target
-    LD DE, (za_org)
+    LD HL, (za_org)
+    EX DE, HL                ; DE = za_org
+    LD HL, (za_bin_size)
     ADD HL, DE               ; HL = bin_size + org
     POP DE                   ; DE = target
     INC HL

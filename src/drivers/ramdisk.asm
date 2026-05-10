@@ -206,19 +206,21 @@ rd_inc_curblock_done:
 
 ; ------------------------------------------------------------
 ; rd_win2_addr
-; Compute the window-2 base address for the current block-in-page.
+; Compute the paging-window base address for the current block-in-page.
+; Name is historical (WIN2 was the 74HCT670 window at 0x8000); the
+; high byte now comes from the per-mapper constant MAPPER_RD_WIN_HIGH.
 ; Inputs:
 ;   (rd_temp_bip) = block-in-page
 ; Outputs:
-;   A  - high byte of WIN2 address (0x80 + bip * 2)
+;   A  - high byte of paging-window address (MAPPER_RD_WIN_HIGH + bip * 2)
 ; Clobbers: C
 ; ------------------------------------------------------------
 rd_win2_addr:
     LD   A, (rd_temp_bip)
     ADD  A                      ; block_in_page * 2
     LD   C, A
-    LD   A, 0x80
-    ADD  C                      ; 0x80 + block_in_page * 2
+    LD   A, MAPPER_RD_WIN_HIGH
+    ADD  C                      ; MAPPER_RD_WIN_HIGH + block_in_page * 2
     RET
 
 ; ------------------------------------------------------------
@@ -305,14 +307,31 @@ rd_bread:
     LD   H, A
     LD   L, 0                   ; HL = WIN2 source
 
-    ; Map page into WIN2, copy to DISK_BUFFER, restore WIN2
+    ; Map page into the paging window, copy to DISK_BUFFER, restore.
+    ; The copy is INLINED (not CALL'd) so a return-address PUSH can't
+    ; corrupt the swapped-in page when the user's SP happens to lie
+    ; inside the paging-window range (0x8000-0xBFFF on 74HCT670,
+    ; 0x4000-0xBFFF on Z180).
     SAFE_DI
-    LD   A, (rd_temp_page)
-    OUT  (MAPPER_WIN2_PORT), A
+    MAPPER_REMAP_BANK rd_temp_page
     LD   DE, DISK_BUFFER
-    CALL rd_copy_512            ; WIN2 (HL) -> DISK_BUFFER (DE)
-    LD   A, MAPPER_WIN2_RAM
-    OUT  (MAPPER_WIN2_PORT), A
+    LD   C, 0                   ; 256 iterations; DEC wraps 0->255 first time
+rd_bread_inline_a:
+    LD   A, (HL)
+    LD   (DE), A
+    INC  HL
+    INC  DE
+    DEC  C
+    JP   NZ, rd_bread_inline_a
+    LD   C, 0
+rd_bread_inline_b:
+    LD   A, (HL)
+    LD   (DE), A
+    INC  HL
+    INC  DE
+    DEC  C
+    JP   NZ, rd_bread_inline_b
+    MAPPER_RESTORE_BANK
     SAFE_EI
 
     CALL rd_inc_curblock
@@ -390,13 +409,27 @@ rd_bwrite_do:
     LD   E, 0                   ; DE = WIN2 dest
     LD   HL, DISK_BUFFER        ; HL = source (always DISK_BUFFER)
 
-    ; Map page into WIN2, copy DISK_BUFFER to WIN2, restore
+    ; Map page into the paging window, copy DISK_BUFFER to it, restore.
+    ; Inlined for the same reason as rd_bread above.
     SAFE_DI
-    LD   A, (rd_temp_page)
-    OUT  (MAPPER_WIN2_PORT), A
-    CALL rd_copy_512            ; DISK_BUFFER (HL) -> WIN2 (DE)
-    LD   A, MAPPER_WIN2_RAM
-    OUT  (MAPPER_WIN2_PORT), A
+    MAPPER_REMAP_BANK rd_temp_page
+    LD   C, 0                   ; 256 iterations; DEC wraps 0->255 first time
+rd_bwrite_inline_a:
+    LD   A, (HL)
+    LD   (DE), A
+    INC  HL
+    INC  DE
+    DEC  C
+    JP   NZ, rd_bwrite_inline_a
+    LD   C, 0
+rd_bwrite_inline_b:
+    LD   A, (HL)
+    LD   (DE), A
+    INC  HL
+    INC  DE
+    DEC  C
+    JP   NZ, rd_bwrite_inline_b
+    MAPPER_RESTORE_BANK
     SAFE_EI
 
     CALL rd_inc_curblock

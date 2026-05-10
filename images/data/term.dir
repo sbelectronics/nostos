@@ -1,0 +1,6 @@
+iscabbs        ATDT bbs.iscabbs.com:23
+300_fing_baud  ATDT 300baud.dynu.net:2525
+vertrauen      ATDT vert.synchro.net:23
+dungeon        ATDT dungeon.synchro.net:23
+monochrome     ATDT mono.org:23
+outwest        ATDT outwest.synchro.net:23

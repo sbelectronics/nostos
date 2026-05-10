@@ -1,32 +1,43 @@
 ; ============================================================
-; Zeta-style 16KB Memory Mapper (EtchedPixels RC2014 emulator)
+; mapper_config.asm - dispatch to the per-mapper include file
 ; ============================================================
-; The emulator implements Zeta-style banking with four 16KB windows.
-; Each window has its own port (0x78-0x7B); writing a page number to
-; the port selects which physical 16KB page backs that window.
+; Three mapper backends are supported.  The build system selects
+; one via a -D flag on the command line:
 ;
-;   Port 0x78 -> window 0 (0x0000-0x3FFF)
-;   Port 0x79 -> window 1 (0x4000-0x7FFF)
-;   Port 0x7A -> window 2 (0x8000-0xBFFF)
-;   Port 0x7B -> window 3 (0xC000-0xFFFF)
+;   (default)              -> mapper_74hct670.asm
+;                              External 4-window 16K mapper
+;                              (Zeta-style, ports 0x78-0x7C)
 ;
-;   Page numbers 0-31  = ROM pages  (read-only; 0 = first 16KB of ROM image)
-;   Page numbers 32-63 = RAM pages  (read-write)
+;   -DMAPPER_NONE          -> mapper_none.asm
+;                              No banking hardware (32K builds)
 ;
-; Banking is enabled by writing 1 to port 0x7C.  In the emulator,
-; it is pre-enabled when the -b flag is used.
+;   -DMAPPER_Z180_MMU      -> mapper_z180_mmu.asm
+;                              Z180 internal MMU
+;
+; Each backend provides:
+;   - sentinel MAPPER_<name>_CHOSEN (defined; bootstraps assert via IFNDEF)
+;   - constant MAPPER_RD_WIN_HIGH (high byte of paging window)
+;   - macro    MAPPER_INIT
+;   - macro    MAPPER_REMAP_BANK page_var
+;   - macro    MAPPER_RESTORE_BANK
+;
+; The kernel and ramdisk driver only use these macros — no IFDEF
+; arms appear outside this file or its included backends.  Each
+; bootstrap asserts at the bottom that the chosen backend matches
+; what it expects, so a UART/mapper mismatch fails at assembly time
+; rather than producing a broken ROM.
+;
+; The flag MUST come from the command line, not from a bootstrap
+; file: bootstraps are included late (from kernel.asm), well after
+; the kernel code that uses MAPPER_INIT has been processed.
+; ============================================================
 
-MAPPER_WIN0_PORT    EQU 0x78    ; set window 0 page
-MAPPER_WIN1_PORT    EQU 0x79    ; set window 1 page
-MAPPER_WIN2_PORT    EQU 0x7A    ; set window 2 page
-MAPPER_WIN3_PORT    EQU 0x7B    ; set window 3 page
-MAPPER_ENABLE_PORT  EQU 0x7C    ; write 1 to enable banking
-
-; Page numbers written to the window ports. This is the canonical configuration
-; for executing the kernel, executive, and user programs. The ramdisk driver
-; may modify these pages, but will always restore them afterward.
-
-MAPPER_WIN0_ROM     EQU 0       ; ROM page 0 -> window 0 (vectors + kernel + executive)
-MAPPER_WIN1_RAM     EQU 32      ; RAM page 0 -> window 1 (0x4000-0x7FFF)
-MAPPER_WIN2_RAM     EQU 33      ; RAM page 1 -> window 2 (0x8000-0xBFFF)
-MAPPER_WIN3_RAM     EQU 34      ; RAM page 2 -> window 3 (0xC000-0xFFFF)
+        IFDEF MAPPER_Z180_MMU
+            INCLUDE "src/include/mapper_z180_mmu.asm"
+        ELSE
+            IFDEF MAPPER_NONE
+                INCLUDE "src/include/mapper_none.asm"
+            ELSE
+                INCLUDE "src/include/mapper_74hct670.asm"
+            ENDIF
+        ENDIF

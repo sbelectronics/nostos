@@ -62,12 +62,17 @@ cmd_ld_io_error:
     JP   cmd_ld_done
 
 cmd_ld_print_file:
-    ; Print size (low 16 bits at DIRENT_OFF_SIZE), right-justified in 6 chars
+    ; Print 32-bit file size right-justified in 6 chars (column
+    ; overflows for sizes >= 1,000,000).
     LD   A, (cmd_ld_dirent + DIRENT_OFF_SIZE)
     LD   L, A
     LD   A, (cmd_ld_dirent + DIRENT_OFF_SIZE + 1)
     LD   H, A
-    CALL exec_print_dec16_w6
+    LD   A, (cmd_ld_dirent + DIRENT_OFF_SIZE + 2)
+    LD   E, A
+    LD   A, (cmd_ld_dirent + DIRENT_OFF_SIZE + 3)
+    LD   D, A
+    CALL exec_print_dec32_w6
     LD   DE, msg_space
     CALL exec_puts
 

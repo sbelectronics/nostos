@@ -664,7 +664,9 @@ _parse_str_err:
 word_to_ascii:
     LD   C, 10              ; divisor constant
     ; Save buffer start
-    LD   (za_w2a_buf), DE
+    EX   DE, HL
+    LD   (za_w2a_buf), HL
+    EX   DE, HL
     LD   D, 0               ; digit count
 _word_to_ascii_loop:
     CALL _divide_hl_c

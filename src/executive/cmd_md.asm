@@ -11,7 +11,8 @@ cmd_md:
     CP   0
     JP   Z, cmd_md_no_arg
     CALL exec_upcase_delimit    ; upcase name in INPUT_BUFFER in-place (HL clobbered)
-    LD   DE, (EXEC_ARGS_PTR)
+    LD   HL, (EXEC_ARGS_PTR)
+    EX   DE, HL
     LD   C, SYS_PATH_PARSE
     CALL KERNELADDR             ; A = status, HL = device ID, DE = path component
     OR   A

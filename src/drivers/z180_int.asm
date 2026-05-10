@@ -518,3 +518,71 @@ PDTENTRY_Z180_INT macro ID, NAME, CHANNEL
     DEFB CHANNEL                        ; +0 channel number (0 or 1)
     DEFS 16, 0                          ; padding to fill 17-byte user data
 endm
+
+; ============================================================
+; Z180_INT_INSTALL_VECTORS
+; Populate the Z180 internal interrupt vector table, point I/IL at
+; it, switch to IM 2, and EI.  Intended for use inside platform_init
+; on every bootstrap that selects this driver.
+;
+; All 9 internal source slots get a vector — 7 spurious handlers
+; for sources we don't enable (INT1/2, PRT0/1, DMA0/1, CSI/O), plus
+; the two real ASCI handlers.  Z180_INTVEC_TABLE is 32-byte aligned
+; (required: only IL bits 7:5 are settable; bits 4:0 come from the
+; source ID during the interrupt acknowledge cycle), so the low
+; byte already has bits 4:0 = 0 and can be written directly to IL.
+;
+; By the time this runs, both ASCI channels have been programmed
+; (RIE set in STAT) and the ring-buffer bookkeeping is zeroed.
+; Clobbers: A, BC, HL
+; ------------------------------------------------------------
+Z180_INT_INSTALL_VECTORS macro
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_INT1
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_INT2
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_PRT0
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_PRT1
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_DMA0
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_DMA1
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_CSIO
+    LD   (HL), z180_int_isr_spurious & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_spurious >> 8
+
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_ASCI0
+    LD   (HL), z180_int_isr_a & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_a >> 8
+    LD   HL, Z180_INTVEC_TABLE + Z180_VEC_OFF_ASCI1
+    LD   (HL), z180_int_isr_b & 0xFF
+    INC  HL
+    LD   (HL), z180_int_isr_b >> 8
+
+    LD   A, Z180_INTVEC_TABLE >> 8
+    LD   I, A
+
+    LD   B, 0
+    LD   C, Z180_IL
+    LD   A, Z180_INTVEC_TABLE & 0xFF
+    OUT  (C), A
+
+    IM   2
+    EI
+endm

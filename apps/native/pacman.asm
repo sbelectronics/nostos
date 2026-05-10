@@ -214,7 +214,8 @@ pac_ig_next:
     LD   A, B
     OR   C
     JP   NZ, pac_ig_count
-    LD   (pac_dots), DE
+    EX   DE, HL
+    LD   (pac_dots), HL
 
     ; Pacman position
     LD   A, PAC_START_ROW

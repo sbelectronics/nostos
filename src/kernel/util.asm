@@ -163,7 +163,7 @@ alloc_physdev_id_loop:
 alloc_physdev_id_ok:
     LD   A, C                   ; A = free ID
     POP  BC
-    OR   A                      ; clear zero flag (ID >= 0x10)
+    OR   A                      ; clear zero flag (ID >= PHYSDEV_ID_FILE0, nonzero)
     RET
 alloc_physdev_id_none:
     POP  BC

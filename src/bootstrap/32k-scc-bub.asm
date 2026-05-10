@@ -108,3 +108,11 @@ automount_table:
 ; ============================================================
 platform_init:
     RET
+
+; --- Build-flag assertions (see mapper_config.asm for sentinel contract) ---
+    IFNDEF MAPPER_NONE_CHOSEN
+        ERROR "32k-scc-bub bootstrap requires -DMAPPER_NONE"
+    ENDIF
+    IFNDEF ROM_32K
+        ERROR "32k-scc-bub bootstrap requires -DROM_32K"
+    ENDIF

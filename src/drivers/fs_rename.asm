@@ -48,11 +48,13 @@ fs_rename:
     LD   (fs_rename_dst + 1), A
 
     ; 3. Resolve src path to (parent_inode, final_component)
-    LD   DE, (fs_rename_src)
+    LD   HL, (fs_rename_src)
+    EX   DE, HL
     CALL fs_path_traverse          ; A = status, DE = bare name, (fs_trav_parent_ino) = parent
     OR   A
     JP   NZ, fs_rename_exit
-    LD   (fs_rename_src), DE       ; update src to bare final component
+    EX   DE, HL
+    LD   (fs_rename_src), HL       ; update src to bare final component
 
     ; 4. Verify dst does not already exist in the same parent directory
     LD   HL, (fs_rename_dst)
@@ -101,7 +103,10 @@ fs_rename_at_entry:
     INC  HL                        ; skip type byte → HL = name field
 
     ; 7. Write dst name into the entry (16 bytes, null-padded)
-    LD   DE, (fs_rename_dst)
+    PUSH HL
+    LD   HL, (fs_rename_dst)
+    EX   DE, HL
+    POP  HL
     LD   B, 16
 fs_rename_copy:
     LD   A, (DE)

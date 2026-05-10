@@ -195,4 +195,4 @@ Errors:
 
 ## Bootstrapping
 
-The kernel and executive are assembled as a single 16 KB ROM image and reside in window 0 (0x0000–0x3FFF). The 8080/Z80 processor begins execution at address 0x0000, which is the RST 0 vector in ROM. This vector jumps to `kernel_init`, which configures the memory mapper so that windows 1–3 (0x4000–0xFFFF) are RAM, initializes the workspace at 0xF800, and starts the executive via `exec_main`.
+The kernel and executive are assembled as a single 16 KB ROM image at 0x0000–0x3FFF. The 8080/Z80 processor begins execution at address 0x0000, which is the RST 0 vector in ROM. This vector jumps to `kernel_init`, which invokes `MAPPER_INIT` (mapper-specific; see [KERNEL.md](KERNEL.md#memory-mapping)) to make 0x4000–0xFFFF RAM, initializes the workspace at 0xF800, and starts the executive via `exec_main`.

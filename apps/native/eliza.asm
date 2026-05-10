@@ -109,6 +109,9 @@ el_rl_read:
     ; Enter?
     CP   0x0D
     JP   Z, el_rl_done
+    ; LF: drop silently so a CRLF sender doesn't leak a stray byte into el_input
+    CP   0x0A
+    JP   Z, el_rl_read
     ; Backspace?
     CP   0x08
     JP   Z, el_rl_bs

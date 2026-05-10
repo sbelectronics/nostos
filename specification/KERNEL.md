@@ -6,23 +6,26 @@ The kernel's primary responsibility is device management: it maintains the physi
 
 ## Memory Mapping
 
-NostOS uses a Zeta-style 16 KB page mapper to divide the 64 KB address space into four windows. Each window is mapped to a physical page via an I/O port write.
+NostOS supports three memory-mapping backends, selected at build time:
 
-| Port | Window | Address Range | Runtime Mapping |
-|------|--------|---------------|-----------------|
-| 0x78 | 0 | 0x0000–0x3FFF | ROM page 0 |
-| 0x79 | 1 | 0x4000–0x7FFF | RAM page 32 |
-| 0x7A | 2 | 0x8000–0xBFFF | RAM page 33 |
-| 0x7B | 3 | 0xC000–0xFFFF | RAM page 34 |
+| Backend | Build flag | Layout | Hardware |
+|---------|------------|--------|----------|
+| External 4-window mapper | (default) | 16 KB ROM + 48 KB banked RAM | 74HCT670 register file driven by ports 0x78–0x7C (Zeta-style) |
+| Z180 internal MMU | `-DMAPPER_Z180_MMU` | 16 KB ROM + 48 KB banked RAM | Z180 CBAR/BBR/CBR; for SC131-class boards with no external mapper |
+| No banking | `-DMAPPER_NONE` | 32 KB ROM + 32 KB RAM | None (32 KB variants only) |
 
-Page numbers 0–31 are ROM (read-only) and 32–63 are RAM (read-write). Banking is enabled by writing 1 to port 0x7C.
+The kernel and ramdisk see only three macros — `MAPPER_INIT`, `MAPPER_REMAP_BANK`, `MAPPER_RESTORE_BANK` — defined in [src/include/mapper_config.asm](../src/include/mapper_config.asm) and supplied by the selected backend. No mapper-specific code lives outside the backend files.
 
-At power-on reset, the 74HCT670 register file mirrors the ROM page into all windows, so the CPU begins executing ROM code at address 0x0000. Window 0 remains mapped to ROM permanently; the kernel reconfigures windows 1–3 to RAM during boot. The ramdisk driver may temporarily remap windows to access additional RAM pages, but always restores the canonical configuration afterward.
+For the two banked backends, the logical layout is identical (16 KB ROM at 0x0000–0x3FFF, 48 KB RAM at 0x4000–0xFFFF) so that workspace constants and ring-buffer addresses don't depend on the choice of mapper. Page numbering is also uniform: pages 0–31 are ROM (each 16 KB), pages 32–63 are RAM, and the canonical runtime mapping is page 0 → 0x0000, page 32 → 0x4000, page 33 → 0x8000, page 34 → 0xC000. The ramdisk driver may temporarily remap a window to access other RAM pages, but always restores the canonical layout.
+
+The `MAPPER_NONE` backend has no paging at all: the 32 KB ROM image sits at 0x0000–0x7FFF and 32 KB of RAM occupies 0x8000–0xFFFF. The workspace, stack, and ring buffers live at the same logical addresses as in the banked layouts (high RAM near 0xFFFF). 32 KB bootstraps include `tinyramdisk.asm` instead of the standard `ramdisk.asm`, so the paging macros never expand in practice — they exist only as no-op stubs to satisfy the macro contract.
+
+See [src/include/mapper_z180_mmu.asm](../src/include/mapper_z180_mmu.asm) for the Z180 backend's CBAR/BBR/CBR values and the rationale for the OUT (C),A / B=0 internal-I/O convention.
 
 ## Boot Sequence
 
-1. The CPU resets to address 0x0000. The 74HCT670 mirrors ROM page 0 into all windows, so execution begins at the RST 0 vector which jumps to `kernel_init` (0x0040).
-2. `kernel_init` configures the memory mapper (window 0 = ROM, windows 1–3 = RAM) and sets the stack pointer to `KERNEL_STACK`. The default `KERNEL_STACK` is 0xF7F0, but it shifts down when `WITH_RINGBUF` is defined to make room for the ring-buffer RAM region below the workspace.
+1. The CPU resets to address 0x0000. The selected mapper's reset state already places the kernel ROM at 0x0000 (the 74HCT670 mirrors page 0 into every window; the Z180 MMU's reset CBAR=0xF0 leaves the entire 64 KB identity-mapped; `MAPPER_NONE` boards have no banking at all). Execution begins at the RST 0 vector which jumps to `kernel_init` (0x0040).
+2. `kernel_init` invokes `MAPPER_INIT` to put the selected mapper into its canonical runtime configuration, then sets the stack pointer to `KERNEL_STACK`. The default `KERNEL_STACK` is 0xF7F0, but it shifts down when `WITH_RINGBUF` is defined to make room for the ring-buffer RAM region below the workspace.
 3. `kernel_init` calls the init chain in order: `workspace_init` (zeros the workspace, installs the I/O trampolines, populates the RST RAM vectors with `JP unexpected_rst`), `devices_init` (copies ROM PDT entries to RAM and runs each driver's initialise hook), `logdev_table_init` (installs the well-known logical device names from the bootstrap), `automount_init` (mounts filesystems listed in the bootstrap automount table), and finally `platform_init` (a bootstrap-supplied hook for any final platform setup, such as installing an interrupt-driven driver's ISR into the RST 7 RAM vector and enabling CPU interrupts).
 4. The kernel jumps to `exec_main`, handing control to the executive.
 
@@ -38,11 +41,14 @@ Each ROM build selects a UART driver and a block-device driver via `-D` flags pa
 | Polled SCC | `UART_SCC` | Z85C30 SCC. |
 | Interrupt-driven SIO | `UART_SIO_INT_CF`, `UART_SIO_INT_FDC` (combine with `SIO_USE_SB` for Scott's-board ports) | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. |
 | Interrupt-driven ACIA | `UART_ACIA_INT_CF`, `UART_ACIA_INT_FDC` | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. |
-| Interrupt-driven SCC | `UART_SCC_INT_FDC`, `UART_SCC_INT_BUB` | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. `UART_SCC_INT_BUB` is a 32K ROM variant for Scott's Basic Bubble board (bubble memory as block device; combine with `ROM_32K`). |
+| Interrupt-driven SCC | `UART_SCC_INT_FDC`, `UART_SCC_INT_BUB` | IM 1 / RST 38. Must be combined with `WITH_RINGBUF`. `UART_SCC_INT_BUB` is a 32K ROM variant for Scott's Basic Bubble board (bubble memory as block device; combine with `ROM_32K` and `MAPPER_NONE`). |
 | Interrupt-driven Z180 ASCI | `UART_Z180_INT_FDC` | **IM 2** with vectored interrupts. Must be combined with `WITH_RINGBUF`. |
+| Interrupt-driven Z180 ASCI + Z180 MMU | `UART_Z180_MMU_INT_CF`, `UART_Z180_MMU_INT_FDC`, `UART_Z180_MMU_INT_SDCARD` | Same as above plus `MAPPER_Z180_MMU`. The `_SDCARD` variant has no block driver beyond ROM disk (SD slot is a stub) and targets boards like the SC131 that lack CF/FDC. |
 
 Capability flags are orthogonal to variant selection and may be combined with the appropriate variant flag:
 
+- **`MAPPER_Z180_MMU`** — selects the Z180 internal MMU as the memory-mapping backend instead of the default external 74HCT670. Required by every `UART_Z180_MMU_*` variant. See [Memory Mapping](#memory-mapping) above.
+- **`MAPPER_NONE`** — no banking hardware at all. Required for every 32 KB ROM variant (must be combined with `ROM_32K`); without it, the kernel's `MAPPER_INIT` would default to programming the absent 74HCT670 ports at boot.
 - **`WITH_RINGBUF`** — required for any interrupt-driven UART driver. Allocates the generic ring-buffer RAM region below `WORKSPACE_BASE` (two 64-byte channel buffers, bookkeeping, and the Z180 internal interrupt vector table) and shifts `KERNEL_STACK` down to make room.
 - **`SIO_USE_SB`** — selects Scott's-board SIO port wiring instead of the RC2014 standard wiring. Affects both polled (`sio.asm`) and interrupt-driven (`sio_int.asm`) SIO drivers. Pass with any `UART_SIO*` variant.
 
@@ -124,11 +130,11 @@ MEMBOT  │  DYNAMIC_MEMBOT         │  (grows upward as extensions load)
         │  (single 16 KB image)   │
 0x0040  ├─────────────────────────┤
         │  RST Vectors            │  0x0000–0x003F
-0x0000  └─────────────────────────┘  KERNEL_BASE (ROM, window 0)
+0x0000  └─────────────────────────┘  KERNEL_BASE (ROM page 0)
 ```
 
-- **ROM** occupies window 0 (0x0000–0x3FFF): RST vectors, kernel, and executive (assembled as a single 16 KB image).
-- **RAM** occupies windows 1–3 (0x4000–0xFFFF): user programs, extensions, executive scratch, stack, and workspace.
+- **ROM** occupies 0x0000–0x3FFF: RST vectors, kernel, and executive (assembled as a single 16 KB image).
+- **RAM** occupies 0x4000–0xFFFF: user programs, extensions, executive scratch, stack, and workspace.
 - **Workspace** is in high RAM at 0xF800–0xFF7F, at a fixed address for all builds (16K and 32K ROM).
 - **Stack** grows downward from `KERNEL_STACK` (0xF7F0), just below the workspace.
 - **Extensions** load at `DYNAMIC_MEMBOT` and grow upward. After an extension is loaded, `DYNAMIC_MEMBOT` advances past the extension code.

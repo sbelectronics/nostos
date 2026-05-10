@@ -48,7 +48,9 @@ fs_fcreate:
 
 fs_create_common:
     ; 1. Save name pointer and get block dev
-    LD   (fs_temp_create_name), DE
+    EX   DE, HL
+    LD   (fs_temp_create_name), HL
+    EX   DE, HL
 
     CALL fs_get_block_dev
     OR   A
@@ -57,7 +59,8 @@ fs_create_common:
     LD   (fs_temp_blk_id), A
 
     ; 1b. Path traversal: resolve to (parent_inode, final_component_name).
-    LD   DE, (fs_temp_create_name)
+    LD   HL, (fs_temp_create_name)
+    EX   DE, HL
 
     ; If path starts with '/', it's absolute — traverse directly
     LD   A, (DE)
@@ -102,7 +105,9 @@ fs_create_do_traverse:
     CALL fs_path_traverse       ; A = status, DE = final name, (fs_trav_parent_ino) = parent
     OR   A
     JP   NZ, fs_create_exit
-    LD   (fs_temp_create_name), DE
+    EX   DE, HL
+    LD   (fs_temp_create_name), HL
+    EX   DE, HL
     ; Reject names longer than 16 characters
     PUSH DE
     LD   B, 17                  ; 16 chars + null must be found within 17
@@ -127,8 +132,9 @@ fs_create_len_ok:
     LD   (fs_temp_open_parent_ino + 1), A
 
     ; 2. Check if name already exists in parent directory
+    LD   HL, (fs_temp_create_name)
+    EX   DE, HL
     LD   HL, (fs_temp_create_parent_ino)
-    LD   DE, (fs_temp_create_name)
     CALL fs_find_dir_entry
     OR   A
     JP   Z, fs_create_err_exists ; Found it, error
@@ -175,8 +181,9 @@ fs_create_build_inode:
     LD   (DISK_BUFFER + INODE_OFF_COUNT), A
 
     ; Span 0 FirstBlock = fs_temp_create_blk
+    LD   HL, (fs_temp_create_blk)
+    EX   DE, HL
     LD   HL, DISK_BUFFER + INODE_OFF_SPANS
-    LD   DE, (fs_temp_create_blk)
     LD   (HL), E
     INC  HL
     LD   (HL), D
@@ -214,8 +221,9 @@ fs_create_set_type:
     ; Name is already in fs_temp_dir_entry via fs_add_to_root
 
     ; Inode
+    LD   HL, (fs_temp_create_ino)
+    EX   DE, HL
     LD   HL, fs_temp_dir_entry + DIRENT_OFF_INODE
-    LD   DE, (fs_temp_create_ino)
     LD   (HL), E
     INC  HL
     LD   (HL), D
@@ -366,7 +374,10 @@ fs_add_set_type:
 
     ; 2. Name
     INC  HL                     ; HL points to DIRENT_OFF_NAME
-    LD   DE, (fs_temp_create_name)
+    PUSH HL
+    LD   HL, (fs_temp_create_name)
+    EX   DE, HL
+    POP  HL
     LD   B, 16
 
     ; We need to write to HL, and also fs_temp_dir_entry + DIRENT_OFF_NAME.
@@ -491,7 +502,10 @@ fs_add_not_found:
     JP   NZ, fs_add_new_span
     ; Contiguous: extend last span's LastBlock to the new block
     POP  HL                     ; HL = &last_span.LastBlock_low
-    LD   DE, (fs_temp_dir_blk)
+    PUSH HL
+    LD   HL, (fs_temp_dir_blk)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D
@@ -509,7 +523,10 @@ fs_add_new_span:
     ADD  HL, HL                 ; * 4  (HL = SpanCount * 4)
     LD   DE, DISK_BUFFER + INODE_OFF_SPANS
     ADD  HL, DE                 ; HL = &new_span
-    LD   DE, (fs_temp_dir_blk)
+    PUSH HL
+    LD   HL, (fs_temp_dir_blk)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E                ; FirstBlock low
     INC  HL
     LD   (HL), D                ; FirstBlock high

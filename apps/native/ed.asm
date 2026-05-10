@@ -391,8 +391,9 @@ ed_del_no_copy:
     ; Count deleted lines = end_line - start_line + 1
     ; We need the end line# but we already consumed it
     ; Recalculate from addr1/addr2
+    LD   HL, (ed_addr1)
+    EX   DE, HL
     LD   HL, (ed_addr2)
-    LD   DE, (ed_addr1)
     LD   A, L
     SUB  E
     LD   C, A
@@ -412,8 +413,9 @@ ed_del_no_copy:
 
     ; Update current line
     POP  HL                  ; start line# (discard, we use addr1)
+    LD   HL, (ed_line_count)
+    EX   DE, HL
     LD   HL, (ed_addr1)
-    LD   DE, (ed_line_count)
     ; If addr1 > line_count, set cur_line = line_count
     LD   A, E
     SUB  L
@@ -448,7 +450,10 @@ ed_cmd_insert:
     LD   HL, (ed_addr1)
     ; Validate: allow insert at line_count+1 (append at end)
     PUSH HL
-    LD   DE, (ed_line_count)
+    PUSH HL
+    LD   HL, (ed_line_count)
+    EX   DE, HL
+    POP  HL
     INC  DE                  ; allow one past end
     LD   A, L
     OR   H
@@ -594,8 +599,9 @@ ed_ddr_no_copy:
     LD   (ed_buf_used), HL
 
     ; Update line_count
+    LD   HL, (ed_addr1)
+    EX   DE, HL
     LD   HL, (ed_addr2)
-    LD   DE, (ed_addr1)
     LD   A, L
     SUB  E
     LD   C, A
@@ -623,11 +629,11 @@ ed_ddr_no_copy:
 ; Lines terminated by a line containing only "."
 ; ============================================================
 ed_insert_mode:
-    LD   HL, (ed_addr1)
-
     ; Find insertion point in buffer
     ; If inserting at line_count+1, insertion point = end of buffer
-    LD   DE, (ed_line_count)
+    LD   HL, (ed_line_count)
+    EX   DE, HL
+    LD   HL, (ed_addr1)
     INC  DE
     LD   A, L
     SUB  E
@@ -696,7 +702,10 @@ ed_ins_len_done:
     ADD  HL, BC              ; new total size
     LD   DE, ed_textbuf
     ADD  HL, DE              ; absolute end after insert
-    LD   DE, (ed_buf_end)
+    PUSH HL
+    LD   HL, (ed_buf_end)
+    EX   DE, HL
+    POP  HL
     ; Check if HL > DE (overflow)
     LD   A, E
     SUB  L
@@ -712,7 +721,10 @@ ed_ins_len_done:
     LD   HL, (ed_buf_used)
     LD   DE, ed_textbuf
     ADD  HL, DE              ; HL = end of data
-    LD   DE, (ed_ins_point)
+    PUSH HL
+    LD   HL, (ed_ins_point)
+    EX   DE, HL
+    POP  HL
     ; bytes_to_shift = HL - DE
     PUSH HL                  ; save end_of_data
     LD   A, L
@@ -757,7 +769,8 @@ ed_ins_no_shift:
     POP  BC                  ; BC = line length (with LF)
 
     ; Copy line text into buffer at ins_point
-    LD   DE, (ed_ins_point)
+    LD   HL, (ed_ins_point)
+    EX   DE, HL
     LD   HL, ed_linebuf
 ed_ins_copy:
     LD   A, (HL)
@@ -773,7 +786,9 @@ ed_ins_copy_lf:
     INC  DE
 
     ; Update ins_point for next line
-    LD   (ed_ins_point), DE
+    EX   DE, HL
+    LD   (ed_ins_point), HL
+    EX   DE, HL
 
     ; Update buf_used += line_length
     LD   HL, (ed_buf_used)
@@ -1100,8 +1115,9 @@ ed_write_created:
     LD   (ed_iobuf_pos), HL
     LD   (ed_bytes_written), HL
 
+    LD   HL, (ed_buf_used)
+    EX   DE, HL              ; DE = total bytes to write
     LD   HL, ed_textbuf      ; source pointer
-    LD   DE, (ed_buf_used)   ; total bytes to write
 
 ed_write_loop:
     ; Check if done
@@ -1287,8 +1303,10 @@ ed_fflush:
     LD   DE, ed_iobuf
     ADD  HL, DE              ; HL = &iobuf[pos]
     ; remaining = 512 - pos
-    LD   BC, (ed_iobuf_pos)
     PUSH HL
+    LD   HL, (ed_iobuf_pos)
+    LD   B, H
+    LD   C, L                ; BC = ed_iobuf_pos
     LD   HL, 512
     LD   A, L
     SUB  C
@@ -1352,7 +1370,10 @@ ed_fl_skip:
 ed_fl_scan_lf:
     ; Check if past end
     PUSH DE
-    LD   DE, (ed_fl_end)
+    PUSH HL
+    LD   HL, (ed_fl_end)
+    EX   DE, HL
+    POP  HL
     LD   A, L
     SUB  E
     LD   A, H
@@ -1373,7 +1394,10 @@ ed_fl_found:
     ; Find end of line (LF)
 ed_fl_find_end:
     PUSH DE
-    LD   DE, (ed_fl_end)
+    PUSH HL
+    LD   HL, (ed_fl_end)
+    EX   DE, HL
+    POP  HL
     LD   A, L
     SUB  E
     LD   A, H
@@ -1418,8 +1442,10 @@ ed_parse_addrs:
     CALL ed_parse_one_addr
     JP   C, ed_pa_done       ; no address found
 
-    LD   (ed_addr1), DE
-    LD   (ed_addr2), DE      ; default: addr2 = addr1
+    EX   DE, HL
+    LD   (ed_addr1), HL
+    LD   (ed_addr2), HL      ; default: addr2 = addr1
+    EX   DE, HL
     LD   A, 1
     LD   (ed_addr_count), A
 
@@ -1432,7 +1458,9 @@ ed_parse_addrs:
     CALL ed_parse_one_addr
     JP   C, ed_pa_done       ; no second address
 
-    LD   (ed_addr2), DE
+    EX   DE, HL
+    LD   (ed_addr2), HL
+    EX   DE, HL
     LD   A, 2
     LD   (ed_addr_count), A
 
@@ -1452,7 +1480,10 @@ ed_parse_one_addr:
     CP   '.'
     JP   NZ, ed_poa_not_dot
     INC  HL
-    LD   DE, (ed_cur_line)
+    PUSH HL
+    LD   HL, (ed_cur_line)
+    EX   DE, HL
+    POP  HL
     OR   A                   ; clear carry
     RET
 
@@ -1461,7 +1492,10 @@ ed_poa_not_dot:
     CP   '$'
     JP   NZ, ed_poa_not_dollar
     INC  HL
-    LD   DE, (ed_line_count)
+    PUSH HL
+    LD   HL, (ed_line_count)
+    EX   DE, HL
+    POP  HL
     OR   A
     RET
 
@@ -1522,7 +1556,10 @@ ed_validate_line:
     SCF
     RET  Z                   ; 0 is invalid
 
-    LD   DE, (ed_line_count)
+    PUSH HL
+    LD   HL, (ed_line_count)
+    EX   DE, HL
+    POP  HL
     LD   A, E
     SUB  L
     LD   A, D
@@ -1543,7 +1580,8 @@ ed_resolve_range:
     RET  C
 
     ; Check addr1 <= addr2
-    LD   DE, (ed_addr1)
+    LD   HL, (ed_addr1)
+    EX   DE, HL
     LD   HL, (ed_addr2)
     LD   A, L
     SUB  E
@@ -1670,11 +1708,11 @@ ed_getline:
 ed_gl_loop:
     CALL ed_getchar
 
-    ; Check for CR or LF (end of line)
+    ; CR ends the line; LF is dropped so a CRLF sender doesn't double-trigger.
     CP   ED_CR
     JP   Z, ed_gl_cr
     CP   ED_LF
-    JP   Z, ed_gl_done
+    JP   Z, ed_gl_loop
 
     ; Check for backspace
     CP   ED_BS
