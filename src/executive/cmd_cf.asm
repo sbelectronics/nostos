@@ -265,7 +265,8 @@ cmd_cf_have_dest_path:
     AND  0x01
     JP   NZ, cmd_cf_skip_open_src   ; src is a char device
 
-    LD   DE, (EXEC_ARGS_PTR)        ; src path (already null-terminated)
+    LD   HL, (EXEC_ARGS_PTR)        ; src path (already null-terminated)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS

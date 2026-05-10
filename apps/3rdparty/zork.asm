@@ -121,17 +121,19 @@ CPMSTR:
 ZER:	JP RESTAR
 ;
 ; ------------------------------------------------------------
-; MEMTOP - return top of available memory in HL
-; Calls SYS_MEMTOP to get runtime memory top, then applies
-; alignment logic from original (ensures ZCODE page boundary)
+; MEMTOP - return top of available memory in HL.
+; Returns SYS_MEMTOP minus 256, leaving a one-page cushion for the
+; START3 NPGS calc (line ~1099) which can round UP one page when
+; the high-byte subtraction is even but the low-byte slack is < 512.
+; That extra page would overflow into RINGBUF_BOOK at 0xF75A in
+; sio-int builds (visible as garbage CIN bytes) or the kernel stack
+; at 0xF7F0+ in polled builds (silent because syscalls run on the
+; caller's stack).  Do not remove DEC H without rewriting the NPGS
+; calc to use a precise 16-bit (MEMTOP - PGBUFP) / 512.
 ; ------------------------------------------------------------
 MEMTOP:	LD C,SYS_MEMTOP
 	CALL KERNELADDR
-	LD A,(ZCODEP+1)		;GET MSB OF LOW MEM STARTING POINTER
-	XOR H			;
-	AND 1			;
-	RET NZ			;
-	DEC H			;WASTE 256 MORE IF NECESSARY
+	DEC H			; one-page safety cushion; see comment above
 	RET
 ;
 ; ------------------------------------------------------------
@@ -182,7 +184,8 @@ GETDSK: LD (DBUFP),HL
 	; BREAD 512 bytes into destination
 	LD A,(ZORKFH)
 	LD B,A
-	LD DE,(DBUFP)
+	LD HL,(DBUFP)
+	EX DE,HL
 	LD C,DEV_BREAD
 	CALL KERNELADDR
 	OR A
@@ -1095,6 +1098,10 @@ START3: LD HL,(ZCODEP)
 	LD (PGBUFP),HL	;STORE IT
 	DEC HL		;CALCULATE NO. OF AVAILABLE PAGES
 	EX DE,HL	;TOP LOCATION
+	; NPGS = (MEMTOP_h - (PGBUFP_h - 1)) / 2 via RRCA.  High-byte
+	; hack: rounds UP one page when the diff is even but the
+	; low-byte slack is < 512.  MEMTOP returns SYS_MEMTOP - 256
+	; specifically to absorb that overshoot; see MEMTOP above.
 	CALL MEMTOP
 	LD A,H
 	SUB D

@@ -1,0 +1,7 @@
+# Sanity check used by `make test-variants`: confirms serial I/O,
+# ROMdisk read, and RAMdisk write work for the selected variant.
+DIR
+TYPE WELCOME.TXT
+COPY WELCOME.TXT B:
+DIR B:
+HALT

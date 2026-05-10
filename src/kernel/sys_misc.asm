@@ -203,7 +203,8 @@ sys_memtop:
 ;   HL - 0
 ; ------------------------------------------------------------
 sys_set_membot:
-    LD   (DYNAMIC_MEMBOT), DE
+    EX   DE, HL
+    LD   (DYNAMIC_MEMBOT), HL
     XOR  A
     LD   H, A
     LD   L, A
@@ -233,7 +234,9 @@ sys_exec_reloc_ptr  EQU SYS_EXEC_STATE + 6      ; 2 bytes
 
 sys_exec:
     ; Save load address
-    LD   (sys_exec_load_addr), DE
+    EX   DE, HL
+    LD   (sys_exec_load_addr), HL
+    EX   DE, HL
 
     ; 1. Read file blocks into memory at DE
     LD   H, D
@@ -272,8 +275,9 @@ sys_exec_loaded:
     INC  HL
     LD   D, (HL)                ; DE = reloc_count
     INC  HL                     ; HL = first reloc entry
-    LD   (sys_exec_reloc_cnt), DE
     LD   (sys_exec_reloc_ptr), HL
+    EX   DE, HL
+    LD   (sys_exec_reloc_cnt), HL
 
     ; 5. Apply relocations
 sys_exec_reloc_loop:

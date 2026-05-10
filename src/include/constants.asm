@@ -84,6 +84,18 @@ PATH_WORK_PATH      EQU PATH_WORK_BASE + 0x08    ; resolved path scratch space (
 FS_SPAN_CACHE       EQU WORKSPACE_BASE + 0x0640  ; filesystem inode span cache: 13*(FirstBlock,LastBlock) = 52 bytes
 SYS_EXEC_STATE      EQU WORKSPACE_BASE + 0x0674  ; SYS_EXEC persistent state (8 bytes, safe across driver calls)
 RND_SEED            EQU WORKSPACE_BASE + 0x067C  ; RND device LFSR state (2 bytes)
+
+; SD driver private state.  Outside KERN_TEMP_SPACE because SD I/O
+; can be invoked from inside an FS file operation, where fs_io.asm
+; owns KERN_TEMP_SPACE +90..106 (fs_temp_io_*).
+SD_CMD_BUF          EQU WORKSPACE_BASE + 0x067E ; 6 bytes: assembled SD SPI command frame
+SD_DEV_ID           EQU WORKSPACE_BASE + 0x0684 ; 1 byte:  device-ID stash (B is clobbered
+                                                ; by every Z180 OUT (C),A)
+
+; Scratch for exec_print_dec32 (4 bytes).  Outside EXEC_RAM_START
+; because callers (e.g. cmd_ld) use EXEC_RAM_START for their own
+; per-command buffers.
+EXEC_DEC32_SCRATCH  EQU WORKSPACE_BASE + 0x0685 ; 4 bytes
 KERN_TEMP_SPACE     EQU WORKSPACE_BASE + 0x0700  ; 128 bytes of temporary space for kernel
 WORKSPACE_END       EQU WORKSPACE_BASE + 0x0780  ; end of workspace
 
@@ -241,6 +253,20 @@ SIO_CTRL_A          EQU SIO_BASE + 0 ; channel A control/status
 SIO_DATA_A          EQU SIO_BASE + 1 ; channel A data
 SIO_CTRL_B          EQU SIO_BASE + 2 ; channel B control/status
 SIO_DATA_B          EQU SIO_BASE + 3 ; channel B data
+        ENDIF
+
+NET_BASE            EQU 0x84    ; Scott's pico networking card, outbound devices
+
+        IFDEF SIO_USE_SB
+NET_CTRL_A          EQU NET_BASE + 2 ; channel A control/status (Scott's board)
+NET_DATA_A          EQU NET_BASE + 0 ; channel A data           (Scott's board)
+NET_CTRL_B          EQU NET_BASE + 3 ; channel B control/status (Scott's board)
+NET_DATA_B          EQU NET_BASE + 1 ; channel B data           (Scott's board)
+        ELSE
+NET_CTRL_A          EQU NET_BASE + 0 ; channel A control/status
+NET_DATA_A          EQU NET_BASE + 1 ; channel A data
+NET_CTRL_B          EQU NET_BASE + 2 ; channel B control/status
+NET_DATA_B          EQU NET_BASE + 3 ; channel B data
         ENDIF
 
 ; SIO/2 physical device user data offsets (within PHYSDEV_OFF_DATA)
@@ -447,6 +473,118 @@ CF_CMD_IDENTIFY     EQU 0xEC    ; identify device
 CF_HEAD_LBA         EQU 0xE0    ; LBA mode, device 0 (1110 0000)
 
 ; ============================================================
+; SD card (SPI) - shared protocol constants
+;
+; Two transport modes, selected by exactly one of the build flags
+; SD_USE_CSIO (Z180 CSI/O hardware SPI) or SD_USE_BITBANG
+; (software SPI on a single 8-bit latch port).  The driver's
+; per-mode primitives live behind these IFDEFs in src/drivers/sd.asm;
+; everything else (init state machine, command framing, block
+; read/write, LBA arithmetic) is shared.
+; ============================================================
+
+; SD command bytes (with the start bit + transmission bit set,
+; i.e. 0x40 | command_index).
+SD_CMD0             EQU 0x40    ; GO_IDLE_STATE
+SD_CMD8             EQU 0x48    ; SEND_IF_COND (V2 cards only)
+SD_CMD17            EQU 0x51    ; READ_SINGLE_BLOCK
+SD_CMD24            EQU 0x58    ; WRITE_BLOCK
+SD_CMD55            EQU 0x77    ; APP_CMD prefix
+SD_CMD58            EQU 0x7A    ; READ_OCR
+SD_ACMD41           EQU 0x69    ; SD_SEND_OP_COND (preceded by CMD55)
+
+; CRCs are only checked by the card while still in CRC mode (before
+; the card has acknowledged the very first command).  After CMD0
+; the SPI mode card ignores CRC, so we only need correct values for
+; CMD0 and CMD8; everything else can use a 0x00 dummy.
+SD_CRC_CMD0         EQU 0x95    ; precomputed CRC7 for CMD0 / arg=0
+SD_CRC_CMD8         EQU 0x87    ; precomputed CRC7 for CMD8 / arg=0x000001AA
+
+; R1 response bits.  R1=0x00 means "in normal operation, no errors".
+; R1=0x01 means "in idle state" — expected reply during init.
+SD_R1_IDLE          EQU 0x01
+SD_R1_ILLEGAL_CMD   EQU 0x04
+
+; Single-block data transfer tokens.
+SD_TOKEN_DATA       EQU 0xFE    ; start-of-block token (read + CMD24 write)
+SD_RESP_ACCEPTED    EQU 0x05    ; data-response after a write: accepted
+SD_RESP_MASK        EQU 0x1F    ; mask off the high 3 don't-care bits
+
+; Card type, stored in PDT user data byte SD_OFF_TYPE.
+SD_TYPE_NONE        EQU 0x00    ; init not yet completed
+SD_TYPE_SDSC        EQU 0x01    ; V1 / V2 SDSC (byte-addressed)
+SD_TYPE_SDHC        EQU 0x02    ; V2 SDHC/SDXC (block-addressed)
+
+; PDT user data offsets (within PHYSDEV_OFF_DATA).  Layout matches
+; CompactFlash for the LBA quad so common_bgetpos works unchanged;
+; +4 is card type, +5 is the bit-bang port (unused by CSI/O).
+SD_OFF_LBA          EQU 0       ; current LBA (4 bytes, little-endian)
+SD_OFF_TYPE         EQU 4       ; card type (1 byte)
+SD_OFF_PORT         EQU 5       ; bit-bang port number (1 byte; ignored in CSI/O mode)
+
+; Reported device size: 32 MB = 65536 blocks (0x02000000 bytes).
+; Fits on any modern card; parsing the real CSD register costs more
+; code than the precision is worth here.
+SD_REPORTED_SIZE_HI EQU 0x02    ; high byte of the 4-byte size (LE byte 3)
+
+; ------------------------------------------------------------
+; SD CSI/O (Z180) - SC131 board
+; CSI/O is the Z180's clocked serial port; it drives MOSI/MISO/SCLK
+; in hardware.  Chip-select is a separate latch bit on a 74HCT259.
+; ------------------------------------------------------------
+
+; Z180 CSI/O registers (post I/O remap to Z180_IO_BASE = 0xC0).
+Z180_CNTR           EQU Z180_IO_BASE + 0x0A ; CSI/O control / baud
+Z180_TRDR           EQU Z180_IO_BASE + 0x0B ; CSI/O transmit/receive data
+
+; CNTR transfer-enable / direction bits.
+Z180_CNTR_TE        EQU 0x10    ; bit 4: transmit enable (1 = start tx)
+Z180_CNTR_RE        EQU 0x20    ; bit 5: receive  enable (1 = start rx)
+
+; CNTR baud divisor presets.  Z8S180 at 18.432 MHz PHI:
+;   bits 2:0 = 110 (6) → PHI/1280  ≈ 14.4 kHz  — init clock (< 400 kHz spec)
+;   bits 2:0 = 000 (0) → PHI/20    ≈ 921 kHz   — fastest CSI/O can run
+SD_CNTR_INIT        EQU 0x06
+SD_CNTR_FAST        EQU 0x00
+
+; SC131 chip-select: bit D2 of the 74HCT259 latch at port 0x0C.
+; D3 is also set in RomWBW's writes (SD_OPRDEF = 0x0C, SD_CS0 = 0x04
+; in their sd.asm — assert = 0x08, deassert = 0x0C).  The SC131
+; '259 only latches one bit per write so D3 is a don't-care here,
+; but we match RomWBW's pattern in case future SC variants reuse
+; this driver and DO care about D3.
+SD_SC131_CS_PORT    EQU 0x0C
+SD_SC131_CS_HIGH    EQU 0x0C    ; D3=1, D2=1 → /CS deasserted (idle)
+SD_SC131_CS_LOW     EQU 0x08    ; D3=1, D2=0 → /CS asserted (selected)
+
+; ------------------------------------------------------------
+; SD bit-bang (SC611 RCBus module)
+; All four SD lines on one 8-bit latch port (default 0x69, jumper-
+; configurable via JP1; runtime port is held in PDT byte SD_OFF_PORT).
+; Read on the same port returns MISO on D7 (one RLA shifts it into
+; carry).
+; ------------------------------------------------------------
+
+; Output bit positions (writes).
+SD_BB_BIT_MOSI      EQU 0x01    ; D0 → SD MOSI
+SD_BB_BIT_CS        EQU 0x08    ; D3 → SD /CS  (active low)
+SD_BB_BIT_SCLK      EQU 0x10    ; D4 → SD SCLK
+
+; Idle state on the latch: SCLK low, /CS high (deasserted), MOSI high.
+SD_BB_IDLE          EQU SD_BB_BIT_CS | SD_BB_BIT_MOSI    ; 0x09
+
+; CS-asserted, SCLK low.  MOSI bit gets ORed in per bit.
+SD_BB_CS_LOW_CLK_LO EQU 0x00
+SD_BB_CS_LOW_CLK_HI EQU SD_BB_BIT_SCLK                    ; 0x10
+
+; Bit-bang reuses the CF self-modifying I/O thunks (same workspace
+; cells, mutually exclusive use — no NostOS bootstrap mounts both
+; CF and a bit-bang SD on the same machine).  CSI/O mode doesn't
+; need them at all.
+SD_BB_IN_THUNK      EQU CF_READ_THUNK
+SD_BB_OUT_THUNK     EQU CF_WRITE_THUNK
+
+; ============================================================
 ; WD37C65 Floppy Disk Controller - hardcoded ports
 ; ============================================================
 
@@ -608,9 +746,12 @@ PHYSDEV_ID_SCCB     EQU 0x0C    ; SCC channel B
 PHYSDEV_ID_FDC      EQU 0x0D    ; WD37C65 floppy disk controller
 PHYSDEV_ID_RND      EQU 0x0E    ; random number character device
 PHYSDEV_ID_BBL      EQU 0x0F    ; 7220 bubble memory block device
+PHYSDEV_ID_NETA     EQU 0x10    ; Scott's pico networking board, channel A
+PHYSDEV_ID_NETB     EQU 0x11    ; Scott's pico networking board, channel B
+PHYSDEV_ID_SD       EQU 0x12    ; SD card (placeholder; no driver yet)
 PHYSDEV_ID_UN       EQU 0xFF    ; unassigned device
-; RAM-allocated open file/dir handles start at 0x10
-PHYSDEV_ID_FILE0    EQU 0x10
+; RAM-allocated open file/dir handles start at 0x20
+PHYSDEV_ID_FILE0    EQU 0x20
 
 ; Ramdisk/romdisk PDT user-data offsets (relative to start of user-data field)
 RD_OFF_START_PAGE   EQU 0       ; 1 byte: first page of disk

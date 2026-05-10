@@ -156,8 +156,9 @@ cmd_sum_update_size:
 
 cmd_sum_finish:
     ; Fold: checksum = (accum & 0xFFFF) + (accum >> 16)
+    LD   HL, (cmd_sum_accum + 2)    ; HL = high 16 bits
+    EX   DE, HL                     ; DE = high 16 bits
     LD   HL, (cmd_sum_accum)        ; HL = low 16 bits
-    LD   DE, (cmd_sum_accum + 2)    ; DE = high 16 bits
     ADD  HL, DE                     ; HL = folded sum (may overflow)
     JP   NC, cmd_sum_no_carry2
     INC  HL                         ; add the carry back in

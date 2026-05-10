@@ -126,7 +126,8 @@ mf_test2:
     CALL mf_read_block
     JP   NZ, mf_error
     CALL mf_sum_buf
-    LD   DE, (mf_sum_a)
+    LD   HL, (mf_sum_a)
+    EX   DE, HL
     LD   HL, (mf_sum)
     ADD  HL, DE
     LD   (mf_sum_a), HL
@@ -136,7 +137,8 @@ mf_test2:
     CALL mf_read_block
     JP   NZ, mf_error
     CALL mf_sum_buf
-    LD   DE, (mf_sum_b)
+    LD   HL, (mf_sum_b)
+    EX   DE, HL
     LD   HL, (mf_sum)
     ADD  HL, DE
     LD   (mf_sum_b), HL
@@ -189,7 +191,8 @@ mf_test2:
     CALL mf_read_block
     JP   NZ, mf_error
     CALL mf_sum_buf
-    LD   DE, (mf_sum_a)
+    LD   HL, (mf_sum_a)
+    EX   DE, HL
     LD   HL, (mf_sum)
     ADD  HL, DE
     LD   (mf_sum_a), HL
@@ -207,7 +210,8 @@ mf_test2:
     CALL mf_read_block
     JP   NZ, mf_error
     CALL mf_sum_buf
-    LD   DE, (mf_sum_b)
+    LD   HL, (mf_sum_b)
+    EX   DE, HL
     LD   HL, (mf_sum)
     ADD  HL, DE
     LD   (mf_sum_b), HL
@@ -390,7 +394,8 @@ mf_sum_nc:
     LD   A, C
     CP   2
     JP   NZ, mf_sum_loop      ; do second pass of 256 = 512 total
-    LD   (mf_sum), DE
+    EX   DE, HL
+    LD   (mf_sum), HL
     RET
 
 ; ============================================================

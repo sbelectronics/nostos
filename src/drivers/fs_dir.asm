@@ -164,7 +164,10 @@ fs_dir_advance_block:
     LD   HL, (fs_temp_dir_blk)
     INC  HL
     LD   (fs_temp_dir_blk), HL
-    LD   DE, (fs_temp_dir_lastblk)
+    PUSH HL                         ; preserve block_num across lastblk load
+    LD   HL, (fs_temp_dir_lastblk)
+    EX   DE, HL                     ; DE = lastblk
+    POP  HL                         ; HL = block_num
     LD   A, D
     CP   H
     RET  C                          ; H > D → past end

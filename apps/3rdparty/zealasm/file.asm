@@ -189,13 +189,17 @@ _file_write_byte_loop:
     PUSH HL
     PUSH BC
     ; Get write position in buffer
+    LD   HL, (file_wbuf_pos)
+    LD   B, H
+    LD   C, L                   ; BC = file_wbuf_pos
     LD   HL, file_write_buf
-    LD   BC, (file_wbuf_pos)
     ADD  HL, BC
     LD   (HL), A
     ; Increment position
     INC  BC
-    LD   (file_wbuf_pos), BC
+    LD   H, B
+    LD   L, C
+    LD   (file_wbuf_pos), HL
     ; Check if buffer full (pos >= 512 = 0x0200)
     LD   A, B
     CP   2
@@ -248,8 +252,10 @@ file_flush_output:
     LD   DE, file_write_buf
     ADD  HL, DE             ; HL = first empty byte
     ; Calculate bytes to zero: 512 - pos
-    LD   BC, (file_wbuf_pos)
     PUSH HL
+    LD   HL, (file_wbuf_pos)
+    LD   B, H
+    LD   C, L               ; BC = file_wbuf_pos
     LD   HL, 512
     LD   A, L
     SUB  C

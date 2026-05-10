@@ -73,9 +73,7 @@ head_parse_fname:
     LD   A, (HL)
     OR   A
     JP   Z, head_usage
-    LD   D, H
-    LD   E, L
-    LD   (head_fname), DE
+    LD   (head_fname), HL
 head_upcase:
     LD   A, (HL)
     OR   A
@@ -100,7 +98,8 @@ head_upcase_done:
     JP   Z, head_usage
 
     ; Open file
-    LD   DE, (head_fname)
+    LD   HL, (head_fname)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS

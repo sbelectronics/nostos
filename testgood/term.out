@@ -1,0 +1,13 @@
+A:/> C:
+C:/> 
+C:/> term.app
+term: usage: TERM <device>
+C:/> 
+C:/> term.app NOSUCH
+term: device not found
+C:/> 
+C:/> term.app CF
+term: device has no char I/O
+C:/> 
+C:/> HALT
+CPU halted

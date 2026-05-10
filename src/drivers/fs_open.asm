@@ -307,7 +307,10 @@ fs_open_prep_slot:
     LD   HL, (fs_temp_open_slot)
     LD   BC, PHYSDEV_OFF_DFT
     ADD  HL, BC
-    LD   DE, (fs_temp_open_dft)
+    PUSH HL
+    LD   HL, (fs_temp_open_dft)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D
@@ -369,7 +372,10 @@ fs_open_prep_slot:
     LD   HL, (fs_temp_open_slot)
     LD   BC, PHYSDEV_OFF_NEXT
     ADD  HL, BC                 ; HL = &slot->next
-    LD   DE, (PHYSDEV_LIST_HEAD)
+    PUSH HL
+    LD   HL, (PHYSDEV_LIST_HEAD)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D

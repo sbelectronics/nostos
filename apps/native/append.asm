@@ -45,10 +45,8 @@ ap_main:
 
     ; --- Token 1: filename ---
     ; Upcase and null-terminate the filename in the input buffer
-    LD   D, H
-    LD   E, L                       ; DE = filename start
     ; Save filename pointer
-    LD   (ap_fname_ptr), DE
+    LD   (ap_fname_ptr), HL
 ap_upcase_fname:
     LD   A, (HL)
     OR   A
@@ -87,7 +85,8 @@ ap_text_found:
 
     ; --- Open or create file ---
     ; Try SYS_GLOBAL_OPENFILE first
-    LD   DE, (ap_fname_ptr)
+    LD   HL, (ap_fname_ptr)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS
@@ -98,7 +97,8 @@ ap_text_found:
     JP   NZ, ap_error
 
     ; Resolve device from filename, then create
-    LD   DE, (ap_fname_ptr)
+    LD   HL, (ap_fname_ptr)
+    EX   DE, HL
     LD   C, SYS_PATH_PARSE
     CALL KERNELADDR             ; A = status, HL = device ID, DE = path component
     OR   A

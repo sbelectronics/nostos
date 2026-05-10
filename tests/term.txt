@@ -1,0 +1,5 @@
+C:
+term.app
+term.app NOSUCH
+term.app CF
+HALT

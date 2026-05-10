@@ -88,9 +88,7 @@ tail_parse_fname:
     LD   A, (HL)
     OR   A
     JP   Z, tail_usage
-    LD   D, H
-    LD   E, L
-    LD   (tail_fname), DE
+    LD   (tail_fname), HL
     ; Upcase filename in-place
 tail_upcase:
     LD   A, (HL)
@@ -122,7 +120,8 @@ tail_upcase_done:
 tail_nlines_ok:
 
     ; Open file
-    LD   DE, (tail_fname)
+    LD   HL, (tail_fname)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS
@@ -386,8 +385,9 @@ tail_read_start:
     SBC  A, C
     LD   (tail_bytes_left + 2), A
     ; Add skip_bytes to bytes_left (need to read+skip those too)
+    LD   HL, (tail_skip_bytes)
+    EX   DE, HL
     LD   HL, (tail_bytes_left)
-    LD   DE, (tail_skip_bytes)
     ADD  HL, DE
     LD   (tail_bytes_left), HL
     JP   NC, tail_no_carry

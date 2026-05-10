@@ -110,3 +110,8 @@ platform_init:
     IM   1
     EI
     RET
+
+; --- Build-flag assertions (see mapper_config.asm for sentinel contract) ---
+    IFNDEF MAPPER_74HCT670_CHOSEN
+        ERROR "512k-sio-int-cf bootstrap requires the default 74HCT670 mapper (no -DMAPPER_NONE or -DMAPPER_Z180_MMU)"
+    ENDIF

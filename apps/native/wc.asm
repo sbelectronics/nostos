@@ -32,9 +32,7 @@ wc_main:
     JP   Z, wc_usage
 
     ; Upcase filename in-place
-    LD   D, H
-    LD   E, L
-    LD   (wc_fname), DE
+    LD   (wc_fname), HL
 wc_upcase:
     LD   A, (HL)
     OR   A
@@ -55,7 +53,8 @@ wc_upcase_term:
 wc_upcase_done:
 
     ; Open file
-    LD   DE, (wc_fname)
+    LD   HL, (wc_fname)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS
@@ -213,7 +212,8 @@ wc_print_name:
     LD   C, DEV_CWRITE
     CALL KERNELADDR
 
-    LD   DE, (wc_fname)
+    LD   HL, (wc_fname)
+    EX   DE, HL
     LD   B, LOGDEV_ID_CONO
     LD   C, DEV_CWRITE_STR
     CALL KERNELADDR

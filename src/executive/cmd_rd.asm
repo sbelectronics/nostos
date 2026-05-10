@@ -12,14 +12,16 @@ cmd_rd:
     CALL exec_upcase_delimit    ; upcase name in INPUT_BUFFER in-place
     ; Try to open as a file — if it succeeds, the target is a file,
     ; not a directory, so refuse.
-    LD   DE, (EXEC_ARGS_PTR)
+    LD   HL, (EXEC_ARGS_PTR)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS
     JP   Z, cmd_rd_is_file     ; opened as file → not a directory
     ; Open failed — target is either a directory or doesn't exist.
     ; Resolve device and path, then DEV_FREMOVE.
-    LD   DE, (EXEC_ARGS_PTR)
+    LD   HL, (EXEC_ARGS_PTR)
+    EX   DE, HL
     LD   C, SYS_PATH_PARSE
     CALL KERNELADDR             ; A = status, HL = device ID, DE = path component
     OR   A

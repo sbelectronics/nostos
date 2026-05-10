@@ -847,7 +847,8 @@ st_nav_eng_ok:
     CALL st_mul_b_c        ; HL = warp * 10
     ; Check we have enough energy (DE >= HL)
     PUSH HL                ; save cost
-    LD   DE, (st_energy)
+    LD   HL, (st_energy)
+    EX   DE, HL
     LD   A, D
     CP   H
     JP   C, st_nav_nrg     ; energy < cost (high byte)
@@ -1091,7 +1092,8 @@ st_pha_have_k:
     CALL st_div_de_c       ; DE = energy per klingon
 
     ; Store energy-per-klingon in temp var
-    LD   (st_pha_epk), DE
+    EX   DE, HL
+    LD   (st_pha_epk), HL
 
     ; Loop through all klingon slots (some may be dead)
     LD   B, ST_MAX_KLINGONS
@@ -1150,7 +1152,8 @@ st_pha_dist_ok:
 st_pha_dist_nz:
     ; Compute hit = (epk / distance) * rand >> 7
     LD   C, A              ; C = distance
-    LD   DE, (st_pha_epk)
+    LD   HL, (st_pha_epk)
+    EX   DE, HL
     CALL st_div_de_c       ; DE = epk / distance
     CALL st_rand
     LD   C, A              ; C = rand byte
@@ -1490,9 +1493,10 @@ st_she_ok:
     JP   C, st_nav_bad
     ; DE = desired shield level
     ; Total available = energy + shields
-    LD   HL, (st_energy)
     PUSH DE
-    LD   DE, (st_shields)
+    LD   HL, (st_shields)
+    EX   DE, HL
+    LD   HL, (st_energy)
     ADD  HL, DE            ; HL = total
     POP  DE                ; DE = desired shields
     ; Check DE <= HL
@@ -1507,7 +1511,8 @@ st_she_ok:
     SBC  A, D
     LD   H, A
     LD   (st_energy), HL
-    LD   (st_shields), DE
+    EX   DE, HL
+    LD   (st_shields), HL
     LD   DE, st_msg_she_set
     CALL st_puts
     RET
@@ -1662,8 +1667,9 @@ st_com_status:
     ; Time remaining
     LD   A, (st_timelimit)
     LD   C, A
+    LD   HL, (st_startdate)
+    EX   DE, HL
     LD   HL, (st_stardate)
-    LD   DE, (st_startdate)
     LD   A, L
     SUB  E
     LD   L, A
@@ -1936,16 +1942,18 @@ st_check_end:
     JP   Z, st_win
 
     ; Lose: energy + shields <= 0
+    LD   HL, (st_shields)
+    EX   DE, HL
     LD   HL, (st_energy)
-    LD   DE, (st_shields)
     ADD  HL, DE
     LD   A, H
     OR   L
     JP   Z, st_lose_nrg
 
     ; Lose: time up
+    LD   HL, (st_startdate)
+    EX   DE, HL
     LD   HL, (st_stardate)
-    LD   DE, (st_startdate)
     LD   A, L
     SUB  E
     LD   L, A

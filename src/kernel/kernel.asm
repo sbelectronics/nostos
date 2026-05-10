@@ -28,24 +28,11 @@
 kernel_init:
     DI                          ; ensure interrupts are off from the very start;
                                 ; on interrupt-driven builds platform_init will EI
-    IFNDEF ROM_32K
-    ; Window 0 stays ROM (we're executing from it right now).
-    ; Switch windows 1-3 to RAM before touching the stack or workspace.
-    ; These OUT instructions need no stack, so they are safe to execute
-    ; from window 0 (ROM) with windows 1-3 still in their reset state.
-    LD   A, MAPPER_WIN0_ROM
-    OUT  (MAPPER_WIN0_PORT), A  ; window 0 (0x0000-0x3FFF) = ROM page 0 (already is, but be explicit)
-    LD   A, MAPPER_WIN1_RAM
-    OUT  (MAPPER_WIN1_PORT), A  ; window 1 (0x4000-0x7FFF) = RAM page 32
-    LD   A, MAPPER_WIN2_RAM
-    OUT  (MAPPER_WIN2_PORT), A  ; window 2 (0x8000-0xBFFF) = RAM page 33
-    LD   A, MAPPER_WIN3_RAM
-    OUT  (MAPPER_WIN3_PORT), A  ; window 3 (0xC000-0xFFFF) = RAM page 34
-    LD   A, 1
-    OUT  (MAPPER_ENABLE_PORT), A ; For Zeta-2 hardware, enable the mapper.
-    ENDIF
+    ; Initialise the memory mapper before touching the stack.
+    ; Backend selected at build time -- see src/include/mapper_config.asm.
+    MAPPER_INIT
 
-    LD   SP, KERNEL_STACK       ; set up kernel/executive stack (window 3 is now RAM)
+    LD   SP, KERNEL_STACK       ; set up kernel/executive stack
 
     CALL workspace_init         ; zero workspace, install vectors, init tables
     CALL devices_init           ; initialise ROM device drivers
@@ -394,6 +381,15 @@ msg_unexpected_rst:
     IFDEF UART_Z180_INT_FDC
     INCLUDE "src/bootstrap/512k-z180-int-fdc.asm"
     ELSE
+    IFDEF UART_Z180_MMU_INT_CF
+    INCLUDE "src/bootstrap/512k-z180-mmu-int-cf.asm"
+    ELSE
+    IFDEF UART_Z180_MMU_INT_FDC
+    INCLUDE "src/bootstrap/512k-z180-mmu-int-fdc.asm"
+    ELSE
+    IFDEF UART_Z180_MMU_INT_SDCARD
+    INCLUDE "src/bootstrap/512k-z180-mmu-int-sdcard.asm"
+    ELSE
     IFDEF UART_Z180
     INCLUDE "src/bootstrap/512k-z180.asm"
     ELSE
@@ -403,6 +399,9 @@ msg_unexpected_rst:
     ELSE
     INCLUDE "src/bootstrap/512k-scc.asm"
     ENDIF
+    ELSE
+    IFDEF BOARD_PICONET_FDC
+    INCLUDE "src/bootstrap/512k-piconet-fdc.asm"
     ELSE
     IFDEF UART_SIO
     INCLUDE "src/bootstrap/512k-sio.asm"
@@ -421,7 +420,11 @@ msg_unexpected_rst:
     ENDIF
     ENDIF
     ELSE
-    ERROR "No UART variant defined. Specify one of: -DUART_ACIA, -DUART_SIO, -DUART_SIO_INT_CF, -DUART_SIO_INT_FDC, -DUART_ACIA_INT_CF, -DUART_ACIA_INT_FDC, -DUART_SCC, -DUART_SCC_INT_FDC, -DUART_SCC_INT_BUB, -DUART_Z180, -DUART_Z180_INT_FDC, -DUART_16550_FDC_ZETA2"
+    ERROR "No UART variant defined. Specify one of: -DUART_ACIA, -DUART_SIO, -DUART_SIO_INT_CF, -DUART_SIO_INT_FDC, -DUART_ACIA_INT_CF, -DUART_ACIA_INT_FDC, -DUART_SCC, -DUART_SCC_INT_FDC, -DUART_SCC_INT_BUB, -DUART_Z180, -DUART_Z180_INT_FDC, -DUART_Z180_MMU_INT_CF, -DUART_Z180_MMU_INT_FDC, -DUART_Z180_MMU_INT_SDCARD, -DUART_16550_FDC_ZETA2, -DBOARD_PICONET_FDC"
+    ENDIF
+    ENDIF
+    ENDIF
+    ENDIF
     ENDIF
     ENDIF
     ENDIF

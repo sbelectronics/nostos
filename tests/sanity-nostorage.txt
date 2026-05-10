@@ -1,0 +1,6 @@
+# Storage-free sanity used by `make test-variants-nostorage`: confirms
+# the variant boots and the executive responds to a command.  No file
+# I/O so it works on variants whose ROMdisk is too small (32K) or
+# whose default block device starts unformatted (FDC).
+HELP
+HALT

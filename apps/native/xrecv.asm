@@ -247,7 +247,8 @@ xm_quiet_off:
 xm_quiet_done:
 
     ; --- Create output file ---
-    LD   DE, (xm_fname)
+    LD   HL, (xm_fname)
+    EX   DE, HL
     LD   C, SYS_PATH_PARSE
     CALL KERNELADDR
     OR   A

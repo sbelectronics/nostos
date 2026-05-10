@@ -10,7 +10,9 @@
 fs_file_bread:
     PUSH BC                     ; preserve BC (B = device ID)
     PUSH DE                     ; preserve DE (buffer pointer)
-    LD   (fs_temp_io_buf), DE   ; save dest buffer
+    EX   DE, HL
+    LD   (fs_temp_io_buf), HL   ; save dest buffer
+    EX   DE, HL
 
     ; 1. Get user data & block dev
     CALL fs_get_slot_data
@@ -78,8 +80,9 @@ fs_file_bread_not_eof:
     JP   NZ, fs_file_bread_exit ; EOF or IO Error
 
     ; 5. Read the block into caller's buffer
+    LD   HL, (fs_temp_io_buf)
+    EX   DE, HL
     LD   HL, (fs_temp_io_pba)
-    LD   DE, (fs_temp_io_buf)
     CALL fs_read_block
     OR   A
     JP   NZ, fs_file_bread_exit

@@ -210,7 +210,8 @@ xs_quiet_off:
 xs_quiet_done:
 
     ; --- Open input file ---
-    LD   DE, (xs_fname)
+    LD   HL, (xs_fname)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     OR   A
@@ -388,7 +389,8 @@ xs_send_block:
     LD   (xs_data_ptr), HL
 
     ; Pad last XMODEM block with 0x1A if file doesn't end on 128-byte boundary
-    LD   DE, (xs_total_blks)
+    LD   HL, (xs_total_blks)
+    EX   DE, HL
     DEC  DE
     LD   A, D
     OR   E

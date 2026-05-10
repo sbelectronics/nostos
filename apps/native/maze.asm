@@ -86,7 +86,8 @@ maze_main:
     LD   A, D
     OR   E
     JP   Z, maze_generate         ; zero seed, keep default
-    LD   (maze_rng_state), DE
+    EX   DE, HL
+    LD   (maze_rng_state), HL
 
 ; ============================================================
 ; maze_generate - build the maze grid

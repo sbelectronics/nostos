@@ -95,3 +95,11 @@ automount_table:
 ; ============================================================
 platform_init:
     RET
+
+; --- Build-flag assertions (see mapper_config.asm for sentinel contract) ---
+    IFNDEF MAPPER_NONE_CHOSEN
+        ERROR "32k-acia bootstrap requires -DMAPPER_NONE"
+    ENDIF
+    IFNDEF ROM_32K
+        ERROR "32k-acia bootstrap requires -DROM_32K"
+    ENDIF

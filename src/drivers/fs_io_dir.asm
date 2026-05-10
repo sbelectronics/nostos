@@ -11,7 +11,9 @@
 fs_dir_bread:
     PUSH BC                     ; preserve BC (B = device ID)
     PUSH DE                     ; preserve DE (buffer pointer)
-    LD   (fs_temp_io_buf), DE   ; save dest buffer
+    EX   DE, HL
+    LD   (fs_temp_io_buf), HL   ; save dest buffer
+    EX   DE, HL
 
 fs_dir_bread_loop:
     ; 1. Get user data & block dev
@@ -110,7 +112,10 @@ fs_dir_bread_loop:
     JP   Z, fs_dir_bread_advance ; If unused, advance to next entry
 
     ; 7. Copy 32 bytes to caller's buffer
-    LD   DE, (fs_temp_io_buf)
+    PUSH HL
+    LD   HL, (fs_temp_io_buf)
+    EX   DE, HL
+    POP  HL
     LD   B, 32
 fs_dir_bread_copy:
     LD   A, (HL)

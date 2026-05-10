@@ -10,7 +10,9 @@
 fs_file_bwrite:
     PUSH BC                     ; preserve BC (B = device ID)
     PUSH DE                     ; preserve DE (source buffer pointer)
-    LD   (fs_temp_io_buf), DE   ; save source buffer
+    EX   DE, HL
+    LD   (fs_temp_io_buf), HL   ; save source buffer
+    EX   DE, HL
 
     ; 1. Get user data & block dev
     CALL fs_get_slot_data
@@ -35,8 +37,9 @@ fs_file_bwrite:
 
     ; 4. Write the block
 fs_file_bwrite_do:
+    LD   HL, (fs_temp_io_buf)
+    EX   DE, HL
     LD   HL, (fs_temp_io_pba)
-    LD   DE, (fs_temp_io_buf)
     CALL fs_write_block
     OR   A
     JP   NZ, fs_file_bwrite_exit
@@ -158,7 +161,10 @@ fs_file_bwrite_append:
     ADD  HL, BC
     ADD  HL, BC
     ADD  HL, BC                    ; HL = &last_span.LastBlock
-    LD   DE, (fs_temp_io_pba)
+    PUSH HL
+    LD   HL, (fs_temp_io_pba)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D
@@ -179,7 +185,10 @@ fs_bwa_new_span:
     ADD  HL, BC
     ADD  HL, BC
     ADD  HL, BC                    ; HL = &spans[new_index]
-    LD   DE, (fs_temp_io_pba)
+    PUSH HL
+    LD   HL, (fs_temp_io_pba)
+    EX   DE, HL
+    POP  HL
     LD   (HL), E
     INC  HL
     LD   (HL), D                   ; FirstBlock = new_block
@@ -193,8 +202,9 @@ fs_bwa_first_span:
     ; No spans: create first span {new_block, new_block}
     LD   A, 1
     LD   (DISK_BUFFER + INODE_OFF_COUNT), A
+    LD   HL, (fs_temp_io_pba)
+    EX   DE, HL
     LD   HL, DISK_BUFFER + INODE_OFF_SPANS
-    LD   DE, (fs_temp_io_pba)
     LD   (HL), E
     INC  HL
     LD   (HL), D

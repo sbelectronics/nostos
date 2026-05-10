@@ -7,7 +7,7 @@ MKRELOC = python3 ../../tools/mkreloc.py
 
 ASM_FLAGS = -b -reloc-info -m -l
 
-APPS = helloworld format fdinit ed append maze debug xrecv xsend startrek chess life pacman tetris eliza more wc tail head
+APPS = helloworld format fdinit ed append maze debug xrecv xsend startrek chess life pacman tetris eliza more wc tail head term
 APP_BINS = $(foreach app,$(APPS),build/$(app).app)
 
 .PHONY: all clean

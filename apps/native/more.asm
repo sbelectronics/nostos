@@ -41,9 +41,7 @@ more_main:
     JP   Z, more_usage
 
     ; Upcase filename in-place
-    LD   D, H
-    LD   E, L                   ; DE = filename start
-    LD   (more_fname), DE
+    LD   (more_fname), HL
 more_upcase:
     LD   A, (HL)
     OR   A
@@ -64,7 +62,8 @@ more_upcase_term:
 more_upcase_done:
 
     ; Open file
-    LD   DE, (more_fname)
+    LD   HL, (more_fname)
+    EX   DE, HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     CP   ERR_SUCCESS

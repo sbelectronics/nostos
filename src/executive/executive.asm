@@ -589,7 +589,8 @@ exec_run_do_open:
 exec_run_do_exec:
     ; L = file handle from open
     LD   B, L                       ; B = file handle
-    LD   DE, (DYNAMIC_MEMBOT)
+    LD   HL, (DYNAMIC_MEMBOT)
+    EX   DE, HL                     ; DE = DYNAMIC_MEMBOT
     LD   C, SYS_EXEC
     CALL KERNELADDR
     ; Reached only on failure; A = error code.

@@ -218,7 +218,9 @@ debug_break_handler:
     INC  HL
     LD   D, (HL)                ; DE = return address (byte after RST 6)
     DEC  DE                     ; DE = address of the RST 6 opcode
-    LD   (debug_save_pc), DE
+    EX   DE, HL
+    LD   (debug_save_pc), HL
+    EX   DE, HL
     ; Pop the return address off the app's saved SP (the app doesn't
     ; need it — we'll push the resume address when G runs)
     LD   HL, (debug_save_sp)
@@ -268,7 +270,8 @@ debug_go_continue:
 ; original byte.  If it was a temp breakpoint, remove it.
 ; ------------------------------------------------------------
 debug_bp_restore_at_pc:
-    LD   DE, (debug_save_pc)
+    LD   HL, (debug_save_pc)
+    EX   DE, HL
     LD   HL, debug_bp_table
     LD   B, DEBUG_MAX_BP
 debug_bpr_loop:
@@ -432,7 +435,8 @@ debug_disarm_skip:
 ; ------------------------------------------------------------
 debug_check_pc_at_bp:
     PUSH HL
-    LD   DE, (debug_save_pc)
+    LD   HL, (debug_save_pc)
+    EX   DE, HL
     LD   HL, debug_bp_table
     LD   B, DEBUG_MAX_BP
 debug_cpb_loop:
@@ -562,7 +566,8 @@ debug_r_have_second:
     LD   A, C
     CP   'F'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_af), DE
+    EX   DE, HL
+    LD   (debug_save_af), HL
     JP   debug_prompt
 debug_rm_not_af:
     CP   'B'
@@ -570,7 +575,8 @@ debug_rm_not_af:
     LD   A, C
     CP   'C'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_bc), DE
+    EX   DE, HL
+    LD   (debug_save_bc), HL
     JP   debug_prompt
 debug_rm_not_bc:
     CP   'D'
@@ -578,7 +584,8 @@ debug_rm_not_bc:
     LD   A, C
     CP   'E'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_de), DE
+    EX   DE, HL
+    LD   (debug_save_de), HL
     JP   debug_prompt
 debug_rm_not_de:
     CP   'H'
@@ -586,7 +593,8 @@ debug_rm_not_de:
     LD   A, C
     CP   'L'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_hl), DE
+    EX   DE, HL
+    LD   (debug_save_hl), HL
     JP   debug_prompt
 debug_rm_not_hl:
     CP   'S'
@@ -594,7 +602,8 @@ debug_rm_not_hl:
     LD   A, C
     CP   'P'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_sp), DE
+    EX   DE, HL
+    LD   (debug_save_sp), HL
     JP   debug_prompt
 debug_rm_not_sp:
     CP   'P'
@@ -602,7 +611,8 @@ debug_rm_not_sp:
     LD   A, C
     CP   'C'
     JP   NZ, debug_err_syntax
-    LD   (debug_save_pc), DE
+    EX   DE, HL
+    LD   (debug_save_pc), HL
     JP   debug_prompt
 
 debug_r_single:
@@ -932,7 +942,8 @@ debug_cmd_g:
     OR   A
     JP   Z, debug_err_syntax
     ; Set PC to the given address
-    LD   (debug_save_pc), DE
+    EX   DE, HL
+    LD   (debug_save_pc), HL
 
 debug_g_resume:
     ; Check if PC is sitting on an active breakpoint.
@@ -1049,9 +1060,9 @@ debug_l_no_addr_pop:
 debug_l_no_addr:
     POP  HL                     ; HL = filename start
 debug_l_open:
-    LD   (debug_load_addr), DE
-    ; Open the file.  HL = filename, or we need DE = filename.
-    EX   DE, HL                 ; DE = filename
+    ; Open the file.  HL = filename, DE = load_addr.
+    EX   DE, HL                 ; HL = load_addr, DE = filename
+    LD   (debug_load_addr), HL
     LD   C, SYS_GLOBAL_OPENFILE
     CALL KERNELADDR
     OR   A
@@ -1096,7 +1107,9 @@ debug_l_loaded:
     LD   D, (HL)                ; DE = code_length
     INC  HL                     ; HL = program_base (load_addr + 2)
     LD   (debug_target_base), HL
-    LD   (debug_target_len), DE
+    EX   DE, HL                 ; HL = code_length, DE = program_base
+    LD   (debug_target_len), HL
+    EX   DE, HL                 ; HL = program_base, DE = code_length
 
     ; Locate relocation table: program_base + code_length
     ADD  HL, DE                 ; HL = reloc table start
@@ -1104,8 +1117,9 @@ debug_l_loaded:
     INC  HL
     LD   D, (HL)                ; DE = reloc_count
     INC  HL                     ; HL = first reloc entry
-    LD   (debug_reloc_cnt), DE
     LD   (debug_reloc_ptr), HL
+    EX   DE, HL                 ; HL = reloc_count
+    LD   (debug_reloc_cnt), HL
 
     ; Apply relocations (same algorithm as kernel's SYS_EXEC)
 debug_l_reloc_loop:
@@ -1473,7 +1487,8 @@ debug_cmd_u:
     LD   A, B
     OR   A
     JP   Z, debug_err_syntax
-    LD   (debug_u_addr), DE
+    EX   DE, HL
+    LD   (debug_u_addr), HL
 debug_u_continue:
     ; If u_addr is 0 and we have a target, start from PC
     LD   HL, (debug_u_addr)
@@ -1596,7 +1611,8 @@ debug_sc_ret:
     LD   D, (HL)
     CALL debug_check_rom
     JP   C, debug_sc_ret_rom
-    LD   (debug_step_bp1), DE
+    EX   DE, HL
+    LD   (debug_step_bp1), HL
     JP   debug_step_set
 debug_sc_ret_rom:
     LD   DE, debug_msg_returned
@@ -1604,10 +1620,12 @@ debug_sc_ret_rom:
     JP   debug_prompt
 
 debug_sc_jp_hl:
-    LD   DE, (debug_save_hl)
+    LD   HL, (debug_save_hl)
+    EX   DE, HL
     CALL debug_check_rom
     JP   C, debug_sc_jp_rom
-    LD   (debug_step_bp1), DE
+    EX   DE, HL
+    LD   (debug_step_bp1), HL
     JP   debug_step_set
 
 debug_sc_jp_nn:
@@ -1618,7 +1636,8 @@ debug_sc_jp_nn:
     LD   D, (HL)
     CALL debug_check_rom
     JP   C, debug_sc_jp_rom
-    LD   (debug_step_bp1), DE
+    EX   DE, HL
+    LD   (debug_step_bp1), HL
     JP   debug_step_set
 debug_sc_jp_rom:
     LD   DE, debug_msg_rom_jp
@@ -1638,7 +1657,8 @@ debug_sc_call_nn:
     ; Trace: step into if RAM
     CALL debug_check_rom
     JP   C, debug_step_set      ; ROM target: step over
-    LD   (debug_step_bp1), DE   ; RAM: step into
+    EX   DE, HL
+    LD   (debug_step_bp1), HL   ; RAM: step into
     JP   debug_step_set
 
 debug_sc_jr:
@@ -1657,7 +1677,8 @@ debug_sc_jr:
     EX   DE, HL
     CALL debug_check_rom
     JP   C, debug_sc_jp_rom
-    LD   (debug_step_bp1), DE
+    EX   DE, HL
+    LD   (debug_step_bp1), HL
     JP   debug_step_set
 
 ; --- Conditional branch ---
@@ -1691,7 +1712,8 @@ debug_sc_cond_ret:
     LD   D, (HL)
     CALL debug_check_rom
     JP   C, debug_step_set      ; ROM: only fall-through BP
-    LD   (debug_step_bp2), DE
+    EX   DE, HL
+    LD   (debug_step_bp2), HL
     JP   debug_step_set
 
 debug_sc_cond_jp:
@@ -1702,7 +1724,8 @@ debug_sc_cond_jp:
     LD   D, (HL)
     CALL debug_check_rom
     JP   C, debug_step_set
-    LD   (debug_step_bp2), DE
+    EX   DE, HL
+    LD   (debug_step_bp2), HL
     JP   debug_step_set
 
 debug_sc_cond_call:
@@ -1717,7 +1740,8 @@ debug_sc_cond_call:
     LD   D, (HL)
     CALL debug_check_rom
     JP   C, debug_step_set
-    LD   (debug_step_bp2), DE
+    EX   DE, HL
+    LD   (debug_step_bp2), HL
     JP   debug_step_set
 
 debug_sc_cond_jr:
@@ -1736,7 +1760,8 @@ debug_sc_cond_jr:
     EX   DE, HL
     CALL debug_check_rom
     JP   C, debug_step_set
-    LD   (debug_step_bp2), DE
+    EX   DE, HL
+    LD   (debug_step_bp2), HL
     JP   debug_step_set
 
 ; --- Special: RST, JP (HL), HALT ---
@@ -1784,13 +1809,15 @@ debug_cr_rom:
 ; ------------------------------------------------------------
 debug_step_set:
     ; Set primary temp BP
-    LD   DE, (debug_step_bp1)
+    LD   HL, (debug_step_bp1)
+    EX   DE, HL
     LD   A, D
     OR   E
     JP   Z, debug_step_err
     CALL debug_set_temp_bp
     ; Set secondary if non-zero and different from primary
-    LD   DE, (debug_step_bp2)
+    LD   HL, (debug_step_bp2)
+    EX   DE, HL
     LD   A, D
     OR   E
     JP   Z, debug_step_arm
